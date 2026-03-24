@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indus Nexus Limited — Company Setup & Trading Roadmap</title>
+<style>
+  :root {
+    --navy: #0a0e1a;
+    --navy2: #0d1224;
+    --navy3: #111830;
+    --navy4: #161e38;
+    --card: #0f1628;
+    --gold: #d4af37;
+    --gold2: #f0c93a;
+    --gold3: #b8960c;
+    --cyan: #00d4ff;
+    --cyan2: #00a8cc;
+    --green: #00e676;
+    --orange: #ff9800;
+    --red: #ff5252;
+    --purple: #9c27b0;
+    --text: #e8eaf0;
+    --muted: #8090b0;
+    --border: rgba(212,175,55,0.18);
+    --glow: 0 0 24px rgba(212,175,55,0.15);
+    --radius: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── PARTICLE CANVAS ── */
+  #hero-canvas {
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 520px;
+    display: flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    background: linear-gradient(160deg, #0d1224 0%, #0a0e1a 50%, #060a14 100%);
+    padding: 60px 20px 80px;
+    overflow: hidden;
+  }
+
+  .hero-badge {
+    position: relative; z-index:2;
+    display: inline-flex; align-items:center; gap:8px;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid var(--gold3);
+    border-radius: 40px;
+    padding: 6px 20px;
+    font-size: 12px; letter-spacing:2px; text-transform:uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .hero h1 {
+    position: relative; z-index:2;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    animation: fadeDown 0.9s ease both;
+  }
+
+  .hero h1 span { color: var(--gold); }
+
+  .hero-sub {
+    position: relative; z-index:2;
+    font-size: 1.05rem; color: var(--muted);
+    max-width: 620px; margin: 16px auto 0;
+    animation: fadeDown 1s ease both;
+  }
+
+  .hero-stats {
+    position: relative; z-index:2;
+    display: flex; gap:32px; flex-wrap:wrap; justify-content:center;
+    margin-top: 40px;
+    animation: fadeUp 1.1s ease both;
+  }
+
+  .hstat {
+    background: rgba(212,175,55,0.07);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 22px;
+    text-align:center;
+  }
+  .hstat .val { font-size:1.5rem; font-weight:800; color:var(--gold); }
+  .hstat .lab { font-size:11px; color:var(--muted); letter-spacing:1px; margin-top:2px; }
+
+  /* ── PROGRESS STRIP ── */
+  .progress-strip {
+    background: var(--navy3);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex; align-items:center; gap:0; overflow-x:auto;
+  }
+
+  .ps-step {
+    display: flex; align-items:center; gap:12px;
+    flex: 1; min-width: 160px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .ps-step:hover { opacity:0.8; }
+
+  .ps-circle {
+    width: 42px; height:42px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:700;
+    background: var(--navy4);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .ps-step.active .ps-circle {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy);
+  }
+  .ps-step.done .ps-circle {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--navy);
+  }
+
+  .ps-label { font-size:12px; font-weight:600; color:var(--muted); }
+  .ps-step.active .ps-label { color: var(--gold); }
+  .ps-step.done .ps-label { color: var(--green); }
+
+  .ps-line {
+    flex: 1; height:2px;
+    background: var(--border);
+    min-width: 20px;
+  }
+  .ps-line.done { background: var(--green); }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(10,14,26,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items:center; gap:4px;
+    overflow-x: auto;
+  }
+
+  .nav-logo {
+    font-size:13px; font-weight:800; letter-spacing:2px;
+    color: var(--gold); padding: 16px 20px 16px 0;
+    border-right: 1px solid var(--border);
+    margin-right: 8px; white-space:nowrap;
+  }
+
+  nav a {
+    color: var(--muted); text-decoration:none;
+    padding: 16px 14px; font-size:12px; font-weight:600;
+    letter-spacing:0.5px; white-space:nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav a:hover { color: var(--text); }
+  nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── LAYOUT ── */
+  .container { max-width:1160px; margin:0 auto; padding:0 24px; }
+
+  section { padding: 80px 0; }
+  section:nth-child(even) { background: var(--navy2); }
+
+  /* ── SECTION HEADER ── */
+  .sec-header {
+    display: flex; align-items:flex-start; gap:20px;
+    margin-bottom: 48px;
+  }
+
+  .sec-icon {
+    width:56px; height:56px; border-radius:14px;
+    display: flex; align-items:center; justify-content:center;
+    font-size:24px; flex-shrink:0;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid var(--border);
+  }
+
+  .sec-header h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    color: var(--text);
+  }
+  .sec-header h2 span { color: var(--gold); }
+  .sec-header p { color: var(--muted); font-size:0.95rem; margin-top:6px; max-width:600px; }
+
+  .phase-tag {
+    display: inline-block;
+    padding: 3px 10px; border-radius:20px;
+    font-size:10px; font-weight:700; letter-spacing:1px;
+    margin-bottom:8px;
+  }
+  .phase-tag.reg { background: rgba(0,214,255,0.12); color:var(--cyan); border:1px solid rgba(0,214,255,0.3); }
+  .phase-tag.bank { background: rgba(212,175,55,0.12); color:var(--gold); border:1px solid rgba(212,175,55,0.3); }
+  .phase-tag.trade { background: rgba(0,230,118,0.12); color:var(--green); border:1px solid rgba(0,230,118,0.3); }
+  .phase-tag.legal { background: rgba(156,39,176,0.12); color:#ce93d8; border:1px solid rgba(156,39,176,0.3); }
+  .phase-tag.warn { background: rgba(255,152,0,0.12); color:var(--orange); border:1px solid rgba(255,152,0,0.3); }
+
+  /* ── TIMELINE STEPS ── */
+  .timeline {
+    position:relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content:'';
+    position:absolute; left:14px; top:0; bottom:0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold3), transparent);
+  }
+
+  .tl-step {
+    position:relative;
+    margin-bottom: 32px;
+    animation: revealStep 0.6s ease both;
+  }
+
+  .tl-step::before {
+    content:'';
+    position:absolute; left:-26px; top:18px;
+    width:12px; height:12px;
+    border-radius:50%;
+    background: var(--gold);
+    border: 2px solid var(--navy);
+    box-shadow: 0 0 10px rgba(212,175,55,0.5);
+  }
+
+  .tl-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    transition: border-color 0.3s, transform 0.2s;
+    position:relative; overflow:hidden;
+  }
+  .tl-card::after {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, var(--gold3), var(--gold2), transparent);
+  }
+  .tl-card:hover { border-color: var(--gold3); transform: translateX(4px); }
+
+  .tl-num {
+    position:absolute; top:18px; right:20px;
+    font-size:28px; font-weight:800;
+    color: rgba(212,175,55,0.08);
+    line-height:1;
+  }
+
+  .tl-card h3 { font-size:1rem; font-weight:700; color:var(--text); margin-bottom:6px; }
+  .tl-card p { font-size:0.9rem; color:var(--muted); line-height:1.7; }
+  .tl-card .tl-link {
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:12px;
+    font-size:12px; font-weight:600;
+    color: var(--gold);
+    text-decoration:none;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.2);
+    padding: 5px 12px; border-radius:6px;
+    transition: background 0.2s;
+  }
+  .tl-card .tl-link:hover { background: rgba(212,175,55,0.16); }
+
+  .tl-meta {
+    display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;
+  }
+  .tl-chip {
+    font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px;
+    background: rgba(0,214,255,0.07); color:var(--cyan); border:1px solid rgba(0,214,255,0.2);
+  }
+  .tl-chip.gold { background: rgba(212,175,55,0.07); color:var(--gold); border-color:rgba(212,175,55,0.2); }
+  .tl-chip.green { background: rgba(0,230,118,0.07); color:var(--green); border-color:rgba(0,230,118,0.2); }
+  .tl-chip.orange { background: rgba(255,152,0,0.07); color:var(--orange); border-color:rgba(255,152,0,0.2); }
+  .tl-chip.red { background: rgba(255,82,82,0.07); color:var(--red); border-color:rgba(255,82,82,0.2); }
+  .tl-chip.purple { background: rgba(156,39,176,0.07); color:#ce93d8; border-color:rgba(156,39,176,0.2); }
+
+  /* ── GRID CARDS ── */
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px; }
+  .grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; }
+  .grid4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .info-card:hover { border-color: var(--gold3); box-shadow: var(--glow); }
+
+  .info-card .ic-icon { font-size:28px; margin-bottom:12px; }
+  .info-card h3 { font-size:0.95rem; font-weight:700; margin-bottom:8px; color:var(--text); }
+  .info-card p { font-size:0.85rem; color:var(--muted); line-height:1.65; }
+  .info-card .ic-val { font-size:1.4rem; font-weight:800; color:var(--gold); margin:6px 0 4px; }
+
+  /* ── BANKING COMPARISON TABLE ── */
+  .bank-table { width:100%; border-collapse:collapse; }
+  .bank-table th {
+    background: rgba(212,175,55,0.08);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    font-size:12px; font-weight:700; letter-spacing:0.5px;
+    text-align:left; color:var(--gold);
+  }
+  .bank-table td {
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    font-size:13px; color:var(--text);
+  }
+  .bank-table tr:hover td { background: rgba(212,175,55,0.04); }
+  .bank-table .rec { color:var(--green); font-weight:700; }
+  .bank-table .opt { color:var(--cyan); }
+  .bank-table .caution { color:var(--orange); }
+  .bank-table a { color:var(--gold); text-decoration:none; font-size:11px; }
+  .bank-table a:hover { text-decoration:underline; }
+
+  /* ── ALERT BOXES ── */
+  .alert {
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 20px 0;
+    display: flex; gap:14px; align-items:flex-start;
+    border-left: 3px solid;
+  }
+  .alert-icon { font-size:20px; flex-shrink:0; margin-top:1px; }
+  .alert h4 { font-size:13px; font-weight:700; margin-bottom:4px; }
+  .alert p { font-size:12px; line-height:1.6; }
+  .alert.gold { background:rgba(212,175,55,0.07); border-color:var(--gold); }
+  .alert.gold h4 { color:var(--gold); }
+  .alert.green { background:rgba(0,230,118,0.06); border-color:var(--green); }
+  .alert.green h4 { color:var(--green); }
+  .alert.red { background:rgba(255,82,82,0.06); border-color:var(--red); }
+  .alert.red h4 { color:var(--red); }
+  .alert.cyan { background:rgba(0,214,255,0.06); border-color:var(--cyan); }
+  .alert.cyan h4 { color:var(--cyan); }
+  .alert.orange { background:rgba(255,152,0,0.06); border-color:var(--orange); }
+  .alert.orange h4 { color:var(--orange); }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style:none; }
+  .checklist li {
+    display:flex; align-items:flex-start; gap:12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(212,175,55,0.07);
+    font-size:14px; cursor:pointer;
+    transition: opacity 0.2s;
+  }
+  .checklist li:last-child { border-bottom:none; }
+  .checklist li:hover { opacity:0.85; }
+  .checklist li .chk {
+    width:20px; height:20px; flex-shrink:0;
+    border-radius:5px;
+    border: 2px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px;
+    background: var(--navy4);
+    transition: all 0.2s;
+    margin-top:1px;
+  }
+  .checklist li.checked .chk {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--navy);
+  }
+  .checklist li.checked span { text-decoration:line-through; opacity:0.5; }
+  .checklist li .sub { font-size:11px; color:var(--muted); display:block; margin-top:2px; }
+
+  /* ── SIC CODE DISPLAY ── */
+  .sic-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin:20px 0; }
+  .sic-box {
+    background: rgba(0,214,255,0.06);
+    border: 1px solid rgba(0,214,255,0.2);
+    border-radius: 10px; padding:18px;
+    text-align:center;
+  }
+  .sic-box .code { font-size:2rem; font-weight:900; color:var(--cyan); }
+  .sic-box .name { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  /* ── COST SUMMARY ── */
+  .cost-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(212,175,55,0.08);
+    font-size:14px;
+  }
+  .cost-row:last-child { border-bottom:none; }
+  .cost-row .label { color:var(--muted); }
+  .cost-row .amount { font-weight:700; color:var(--text); }
+  .cost-row .amount.gold { color:var(--gold); }
+  .cost-row .amount.green { color:var(--green); }
+  .cost-row .amount.red { color:var(--red); }
+
+  .total-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid var(--border);
+    border-radius: 8px; margin-top:12px;
+  }
+  .total-row .label { font-weight:700; color:var(--text); }
+  .total-row .amount { font-size:1.3rem; font-weight:800; color:var(--gold); }
+
+  /* ── TIMELINE VISUAL ── */
+  .journey-timeline {
+    display:flex; gap:0; overflow-x:auto;
+    padding: 24px 0;
+    position:relative;
+  }
+  .journey-timeline::before {
+    content:'';
+    position:absolute; top:38px; left:20px; right:20px; height:2px;
+    background: linear-gradient(90deg, var(--gold3), var(--cyan2), var(--green), transparent);
+  }
+
+  .jt-node {
+    flex: 1; min-width:140px;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; gap:8px;
+    padding: 0 8px;
+  }
+
+  .jt-circle {
+    width:48px; height:48px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px;
+    border: 2px solid var(--border);
+    background: var(--navy4);
+    position:relative; z-index:1;
+    transition: all 0.3s;
+  }
+  .jt-circle:hover { transform: scale(1.15); }
+
+  .jt-node:nth-child(1) .jt-circle { border-color:var(--gold); background: rgba(212,175,55,0.1); }
+  .jt-node:nth-child(2) .jt-circle { border-color:var(--cyan); background: rgba(0,214,255,0.1); }
+  .jt-node:nth-child(3) .jt-circle { border-color:var(--green); background: rgba(0,230,118,0.1); }
+  .jt-node:nth-child(4) .jt-circle { border-color:var(--orange); background: rgba(255,152,0,0.1); }
+  .jt-node:nth-child(5) .jt-circle { border-color:#ce93d8; background: rgba(156,39,176,0.1); }
+  .jt-node:nth-child(6) .jt-circle { border-color:var(--gold2); background: rgba(212,175,55,0.15); }
+
+  .jt-title { font-size:12px; font-weight:700; color:var(--text); }
+  .jt-days { font-size:11px; color:var(--muted); }
+  .jt-week { font-size:10px; font-weight:600; padding:2px 8px; border-radius:10px; background: rgba(212,175,55,0.1); color:var(--gold); }
+
+  /* ── INTERACTIVE MASTER CHECKLIST ── */
+  #master-checklist { }
+
+  .mc-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow:hidden;
+  }
+
+  .mc-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 20px;
+    cursor:pointer;
+    user-select:none;
+    transition: background 0.2s;
+  }
+  .mc-header:hover { background: rgba(212,175,55,0.04); }
+  .mc-header h3 { font-size:14px; font-weight:700; display:flex; align-items:center; gap:10px; }
+  .mc-header .mc-count { font-size:11px; padding:2px 8px; border-radius:10px; font-weight:600; }
+  .mc-body { padding: 0 20px 16px; display:none; }
+  .mc-body.open { display:block; }
+
+  .mc-item {
+    display:flex; align-items:flex-start; gap:12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(212,175,55,0.06);
+    cursor:pointer; transition: opacity 0.2s;
+  }
+  .mc-item:last-child { border-bottom:none; }
+  .mc-item:hover { opacity:0.8; }
+  .mc-checkbox {
+    width:18px; height:18px; border-radius:4px;
+    border: 2px solid var(--border); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:10px; font-weight:700; margin-top:2px;
+    transition: all 0.2s; background: var(--navy4);
+  }
+  .mc-item.done .mc-checkbox { background: var(--green); border-color:var(--green); color:var(--navy); }
+  .mc-item.done .mc-text { opacity:0.45; text-decoration:line-through; }
+
+  .mc-text strong { display:block; font-size:13px; font-weight:600; color:var(--text); }
+  .mc-text span { font-size:11px; color:var(--muted); }
+
+  /* ── PROGRESS SIDEBAR ── */
+  .layout-split { display:grid; grid-template-columns: 1fr 280px; gap:32px; align-items:start; }
+  @media(max-width:900px){ .layout-split { grid-template-columns:1fr; } }
+
+  .progress-sidebar {
+    position:sticky; top:70px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+
+  .progress-sidebar h3 { font-size:13px; font-weight:700; color:var(--gold); margin-bottom:16px; }
+
+  .prog-ring-wrap {
+    display:flex; align-items:center; justify-content:center;
+    margin: 0 auto 20px;
+    position:relative;
+    width:100px; height:100px;
+  }
+  .prog-ring-wrap svg { transform:rotate(-90deg); }
+  .prog-ring-bg { fill:none; stroke:rgba(212,175,55,0.1); stroke-width:8; }
+  .prog-ring-fill {
+    fill:none; stroke:var(--gold); stroke-width:8;
+    stroke-linecap:round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.8s ease;
+  }
+  .prog-ring-text {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-size:22px; font-weight:800; color:var(--gold);
+  }
+  .prog-ring-sub { text-align:center; font-size:11px; color:var(--muted); margin-bottom:20px; }
+
+  .sidebar-phases { }
+  .sp-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:7px 0;
+    border-bottom: 1px solid rgba(212,175,55,0.06);
+    font-size:12px;
+  }
+  .sp-row:last-child { border-bottom:none; }
+  .sp-name { color:var(--muted); }
+  .sp-progress { color:var(--gold); font-weight:700; }
+  .sp-bar { height:3px; background: rgba(212,175,55,0.1); border-radius:2px; margin-top:3px; overflow:hidden; }
+  .sp-fill { height:100%; background: var(--gold); transition: width 0.5s; }
+
+  /* ── FCA SECTION ── */
+  .fca-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media(max-width:700px){ .fca-grid { grid-template-columns:1fr; } }
+
+  .fca-card {
+    border-radius: var(--radius); padding:22px;
+    border: 2px solid;
+  }
+  .fca-card.free { border-color: rgba(0,230,118,0.35); background: rgba(0,230,118,0.05); }
+  .fca-card.required { border-color: rgba(255,82,82,0.35); background: rgba(255,82,82,0.05); }
+
+  .fca-card h3 { font-size:14px; font-weight:700; margin-bottom:12px; }
+  .fca-card.free h3 { color:var(--green); }
+  .fca-card.required h3 { color:var(--red); }
+  .fca-card ul { padding-left:18px; }
+  .fca-card li { font-size:13px; color:var(--muted); margin-bottom:6px; line-height:1.5; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px) {
+    nav { padding:0 16px; }
+    section { padding:50px 0; }
+    .sec-header { flex-direction:column; }
+    .progress-strip { padding:16px; }
+    .ps-step { min-width:120px; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:none; } }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(20px); }  to { opacity:1; transform:none; } }
+  @keyframes revealStep { from { opacity:0; transform:translateX(-16px); } to { opacity:1; transform:none; } }
+
+  .rev { opacity:0; transform:translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .vis { opacity:1; transform:none; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy3);
+    border-top: 1px solid var(--border);
+    padding: 32px 40px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:16px;
+  }
+  .footer-brand { font-size:15px; font-weight:800; color:var(--gold); }
+  .footer-note { font-size:11px; color:var(--muted); max-width:480px; line-height:1.6; }
+  .footer-date { font-size:11px; color:var(--muted); }
+
+  /* ── TICKER BAR ── */
+  .ticker-bar {
+    background: rgba(212,175,55,0.05);
+    border-bottom: 1px solid var(--border);
+    overflow:hidden; padding: 8px 0;
+  }
+  .ticker-inner {
+    display:flex; gap:40px;
+    animation: tickScroll 30s linear infinite;
+    width: max-content;
+  }
+  .ticker-item { font-size:12px; font-weight:600; color:var(--muted); white-space:nowrap; }
+  .ticker-item span { color:var(--gold); margin-left:6px; }
+  @keyframes tickScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* ── PRINT BUTTON ── */
+  .print-btn {
+    position:fixed; bottom:28px; right:28px; z-index:999;
+    background: var(--gold);
+    color: var(--navy);
+    border:none; border-radius:50px;
+    padding: 12px 22px;
+    font-size:13px; font-weight:700;
+    cursor:pointer;
+    box-shadow: 0 4px 20px rgba(212,175,55,0.3);
+    transition: all 0.2s;
+  }
+  .print-btn:hover { background: var(--gold2); transform:translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- TICKER BAR -->
+<div class="ticker-bar">
+  <div class="ticker-inner">
+    <span class="ticker-item">INDUS NEXUS LIMITED<span>UK COMPANY SETUP ROADMAP</span></span>
+    <span class="ticker-item">PHASE 1: COMPANIES HOUSE<span>£100 · 24HRS</span></span>
+    <span class="ticker-item">SIC: 46520<span>SEMICONDUCTOR WHOLESALE</span></span>
+    <span class="ticker-item">SIC: 62020<span>IT CONSULTANCY</span></span>
+    <span class="ticker-item">BANKING<span>REVOLUT · WISE · HSBC</span></span>
+    <span class="ticker-item">TRADING<span>IBKR · SAXO BANK</span></span>
+    <span class="ticker-item">HMRC REGISTRATION<span>3 MONTHS FROM TRADING</span></span>
+    <span class="ticker-item">EORI NUMBER<span>IMPORT/EXPORT ESSENTIAL</span></span>
+    <span class="ticker-item">FCA LICENCE<span>PHYSICAL TRADING: NOT REQUIRED</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">INDUS NEXUS LIMITED<span>UK COMPANY SETUP ROADMAP</span></span>
+    <span class="ticker-item">PHASE 1: COMPANIES HOUSE<span>£100 · 24HRS</span></span>
+    <span class="ticker-item">SIC: 46520<span>SEMICONDUCTOR WHOLESALE</span></span>
+    <span class="ticker-item">SIC: 62020<span>IT CONSULTANCY</span></span>
+    <span class="ticker-item">BANKING<span>REVOLUT · WISE · HSBC</span></span>
+    <span class="ticker-item">TRADING<span>IBKR · SAXO BANK</span></span>
+    <span class="ticker-item">HMRC REGISTRATION<span>3 MONTHS FROM TRADING</span></span>
+    <span class="ticker-item">EORI NUMBER<span>IMPORT/EXPORT ESSENTIAL</span></span>
+    <span class="ticker-item">FCA LICENCE<span>PHYSICAL TRADING: NOT REQUIRED</span></span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-badge">🏛️ Private Limited Company · United Kingdom</div>
+  <h1><span>Indus Nexus</span> Limited<br>Company Setup & Trading Roadmap</h1>
+  <p class="hero-sub">Your complete step-by-step guide to registering, banking, and trading — from Companies House to live semiconductor markets.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="val">£100</div><div class="lab">Registration Fee</div></div>
+    <div class="hstat"><div class="val">24hrs</div><div class="lab">Companies House Processing</div></div>
+    <div class="hstat"><div class="val">4 Phases</div><div class="lab">Setup Stages</div></div>
+    <div class="hstat"><div class="val">~8 Weeks</div><div class="lab">Full Operational</div></div>
+    <div class="hstat"><div class="val">$1.5T+</div><div class="lab">Target TAM by 2030</div></div>
+  </div>
+</div>
+
+<!-- JOURNEY TIMELINE STRIP -->
+<div class="progress-strip">
+  <div class="ps-step active" onclick="scrollToSection('registration')">
+    <div class="ps-circle">1</div>
+    <div class="ps-label">Company Registration</div>
+  </div>
+  <div class="ps-line"></div>
+  <div class="ps-step" onclick="scrollToSection('banking')">
+    <div class="ps-circle">2</div>
+    <div class="ps-label">Business Banking</div>
+  </div>
+  <div class="ps-line"></div>
+  <div class="ps-step" onclick="scrollToSection('trading')">
+    <div class="ps-circle">3</div>
+    <div class="ps-label">Trading Infrastructure</div>
+  </div>
+  <div class="ps-line"></div>
+  <div class="ps-step" onclick="scrollToSection('legal')">
+    <div class="ps-circle">4</div>
+    <div class="ps-label">Legal & Compliance</div>
+  </div>
+  <div class="ps-line"></div>
+  <div class="ps-step" onclick="scrollToSection('checklist')">
+    <div class="ps-circle">✓</div>
+    <div class="ps-label">Master Checklist</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">INDUS NEXUS</div>
+  <a href="#registration" class="active">Registration</a>
+  <a href="#banking">Banking</a>
+  <a href="#trading">Trading</a>
+  <a href="#legal">Legal</a>
+  <a href="#fca">FCA Guide</a>
+  <a href="#costs">Cost Summary</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<!-- ═══ SECTION 1: COMPANY REGISTRATION ═══ -->
+<section id="registration">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">🏛️</div>
+    <div>
+      <div class="phase-tag reg">PHASE 1 · DAYS 1–2</div>
+      <h2>Company <span>Registration</span></h2>
+      <p>Incorporate Indus Nexus Limited as a UK Private Limited Company via Companies House. The fastest and most cost-effective route is the online GOV.UK portal — £100, processed within 24 hours.</p>
+    </div>
+  </div>
+
+  <div class="journey-timeline rev" style="transition-delay:0.1s">
+    <div class="jt-node">
+      <div class="jt-circle">📋</div>
+      <div class="jt-title">Prepare Documents</div>
+      <div class="jt-days">Day 1 · 2hrs</div>
+      <div class="jt-week">Week 1</div>
+    </div>
+    <div class="jt-node">
+      <div class="jt-circle">🌐</div>
+      <div class="jt-title">Online Application</div>
+      <div class="jt-days">Day 1 · 30min</div>
+      <div class="jt-week">Week 1</div>
+    </div>
+    <div class="jt-node">
+      <div class="jt-circle">✅</div>
+      <div class="jt-title">Certificate Issued</div>
+      <div class="jt-days">Day 1–2</div>
+      <div class="jt-week">Week 1</div>
+    </div>
+    <div class="jt-node">
+      <div class="jt-circle">🆔</div>
+      <div class="jt-title">ID Verification</div>
+      <div class="jt-days">Within 12 months</div>
+      <div class="jt-week">New 2025</div>
+    </div>
+    <div class="jt-node">
+      <div class="jt-circle">🏦</div>
+      <div class="jt-title">Open Bank Account</div>
+      <div class="jt-days">Days 3–14</div>
+      <div class="jt-week">Week 1–2</div>
+    </div>
+    <div class="jt-node">
+      <div class="jt-circle">🚀</div>
+      <div class="jt-title">Ready to Trade</div>
+      <div class="jt-days">Week 2–8</div>
+      <div class="jt-week">Operational</div>
+    </div>
+  </div>
+
+  <div class="sic-grid rev" style="transition-delay:0.15s">
+    <div class="sic-box">
+      <div class="code">46520</div>
+      <div class="name">Wholesale of electronic & telecommunications equipment & parts</div>
+      <div class="name" style="color:var(--cyan);margin-top:6px;">✓ Semiconductors &amp; Components</div>
+    </div>
+    <div class="sic-box">
+      <div class="code">62020</div>
+      <div class="name">Information technology consultancy activities</div>
+      <div class="name" style="color:var(--cyan);margin-top:6px;">✓ API Integration &amp; Tech Services</div>
+    </div>
+    <div class="sic-box">
+      <div class="code">64999</div>
+      <div class="name">Other financial service activities (supplementary)</div>
+      <div class="name" style="color:var(--muted);margin-top:6px;">Optional for trading entities</div>
+    </div>
+  </div>
+
+  <div class="timeline" style="margin-top:32px">
+    <div class="tl-step rev" style="transition-delay:0.05s">
+      <div class="tl-card">
+        <div class="tl-num">01</div>
+        <h3>Choose Your Company Name</h3>
+        <p>Your company name must be unique — check availability on Companies House before applying. The name must end with "Limited" or "Ltd". Use the name checker to confirm availability instantly.</p>
+        <div class="tl-meta">
+          <span class="tl-chip gold">INDUS NEXUS LIMITED ✓</span>
+          <span class="tl-chip">Must be unique</span>
+          <span class="tl-chip green">Free check</span>
+        </div>
+        <a class="tl-link" href="https://find-and-update.company-information.service.gov.uk/search" target="_blank">🔍 Check Name Availability — Companies House</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.1s">
+      <div class="tl-card">
+        <div class="tl-num">02</div>
+        <h3>Register Online — GOV.UK</h3>
+        <p>The fastest and cheapest route: apply online via the GOV.UK portal. You'll need a registered UK address (can be your home address, a registered office service, or a virtual office). Processing takes typically 24 hours — you'll receive your Certificate of Incorporation by email.</p>
+        <div class="tl-meta">
+          <span class="tl-chip gold">£100 fee</span>
+          <span class="tl-chip green">24hr processing</span>
+          <span class="tl-chip">Debit/credit card</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/limited-company-formation/register-your-company" target="_blank">🌐 Register Now — GOV.UK Official</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.15s">
+      <div class="tl-card">
+        <div class="tl-num">03</div>
+        <h3>Memorandum & Articles of Association</h3>
+        <p>You can use the standard "model" articles provided by Companies House for speed, or draft custom articles. For a trading company with multiple shareholders or complex ownership, custom articles are recommended. For a sole director/shareholder setup, model articles work perfectly.</p>
+        <div class="tl-meta">
+          <span class="tl-chip green">Model articles = free &amp; instant</span>
+          <span class="tl-chip orange">Custom articles = solicitor needed</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/guidance/model-articles-of-association-for-limited-companies" target="_blank">📄 Model Articles — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.2s">
+      <div class="tl-card">
+        <div class="tl-num">04</div>
+        <h3>Identity Verification — New Nov 2025 Requirement</h3>
+        <p>From November 2025, all new company directors and persons with significant control (PSC) must verify their identity with Companies House. You have 12 months from incorporation to complete this. Verification is done via GOV.UK One Login — requires a valid passport or UK driving licence.</p>
+        <div class="tl-meta">
+          <span class="tl-chip red">MANDATORY — New 2025</span>
+          <span class="tl-chip">12 month window</span>
+          <span class="tl-chip">Passport or UK licence</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/guidance/identity-verification-for-companies-house" target="_blank">🆔 Identity Verification Guide — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.25s">
+      <div class="tl-card">
+        <div class="tl-num">05</div>
+        <h3>Registered Office Address</h3>
+        <p>Every UK company requires a registered office address in England/Wales (or Scotland/Northern Ireland if registered there). This address appears on public records. Options: your home address, a registered agent address service (from ~£50/year), or a virtual office.</p>
+        <div class="tl-meta">
+          <span class="tl-chip">Must be physical UK address</span>
+          <span class="tl-chip gold">£50–£200/yr for registered agent</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/registered-office-address" target="_blank">📍 Registered Office Requirements — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.3s">
+      <div class="tl-card">
+        <div class="tl-num">06</div>
+        <h3>Certificate of Incorporation</h3>
+        <p>Once approved, Companies House issues your Certificate of Incorporation by email. This includes your unique Company Registration Number (CRN). Keep this safe — you'll need it for banking, contracts, invoices, and all official documents. Your company is now legally trading-ready.</p>
+        <div class="tl-meta">
+          <span class="tl-chip green">Issued within 24hrs</span>
+          <span class="tl-chip cyan">Unique CRN assigned</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/government/publications/life-of-a-company-annual-requirements" target="_blank">📊 Company Annual Requirements — GOV.UK</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert gold rev" style="transition-delay:0.35s">
+    <div class="alert-icon">💡</div>
+    <div>
+      <h4>Pro Tip — Formation Agent Option</h4>
+      <p>If you want everything handled professionally, formation agents like Rapid Formations or Companies Made Simple charge £20–£150 and handle all paperwork, registered office, and post forwarding. Still uses Companies House in the background. GOV.UK direct is cheapest at £100.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 2: BUSINESS BANKING ═══ -->
+<section id="banking">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">🏦</div>
+    <div>
+      <div class="phase-tag bank">PHASE 2 · DAYS 3–14</div>
+      <h2>Business <span>Banking</span></h2>
+      <p>Open a dedicated business account immediately after incorporation. Your Certificate of Incorporation and Company Registration Number are the primary documents you'll need. You need a separate business account — personal accounts cannot be used for company transactions.</p>
+    </div>
+  </div>
+
+  <div class="alert cyan rev">
+    <div class="alert-icon">📋</div>
+    <div>
+      <h4>Documents Required for All Business Bank Accounts</h4>
+      <p>Certificate of Incorporation · Company Registration Number · Director's passport/driving licence · Proof of address (utility bill, dated within 3 months) · Company address (registered office) · Details of intended business activities & expected turnover</p>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto" class="rev" style="transition-delay:0.1s">
+  <table class="bank-table">
+    <thead>
+      <tr>
+        <th>Bank / Provider</th>
+        <th>Setup Time</th>
+        <th>Monthly Fee</th>
+        <th>Multi-Currency</th>
+        <th>International Wires</th>
+        <th>Best For</th>
+        <th>Apply</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Revolut Business</strong> ⭐</td>
+        <td class="rec">1–3 days</td>
+        <td>£0–£79/mo</td>
+        <td class="rec">✓ 25+ currencies</td>
+        <td class="rec">Low-cost SWIFT</td>
+        <td class="rec">Primary account — global trading</td>
+        <td><a href="https://www.revolut.com/business/" target="_blank">revolut.com/business</a></td>
+      </tr>
+      <tr>
+        <td><strong>Wise Business</strong> ⭐</td>
+        <td class="rec">2–5 days</td>
+        <td>£0 (fees per tx)</td>
+        <td class="rec">✓ 40+ currencies</td>
+        <td class="rec">Mid-market rate</td>
+        <td class="rec">Supplier payments — Asia, Middle East</td>
+        <td><a href="https://wise.com/gb/business/" target="_blank">wise.com/business</a></td>
+      </tr>
+      <tr>
+        <td><strong>HSBC Business</strong></td>
+        <td class="caution">2–4 weeks</td>
+        <td>£8–£30/mo</td>
+        <td class="opt">✓ Trade finance</td>
+        <td class="opt">✓ Full SWIFT</td>
+        <td>Large transactions, credit facilities</td>
+        <td><a href="https://www.business.hsbc.uk/" target="_blank">business.hsbc.uk</a></td>
+      </tr>
+      <tr>
+        <td><strong>Tide Business</strong></td>
+        <td class="rec">1–5 days</td>
+        <td>£0–£29.99/mo</td>
+        <td>Limited</td>
+        <td class="caution">Via partners</td>
+        <td>UK-only simple ops</td>
+        <td><a href="https://www.tide.co/" target="_blank">tide.co</a></td>
+      </tr>
+      <tr>
+        <td><strong>Barclays Business</strong></td>
+        <td class="caution">1–3 weeks</td>
+        <td>£8–£25/mo</td>
+        <td class="opt">✓ FX available</td>
+        <td class="opt">✓ International</td>
+        <td>Traditional banking + credit</td>
+        <td><a href="https://www.barclays.co.uk/business-banking/" target="_blank">barclays.co.uk/business</a></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="alert green rev" style="transition-delay:0.15s; margin-top:28px;">
+    <div class="alert-icon">✅</div>
+    <div>
+      <h4>Recommended Strategy for Indus Nexus</h4>
+      <p><strong>Primary Account:</strong> Revolut Business (Scale plan, ~£25/mo) — instant multi-currency, API access, fast international payments to TSMC suppliers, Middle East clients, and Pakistan distributors. <strong>Secondary:</strong> Wise Business for spot-rate supplier payments where Revolut charges more. <strong>Long-term:</strong> HSBC Business once revenue exceeds £250K/year — for trade finance, letters of credit, and bank guarantees needed for large semiconductor orders.</p>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:28px">
+    <div class="info-card rev" style="transition-delay:0.2s">
+      <div class="ic-icon">💳</div>
+      <h3>Revolut Business — Recommended First Account</h3>
+      <p>Open online with Certificate of Incorporation. Most fintech-friendly bank for a new trading company. Free plan available, Scale plan adds expense management, SWIFT payments, and multi-currency accounts.</p>
+      <div class="tl-meta" style="margin-top:12px">
+        <span class="tl-chip green">1–3 days approval</span>
+        <span class="tl-chip gold">25+ currencies</span>
+      </div>
+    </div>
+    <div class="info-card rev" style="transition-delay:0.25s">
+      <div class="ic-icon">🌍</div>
+      <h3>Wise Business — International Payments</h3>
+      <p>Best mid-market exchange rates for paying Asian suppliers and receiving payments globally. Useful for TSMC Taiwan and Pakistan telecom distributors — typically 4–8× cheaper than high street banks for FX.</p>
+      <div class="tl-meta" style="margin-top:12px">
+        <span class="tl-chip cyan">Mid-market FX rates</span>
+        <span class="tl-chip">40+ currencies</span>
+      </div>
+    </div>
+    <div class="info-card rev" style="transition-delay:0.3s">
+      <div class="ic-icon">🏛️</div>
+      <h3>HSBC Business — Trade Finance Layer</h3>
+      <p>Once Indus Nexus is established, HSBC provides Letters of Credit (LCs), bank guarantees, and trade finance lines essential for large semiconductor procurement orders from Asia-Pacific suppliers.</p>
+      <div class="tl-meta" style="margin-top:12px">
+        <span class="tl-chip orange">2–4 week setup</span>
+        <span class="tl-chip purple">Trade finance tools</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 3: TRADING INFRASTRUCTURE ═══ -->
+<section id="trading">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">📈</div>
+    <div>
+      <div class="phase-tag trade">PHASE 3 · WEEKS 2–6</div>
+      <h2>Trading <span>Infrastructure</span></h2>
+      <p>Indus Nexus will operate across two trading types: physical semiconductor/component procurement and resale (commercial trading), and financial instrument trading in listed semiconductor equities and ETFs (investment trading).</p>
+    </div>
+  </div>
+
+  <div class="fca-grid rev" style="margin-bottom:32px">
+    <div class="fca-card free">
+      <h3>✅ Physical Semiconductor Trading — NO FCA Licence</h3>
+      <ul>
+        <li>Buying and reselling physical semiconductor chips, components, GPUs</li>
+        <li>Procurement from TSMC, Arrow Electronics, manufacturers</li>
+        <li>Selling to data centres, fintechs, enterprise clients</li>
+        <li>Import/export of electronic components (need EORI)</li>
+        <li>API integration services and IT consultancy contracts</li>
+        <li>Regular company + VAT registration only required</li>
+      </ul>
+    </div>
+    <div class="fca-card required">
+      <h3>⚠️ Financial Instrument Trading — FCA Authorisation Needed</h3>
+      <ul>
+        <li>Trading stocks, ETFs, derivatives as a business (not personal)</li>
+        <li>Acting as investment manager or advisor for others</li>
+        <li>Running a fund or managing client money</li>
+        <li>Providing investment advice for a fee</li>
+        <li>FCA application fee: ~£10,880 for IFPRU investment firm</li>
+        <li>Total cost (fees + advisors): £30,000–£75,000+</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert orange rev">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <h4>Important: Trading With Your Own Company Money</h4>
+      <p>If DK trades equities/stocks using Indus Nexus's own funds (proprietary trading), and does NOT manage client money or give investment advice, the FCA authorisation requirement is significantly reduced. Use a Corporate Brokerage Account (Interactive Brokers, Saxo) under the company name — this is legal proprietary trading and doesn't require FCA registration for your own capital.</p>
+    </div>
+  </div>
+
+  <h3 style="color:var(--gold); font-size:1rem; margin:32px 0 16px; font-weight:700;">Financial Market Trading Platforms (Corporate Accounts)</h3>
+  <div style="overflow-x:auto" class="rev" style="transition-delay:0.1s">
+  <table class="bank-table">
+    <thead>
+      <tr>
+        <th>Platform</th>
+        <th>Corporate Account</th>
+        <th>Asset Classes</th>
+        <th>Min Deposit</th>
+        <th>Best For</th>
+        <th>Apply</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Interactive Brokers (IBKR)</strong> ⭐</td>
+        <td class="rec">✓ Corporate</td>
+        <td class="rec">Stocks, ETFs, Options, Futures, FX, Bonds</td>
+        <td>$0 (tiered)</td>
+        <td class="rec">Primary platform — global equities</td>
+        <td><a href="https://www.interactivebrokers.co.uk/en/trading/corporate-accounts.php" target="_blank">interactivebrokers.co.uk</a></td>
+      </tr>
+      <tr>
+        <td><strong>Saxo Bank</strong> ⭐</td>
+        <td class="rec">✓ Corporate</td>
+        <td>Stocks, ETFs, FX, CFDs, Commodities</td>
+        <td>£25,000</td>
+        <td>Premium execution, research</td>
+        <td><a href="https://www.home.saxo/en-gb/accounts/openaccount" target="_blank">home.saxo/en-gb</a></td>
+      </tr>
+      <tr>
+        <td><strong>CMC Markets</strong></td>
+        <td class="opt">✓ Corporate CFD</td>
+        <td>CFDs, Spread betting, FX</td>
+        <td>£0</td>
+        <td>Short-term semiconductor sector CFDs</td>
+        <td><a href="https://www.cmcmarkets.com/en-gb/cfds/corporate-accounts" target="_blank">cmcmarkets.com</a></td>
+      </tr>
+      <tr>
+        <td><strong>Hargreaves Lansdown</strong></td>
+        <td class="opt">✓ Business</td>
+        <td>UK Stocks, ETFs, Funds</td>
+        <td>£0</td>
+        <td>UK equities, simple setup</td>
+        <td><a href="https://www.hl.co.uk/shares/corporate-trading-account" target="_blank">hl.co.uk</a></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="color:var(--gold); font-size:1rem; margin:32px 0 16px; font-weight:700;">Physical Semiconductor Procurement Channels</h3>
+  <div class="grid2 rev" style="transition-delay:0.15s">
+    <div class="tl-card">
+      <h3>📦 Authorised Distributors</h3>
+      <p style="font-size:13px; color:var(--muted); margin-top:8px;">Avnet, Arrow Electronics, Future Electronics, Mouser, Digi-Key — authorised distributor networks. Best for consistent supply, quality assurance, legitimate sourcing. Apply for corporate trade accounts directly.</p>
+      <div class="tl-meta">
+        <span class="tl-chip green">Authorised source</span>
+        <span class="tl-chip">Net 30/60 payment terms</span>
+      </div>
+      <a class="tl-link" href="https://www.arrow.com/" target="_blank">🔗 Arrow Electronics — arrow.com</a>
+    </div>
+    <div class="tl-card">
+      <h3>🤝 Direct Manufacturer Relationships</h3>
+      <p style="font-size:13px; color:var(--muted); margin-top:8px;">TSMC, Samsung Foundry, NVIDIA — direct vendor relationships require larger order volumes and approved vendor status. Essential for Indus Nexus's long-term competitive advantage in semiconductor procurement.</p>
+      <div class="tl-meta">
+        <span class="tl-chip gold">Higher margins</span>
+        <span class="tl-chip orange">Volume requirements</span>
+      </div>
+    </div>
+    <div class="tl-card">
+      <h3>🌐 B2B Marketplace Platforms</h3>
+      <p style="font-size:13px; color:var(--muted); margin-top:8px;">Alibaba (global), IC Insider, Global Sources — B2B platforms for sourcing electronic components. Requires thorough supplier vetting to avoid counterfeit components. Use only verified Alibaba Gold Suppliers.</p>
+      <div class="tl-meta">
+        <span class="tl-chip">Due diligence required</span>
+        <span class="tl-chip red">Counterfeit risk</span>
+      </div>
+    </div>
+    <div class="tl-card">
+      <h3>📊 UK Government Trade Resources</h3>
+      <p style="font-size:13px; color:var(--muted); margin-top:8px;">UK Export Finance (UKEF), Department for Business and Trade (DBT), and UK Trade Tariff — essential for import/export classification, tariff codes, and government-backed trade finance for Indus Nexus.</p>
+      <div class="tl-meta">
+        <span class="tl-chip cyan">Free government support</span>
+      </div>
+      <a class="tl-link" href="https://www.gov.uk/guidance/uk-trade-tariff-look-up-commodity-codes-duty-and-vat-rates" target="_blank">🔗 UK Trade Tariff Tool</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 4: LEGAL & COMPLIANCE ═══ -->
+<section id="legal">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">⚖️</div>
+    <div>
+      <div class="phase-tag legal">PHASE 4 · WEEKS 1–8</div>
+      <h2>Legal &amp; <span>Compliance</span></h2>
+      <p>UK companies have ongoing legal obligations from day one. The key registrations are HMRC (Corporation Tax + VAT), EORI (for importing/exporting), and Companies House annual filings. Staying compliant protects the company and avoids penalties.</p>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-step rev">
+      <div class="tl-card">
+        <div class="tl-num">01</div>
+        <h3>HMRC — Register for Corporation Tax</h3>
+        <p>Within 3 months of starting to trade (or generating income), Indus Nexus must register with HMRC for Corporation Tax. You'll receive a Unique Taxpayer Reference (UTR) by post within 10 working days. UK Corporation Tax rate: 25% on profits over £250K (19% for profits under £50K).</p>
+        <div class="tl-meta">
+          <span class="tl-chip red">3 MONTH DEADLINE</span>
+          <span class="tl-chip">25% rate (£250K+)</span>
+          <span class="tl-chip green">19% rate (&lt;£50K)</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/limited-company-formation/set-up-your-company-for-corporation-tax" target="_blank">📋 Register for Corporation Tax — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.05s">
+      <div class="tl-card">
+        <div class="tl-num">02</div>
+        <h3>VAT Registration</h3>
+        <p>Mandatory when taxable turnover exceeds £90,000/year (from April 2024). Voluntary registration before this threshold can be beneficial — you can reclaim VAT on business purchases (equipment, services). Standard UK VAT rate is 20%. For international B2B semiconductor sales, zero-rated VAT may apply.</p>
+        <div class="tl-meta">
+          <span class="tl-chip orange">MANDATORY at £90K turnover</span>
+          <span class="tl-chip gold">Voluntary before threshold</span>
+          <span class="tl-chip cyan">20% standard rate</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/vat-registration" target="_blank">📋 VAT Registration — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.1s">
+      <div class="tl-card">
+        <div class="tl-num">03</div>
+        <h3>EORI Number — Essential for Import/Export</h3>
+        <p>An Economic Operators Registration and Identification (EORI) number is required for all businesses importing goods into or exporting from the UK. This is critical for Indus Nexus semiconductor trading — you cannot clear goods through UK customs without it. Apply online, typically issued within 3 working days. It's free.</p>
+        <div class="tl-meta">
+          <span class="tl-chip red">CRITICAL for semiconductor imports</span>
+          <span class="tl-chip green">Free to apply</span>
+          <span class="tl-chip">3 working days</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/eori" target="_blank">🌍 Apply for EORI Number — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.15s">
+      <div class="tl-card">
+        <div class="tl-num">04</div>
+        <h3>Annual Confirmation Statement & Accounts</h3>
+        <p>Every year, Indus Nexus must file: (1) Confirmation Statement with Companies House — confirms company details are up to date (£34 online). (2) Annual Accounts with Companies House — abbreviated accounts for small companies. (3) Company Tax Return with HMRC — within 12 months of your accounting period end.</p>
+        <div class="tl-meta">
+          <span class="tl-chip">Confirmation statement £34/yr</span>
+          <span class="tl-chip orange">Annual filing deadline</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/file-your-confirmation-statement-with-companies-house" target="_blank">📄 File Confirmation Statement</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.2s">
+      <div class="tl-card">
+        <div class="tl-num">05</div>
+        <h3>Professional Indemnity & Business Insurance</h3>
+        <p>For IT consultancy contracts (SIC 62020) and trading agreements, Professional Indemnity Insurance (PI) and Public Liability are typically required by enterprise clients before signing contracts. PI covers you against claims of financial loss caused by your professional advice or services. Cost: £500–£2,000/year for a small consultancy.</p>
+        <div class="tl-meta">
+          <span class="tl-chip gold">£500–£2,000/yr</span>
+          <span class="tl-chip">Required by enterprise clients</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/business-legal-structures/business-insurance" target="_blank">🛡️ Business Insurance Guide — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.25s">
+      <div class="tl-card">
+        <div class="tl-num">06</div>
+        <h3>Export Controls — Dual-Use Goods</h3>
+        <p>Some advanced semiconductor chips (especially AI accelerators, high-performance computing chips) may be subject to UK Export Control regulations and US export restrictions (EAR/ITAR). Before trading H100/H200 GPUs, Cortex A-series military-grade chips, or any items on the UK Strategic Export Control List, check and obtain necessary export licences.</p>
+        <div class="tl-meta">
+          <span class="tl-chip red">NVIDIA H100/H200 — check restrictions</span>
+          <span class="tl-chip orange">UK Export Control Act 2002</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/guidance/export-controls-dual-use-items-software-and-technology-goods-for-torture-and-radio-transmission-equipment" target="_blank">⚠️ Export Controls — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-step rev" style="transition-delay:0.3s">
+      <div class="tl-card">
+        <div class="tl-num">07</div>
+        <h3>Anti-Money Laundering (AML) — Know Your Customer</h3>
+        <p>As a trading company, Indus Nexus must comply with UK Money Laundering Regulations 2017. Implement basic KYC (Know Your Customer) for all new business partners and clients. Maintain due diligence records for 5 years. Appoint a Nominated Officer (Money Laundering Reporting Officer — MLRO) if you handle significant financial flows.</p>
+        <div class="tl-meta">
+          <span class="tl-chip purple">UK MLR 2017</span>
+          <span class="tl-chip">5yr record keeping</span>
+          <span class="tl-chip orange">Client due diligence</span>
+        </div>
+        <a class="tl-link" href="https://www.gov.uk/guidance/money-laundering-regulations-registration" target="_blank">📋 AML Compliance — GOV.UK</a>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 5: FCA GUIDE ═══ -->
+<section id="fca">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">🏛️</div>
+    <div>
+      <div class="phase-tag warn">FCA REGULATORY GUIDE</div>
+      <h2>FCA <span>Regulation</span> — Do You Need a Licence?</h2>
+      <p>This is the most frequently misunderstood aspect of starting a trading company in the UK. The answer depends entirely on what you trade and how you trade it.</p>
+    </div>
+  </div>
+
+  <div class="grid2 rev">
+    <div>
+      <div class="alert green">
+        <div class="alert-icon">✅</div>
+        <div>
+          <h4>NO FCA Licence Required — Indus Nexus Phase 1</h4>
+          <p>Physical semiconductor procurement, component distribution, and resale to businesses. IT consultancy and API integration services. Proprietary trading of your own company capital in listed equities (not for others). Import/export of electronic goods. Normal B2B commercial trading contracts.</p>
+        </div>
+      </div>
+      <div class="alert red" style="margin-top:16px">
+        <div class="alert-icon">⚠️</div>
+        <div>
+          <h4>FCA Authorisation Required — Phase 2+ Activities</h4>
+          <p>Managing or advising on investments on behalf of other people or businesses for reward. Running any kind of fund or pooled investment vehicle. Providing regulated investment advice to clients. Operating as a broker or dealer in financial instruments as a service to others. Any consumer credit activities.</p>
+        </div>
+      </div>
+    </div>
+    <div class="info-card rev" style="transition-delay:0.1s">
+      <div class="ic-icon">📊</div>
+      <h3>FCA Authorisation Cost (If Required in Future)</h3>
+      <div class="cost-row"><span class="label">FCA Application Fee (IFPRU)</span><span class="amount">£10,880</span></div>
+      <div class="cost-row"><span class="label">Compliance Consultant</span><span class="amount">£15,000–£30,000</span></div>
+      <div class="cost-row"><span class="label">Compliance Officer Salary</span><span class="amount">£50,000–£80,000/yr</span></div>
+      <div class="cost-row"><span class="label">Legal Advisors</span><span class="amount">£5,000–£20,000</span></div>
+      <div class="cost-row"><span class="label">PI Insurance (FCA regulated)</span><span class="amount">£2,000–£8,000/yr</span></div>
+      <div class="cost-row"><span class="label">FCA Annual Fee (ongoing)</span><span class="amount">£1,500–£5,000/yr</span></div>
+      <div class="total-row"><span class="label">Total First Year (est.)</span><span class="amount">£85,000+</span></div>
+      <a class="tl-link" href="https://www.fca.org.uk/firms/authorisation" target="_blank" style="margin-top:16px; display:inline-flex;">📋 FCA Authorisation — fca.org.uk</a>
+    </div>
+  </div>
+
+  <div class="alert cyan rev" style="transition-delay:0.15s; margin-top:8px;">
+    <div class="alert-icon">💡</div>
+    <div>
+      <h4>Recommended Path for Indus Nexus</h4>
+      <p>Start with physical semiconductor trading and IT consultancy — NO FCA licence needed. Use a corporate brokerage account (IBKR) to invest Indus Nexus's own profits in semiconductor sector ETFs — this is proprietary investment, not regulated advisory. Once revenues exceed £500K, explore whether an Appointed Representative arrangement (costs ~£5,000–£15,000/yr under an existing FCA firm's umbrella) makes sense before full FCA authorisation.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 6: COST SUMMARY ═══ -->
+<section id="costs">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">💰</div>
+    <div>
+      <div class="phase-tag bank">COST SUMMARY</div>
+      <h2>Setup <span>Costs</span> — Complete Breakdown</h2>
+      <p>Full transparent cost analysis for establishing Indus Nexus Limited. Split into one-time setup costs and ongoing annual operating costs.</p>
+    </div>
+  </div>
+
+  <div class="grid2 rev">
+    <div class="info-card">
+      <h3 style="color:var(--gold); margin-bottom:16px;">One-Time Setup Costs</h3>
+      <div class="cost-row"><span class="label">Companies House Registration</span><span class="amount gold">£100</span></div>
+      <div class="cost-row"><span class="label">EORI Number</span><span class="amount green">FREE</span></div>
+      <div class="cost-row"><span class="label">HMRC Corp Tax Registration</span><span class="amount green">FREE</span></div>
+      <div class="cost-row"><span class="label">VAT Registration</span><span class="amount green">FREE</span></div>
+      <div class="cost-row"><span class="label">Registered Office (1st yr)</span><span class="amount">£50–£200</span></div>
+      <div class="cost-row"><span class="label">Business Bank Account Setup</span><span class="amount green">FREE</span></div>
+      <div class="cost-row"><span class="label">Corporate Brokerage Account</span><span class="amount green">FREE</span></div>
+      <div class="cost-row"><span class="label">Solicitor (Articles review)</span><span class="amount">£200–£800</span></div>
+      <div class="cost-row"><span class="label">Accountant (1st year setup)</span><span class="amount">£500–£1,500</span></div>
+      <div class="total-row"><span class="label">Total Setup (min — max)</span><span class="amount">£850 — £2,700</span></div>
+    </div>
+    <div class="info-card">
+      <h3 style="color:var(--gold); margin-bottom:16px;">Annual Running Costs</h3>
+      <div class="cost-row"><span class="label">Companies House Confirmation</span><span class="amount">£34</span></div>
+      <div class="cost-row"><span class="label">Registered Office Address</span><span class="amount">£50–£200</span></div>
+      <div class="cost-row"><span class="label">Business Bank Account (Revolut Scale)</span><span class="amount">£300</span></div>
+      <div class="cost-row"><span class="label">Accountant / Bookkeeper</span><span class="amount">£1,200–£3,600</span></div>
+      <div class="cost-row"><span class="label">Professional Indemnity Insurance</span><span class="amount">£500–£2,000</span></div>
+      <div class="cost-row"><span class="label">Corporation Tax (on profit)</span><span class="amount red">19–25% of profit</span></div>
+      <div class="cost-row"><span class="label">VAT (net neutral if properly managed)</span><span class="amount">Varies</span></div>
+      <div class="cost-row"><span class="label">IBKR Corporate Account</span><span class="amount green">FREE (commission per trade)</span></div>
+      <div class="total-row"><span class="label">Annual Running (excl. tax)</span><span class="amount">£2,100 — £6,400</span></div>
+    </div>
+  </div>
+
+  <div class="alert gold rev" style="transition-delay:0.15s; margin-top:20px;">
+    <div class="alert-icon">💎</div>
+    <div>
+      <h4>Total Investment to Full Operation: Approximately £3,000–£9,000 (Year 1)</h4>
+      <p>This makes Indus Nexus Limited one of the most capital-efficient trading company formations possible. With a £100 registration fee and free regulatory registrations, the barrier to entry is exceptionally low. The primary investment is operational: working capital for initial semiconductor procurement and personnel time for relationship building with suppliers and clients.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 7: MASTER CHECKLIST ═══ -->
+<section id="checklist">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">✅</div>
+    <div>
+      <div class="phase-tag reg">INTERACTIVE CHECKLIST</div>
+      <h2>Master <span>Setup</span> Checklist</h2>
+      <p>Track every step in your Indus Nexus setup. Progress is saved automatically in your browser — check off tasks as you complete them.</p>
+    </div>
+  </div>
+
+  <div class="layout-split rev">
+    <div id="master-checklist">
+      <!-- Registration Phase -->
+      <div class="mc-section">
+        <div class="mc-header" onclick="toggleSection('reg')">
+          <h3>🏛️ Phase 1 — Company Registration <span class="mc-count" id="cnt-reg" style="background:rgba(0,214,255,0.1);color:var(--cyan)">0/6</span></h3>
+          <span style="color:var(--muted);font-size:18px" id="arr-reg">▼</span>
+        </div>
+        <div class="mc-body open" id="body-reg">
+          <div class="mc-item" id="ri-0" onclick="toggleItem('reg',0)"><div class="mc-checkbox" id="cb-reg-0"></div><div class="mc-text"><strong>Check company name availability on Companies House</strong><span>find-and-update.company-information.service.gov.uk — confirm INDUS NEXUS LIMITED is unique</span></div></div>
+          <div class="mc-item" id="ri-1" onclick="toggleItem('reg',1)"><div class="mc-checkbox" id="cb-reg-1"></div><div class="mc-text"><strong>Register online at GOV.UK for £100</strong><span>gov.uk/limited-company-formation — Certificate of Incorporation within 24hrs</span></div></div>
+          <div class="mc-item" id="ri-2" onclick="toggleItem('reg',2)"><div class="mc-checkbox" id="cb-reg-2"></div><div class="mc-text"><strong>Receive Certificate of Incorporation</strong><span>Save your Company Registration Number (CRN) — needed for everything</span></div></div>
+          <div class="mc-item" id="ri-3" onclick="toggleItem('reg',3)"><div class="mc-checkbox" id="cb-reg-3"></div><div class="mc-text"><strong>Complete identity verification — GOV.UK One Login</strong><span>New Nov 2025 requirement — passport or UK driving licence — 12 months window</span></div></div>
+          <div class="mc-item" id="ri-4" onclick="toggleItem('reg',4)"><div class="mc-checkbox" id="cb-reg-4"></div><div class="mc-text"><strong>Set up registered office address</strong><span>Your address, registered agent (£50–£200/yr), or virtual office</span></div></div>
+          <div class="mc-item" id="ri-5" onclick="toggleItem('reg',5)"><div class="mc-checkbox" id="cb-reg-5"></div><div class="mc-text"><strong>Add SIC codes: 46520 + 62020</strong><span>Wholesale electronic components + IT consultancy — core business activities</span></div></div>
+        </div>
+      </div>
+
+      <!-- Banking Phase -->
+      <div class="mc-section">
+        <div class="mc-header" onclick="toggleSection('bank')">
+          <h3>🏦 Phase 2 — Business Banking <span class="mc-count" id="cnt-bank" style="background:rgba(212,175,55,0.1);color:var(--gold)">0/5</span></h3>
+          <span style="color:var(--muted);font-size:18px" id="arr-bank">▼</span>
+        </div>
+        <div class="mc-body" id="body-bank">
+          <div class="mc-item" id="bi-0" onclick="toggleItem('bank',0)"><div class="mc-checkbox" id="cb-bank-0"></div><div class="mc-text"><strong>Open Revolut Business account (primary)</strong><span>revolut.com/business — Scale plan ~£25/mo — multi-currency, API, SWIFT payments</span></div></div>
+          <div class="mc-item" id="bi-1" onclick="toggleItem('bank',1)"><div class="mc-checkbox" id="cb-bank-1"></div><div class="mc-text"><strong>Open Wise Business account (FX payments)</strong><span>wise.com/business — best rates for TSMC Taiwan, Pakistan, Middle East payments</span></div></div>
+          <div class="mc-item" id="bi-2" onclick="toggleItem('bank',2)"><div class="mc-checkbox" id="cb-bank-2"></div><div class="mc-text"><strong>Prepare bank application documents</strong><span>Certificate of Incorporation · passport · proof of address (3 months) · business plan</span></div></div>
+          <div class="mc-item" id="bi-3" onclick="toggleItem('bank',3)"><div class="mc-checkbox" id="cb-bank-3"></div><div class="mc-text"><strong>Set up accounting software integration</strong><span>Xero or QuickBooks — connect to Revolut for automatic transaction categorisation</span></div></div>
+          <div class="mc-item" id="bi-4" onclick="toggleItem('bank',4)"><div class="mc-checkbox" id="cb-bank-4"></div><div class="mc-text"><strong>Research HSBC Business (for trade finance later)</strong><span>When revenues approach £250K+ — letters of credit for large semiconductor orders</span></div></div>
+        </div>
+      </div>
+
+      <!-- Trading Phase -->
+      <div class="mc-section">
+        <div class="mc-header" onclick="toggleSection('trade')">
+          <h3>📈 Phase 3 — Trading Infrastructure <span class="mc-count" id="cnt-trade" style="background:rgba(0,230,118,0.1);color:var(--green)">0/6</span></h3>
+          <span style="color:var(--muted);font-size:18px" id="arr-trade">▼</span>
+        </div>
+        <div class="mc-body" id="body-trade">
+          <div class="mc-item" id="ti-0" onclick="toggleItem('trade',0)"><div class="mc-checkbox" id="cb-trade-0"></div><div class="mc-text"><strong>Open Interactive Brokers corporate account</strong><span>interactivebrokers.co.uk — for equity/ETF trading under Indus Nexus company name</span></div></div>
+          <div class="mc-item" id="ti-1" onclick="toggleItem('trade',1)"><div class="mc-checkbox" id="cb-trade-1"></div><div class="mc-text"><strong>Apply for trade accounts with Arrow Electronics / Avnet</strong><span>Authorised distributor accounts — enables bulk semiconductor component procurement</span></div></div>
+          <div class="mc-item" id="ti-2" onclick="toggleItem('trade',2)"><div class="mc-checkbox" id="cb-trade-2"></div><div class="mc-text"><strong>Register on UK Trade Tariff for commodity codes</strong><span>gov.uk/trade-tariff — find correct HS codes for semiconductor imports (e.g. 8542)</span></div></div>
+          <div class="mc-item" id="ti-3" onclick="toggleItem('trade',3)"><div class="mc-checkbox" id="cb-trade-3"></div><div class="mc-text"><strong>Set up customs broker / freight forwarder relationship</strong><span>Essential for importing semiconductor components — DHL Trade, Kuehne+Nagel, Geodis</span></div></div>
+          <div class="mc-item" id="ti-4" onclick="toggleItem('trade',4)"><div class="mc-checkbox" id="cb-trade-4"></div><div class="mc-text"><strong>Check export controls for target products</strong><span>H100/H200 GPUs, advanced chips — review UK Strategic Export Control List before trading</span></div></div>
+          <div class="mc-item" id="ti-5" onclick="toggleItem('trade',5)"><div class="mc-checkbox" id="cb-trade-5"></div><div class="mc-text"><strong>Draft standard trading contracts and T&Cs</strong><span>Standard purchase orders, sales contracts, delivery terms (Incoterms) — use a solicitor</span></div></div>
+        </div>
+      </div>
+
+      <!-- Legal Phase -->
+      <div class="mc-section">
+        <div class="mc-header" onclick="toggleSection('legal2')">
+          <h3>⚖️ Phase 4 — Legal &amp; Compliance <span class="mc-count" id="cnt-legal2" style="background:rgba(156,39,176,0.1);color:#ce93d8">0/7</span></h3>
+          <span style="color:var(--muted);font-size:18px" id="arr-legal2">▼</span>
+        </div>
+        <div class="mc-body" id="body-legal2">
+          <div class="mc-item" id="li-0" onclick="toggleItem('legal2',0)"><div class="mc-checkbox" id="cb-legal2-0"></div><div class="mc-text"><strong>Register for Corporation Tax with HMRC</strong><span>Must register within 3 months of trading — gov.uk/corp-tax-registration — free, get UTR</span></div></div>
+          <div class="mc-item" id="li-1" onclick="toggleItem('legal2',1)"><div class="mc-checkbox" id="cb-legal2-1"></div><div class="mc-text"><strong>Apply for EORI number</strong><span>gov.uk/eori — free, 3 working days — CRITICAL for any import/export of semiconductors</span></div></div>
+          <div class="mc-item" id="li-2" onclick="toggleItem('legal2',2)"><div class="mc-checkbox" id="cb-legal2-2"></div><div class="mc-text"><strong>VAT registration (voluntary or mandatory)</strong><span>Mandatory at £90K turnover. Voluntary registration benefits: reclaim input VAT on purchases</span></div></div>
+          <div class="mc-item" id="li-3" onclick="toggleItem('legal2',3)"><div class="mc-checkbox" id="cb-legal2-3"></div><div class="mc-text"><strong>Take out Professional Indemnity Insurance</strong><span>Required by enterprise IT/consulting clients — £500–£2,000/yr via Hiscox, AXA, Markel</span></div></div>
+          <div class="mc-item" id="li-4" onclick="toggleItem('legal2',4)"><div class="mc-checkbox" id="cb-legal2-4"></div><div class="mc-text"><strong>Set up basic AML/KYC procedures</strong><span>Document customer due diligence process — verify all new partners and clients. Keep 5yr records</span></div></div>
+          <div class="mc-item" id="li-5" onclick="toggleItem('legal2',5)"><div class="mc-checkbox" id="cb-legal2-5"></div><div class="mc-text"><strong>Engage an accountant for year-end accounts</strong><span>File annual accounts with Companies House + Corporation Tax return with HMRC on time</span></div></div>
+          <div class="mc-item" id="li-6" onclick="toggleItem('legal2',6)"><div class="mc-checkbox" id="cb-legal2-6"></div><div class="mc-text"><strong>Diarise annual confirmation statement</strong><span>File each year at Companies House — £34 online — confirms company info is current</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRESS SIDEBAR -->
+    <div class="progress-sidebar">
+      <h3>📊 Setup Progress</h3>
+      <div class="prog-ring-wrap">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle class="prog-ring-bg" cx="50" cy="50" r="45"/>
+          <circle class="prog-ring-fill" id="prog-ring" cx="50" cy="50" r="45"/>
+        </svg>
+        <div class="prog-ring-text" id="prog-pct">0%</div>
+      </div>
+      <div class="prog-ring-sub" id="prog-sub">0 of 24 tasks complete</div>
+
+      <div class="sidebar-phases">
+        <div class="sp-row">
+          <span class="sp-name">🏛️ Registration</span>
+          <span class="sp-progress" id="sp-reg">0/6</span>
+        </div>
+        <div class="sp-bar"><div class="sp-fill" id="spf-reg" style="width:0%"></div></div>
+
+        <div class="sp-row">
+          <span class="sp-name">🏦 Banking</span>
+          <span class="sp-progress" id="sp-bank">0/5</span>
+        </div>
+        <div class="sp-bar"><div class="sp-fill" id="spf-bank" style="width:0%"></div></div>
+
+        <div class="sp-row">
+          <span class="sp-name">📈 Trading</span>
+          <span class="sp-progress" id="sp-trade">0/6</span>
+        </div>
+        <div class="sp-bar"><div class="sp-fill" id="spf-trade" style="width:0%"></div></div>
+
+        <div class="sp-row">
+          <span class="sp-name">⚖️ Legal</span>
+          <span class="sp-progress" id="sp-legal2">0/7</span>
+        </div>
+        <div class="sp-bar"><div class="sp-fill" id="spf-legal2" style="width:0%"></div></div>
+      </div>
+
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+        <button onclick="resetAll()" style="width:100%;padding:8px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;font-size:11px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Reset All Progress</button>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">⚡ INDUS NEXUS LIMITED</div>
+  <div class="footer-note">This guide was prepared for DK as part of the Indus Nexus Limited company formation and trading infrastructure roadmap. All regulatory information references GOV.UK official sources and was current as of March 2026. Always verify compliance requirements with a qualified UK solicitor or accountant before making final decisions. This document does not constitute legal or financial advice.</div>
+  <div class="footer-date">Generated: March 2026 | Prepared by SOVEREIGN Intelligence</div>
+</footer>
+
+<!-- PRINT BUTTON -->
+<button class="print-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+
+<script>
+// ── PARTICLE CANVAS ──────────────────────────────────────────────
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles=[];
+
+function resize(){
+  W = canvas.width = canvas.offsetWidth;
+  H = canvas.height = canvas.offsetHeight;
+}
+
+function createParticles(){
+  particles = [];
+  const n = Math.min(70, Math.floor(W*H/8000));
+  for(let i=0;i<n;i++){
+    particles.push({
+      x: Math.random()*W, y: Math.random()*H,
+      vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
+      r: Math.random()*2+1,
+      c: Math.random()>.5 ? 'rgba(212,175,55,' : 'rgba(0,212,255,',
+      a: Math.random()*.5+.2
+    });
+  }
+}
+
+function drawParticles(){
+  ctx.clearRect(0,0,W,H);
+  particles.forEach((p,i)=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>W) p.vx*=-1;
+    if(p.y<0||p.y>H) p.vy*=-1;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=p.c+p.a+')';
+    ctx.fill();
+    particles.slice(i+1).forEach(q=>{
+      const dx=p.x-q.x, dy=p.y-q.y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100){
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle='rgba(212,175,55,'+(0.1*(1-d/100))+')';
+        ctx.lineWidth=.5; ctx.stroke();
+      }
+    });
+  });
+  requestAnimationFrame(drawParticles);
+}
+
+resize(); createParticles(); drawParticles();
+window.addEventListener('resize',()=>{ resize(); createParticles(); });
+
+// ── SCROLL REVEAL ────────────────────────────────────────────────
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('vis'); });
+},{threshold:0.08});
+document.querySelectorAll('.rev').forEach(el=>observer.observe(el));
+
+// ── NAV ACTIVE ───────────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-120) cur=s.id; });
+  navLinks.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href')==='#'+cur); });
+});
+
+function scrollToSection(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── CHECKLIST DATA ───────────────────────────────────────────────
+const phases = {
+  reg: { total:6 },
+  bank: { total:5 },
+  trade: { total:6 },
+  legal2: { total:7 }
+};
+
+const STORE_KEY = 'indus_nexus_checklist_v1';
+let checks = {};
+
+function loadChecks(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) checks = JSON.parse(raw);
+  } catch(e){ checks = {}; }
+}
+
+function saveChecks(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(checks));
+}
+
+function toggleItem(phase, idx){
+  const key = phase+'_'+idx;
+  checks[key] = !checks[key];
+  saveChecks();
+  renderChecklist();
+}
+
+function toggleSection(phase){
+  const body = document.getElementById('body-'+phase);
+  const arr = document.getElementById('arr-'+phase);
+  if(body){
+    body.classList.toggle('open');
+    if(arr) arr.textContent = body.classList.contains('open') ? '▲' : '▼';
+  }
+}
+
+function renderChecklist(){
+  let totalDone=0, totalAll=0;
+
+  Object.entries(phases).forEach(([phase, {total}]){
+    let done=0;
+    for(let i=0;i<total;i++){
+      const key = phase+'_'+i;
+      const item = document.getElementById(phase.replace('2','')+'i-'+i) || document.getElementById(phase[0]+'i-'+i);
+      const mcItem = document.querySelector(`[onclick="toggleItem('${phase}',${i})"]`);
+      const cb = document.getElementById('cb-'+phase+'-'+i);
+      const isDone = !!checks[key];
+      if(isDone) done++;
+      if(mcItem){ mcItem.classList.toggle('done', isDone); }
+      if(cb){ cb.textContent = isDone ? '✓' : ''; }
+    }
+    totalDone += done;
+    totalAll += total;
+
+    const cnt = document.getElementById('cnt-'+phase);
+    const sp = document.getElementById('sp-'+phase);
+    const spf = document.getElementById('spf-'+phase);
+    if(cnt) cnt.textContent = done+'/'+total;
+    if(sp) sp.textContent = done+'/'+total;
+    if(spf) spf.style.width = (done/total*100)+'%';
+  });
+
+  // Ring
+  const pct = totalAll>0 ? Math.round(totalDone/totalAll*100) : 0;
+  const ring = document.getElementById('prog-ring');
+  const pctEl = document.getElementById('prog-pct');
+  const subEl = document.getElementById('prog-sub');
+  if(ring){ ring.style.strokeDashoffset = 283 - (283*pct/100); }
+  if(pctEl) pctEl.textContent = pct+'%';
+  if(subEl) subEl.textContent = totalDone+' of '+totalAll+' tasks complete';
+
+  // Update ring colour based on progress
+  if(ring){
+    if(pct>=80) ring.style.stroke='var(--green)';
+    else if(pct>=40) ring.style.stroke='var(--gold)';
+    else ring.style.stroke='var(--cyan)';
+  }
+}
+
+function resetAll(){
+  if(confirm('Reset all checklist progress for Indus Nexus setup?')){
+    checks = {};
+    saveChecks();
+    renderChecklist();
+  }
+}
+
+// Init
+loadChecks();
+renderChecklist();
+</script>
+</body>
+</html>

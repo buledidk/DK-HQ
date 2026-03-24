@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SOVEREIGN — Indus Nexus Command Centre</title>
+<style>
+:root{
+  --navy0:#020508;--navy1:#050910;--navy2:#080d18;--navy3:#0c1220;
+  --navy4:#101830;--navy5:#141e3a;--navy6:#1a2545;
+  --gold:#c9973c;--gold2:#d4a84b;--gold3:#f5d490;--gold4:#e8c060;--gold5:#a07828;
+  --cyan:#06b6d4;--cyan2:#22d3ee;--cyan3:#67e8f9;
+  --green:#10b981;--green2:#34d399;
+  --red:#ef4444;--red2:#fca5a5;
+  --orange:#f59e0b;
+  --purple:#8b5cf6;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--text4:#475569;
+  --border:rgba(201,151,60,0.14);--border2:rgba(6,182,212,0.12);
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+  --sb-width:228px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--navy0);color:var(--text);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  display:flex;flex-direction:column;
+}
+
+/* ═══ TOPBAR ═══ */
+.topbar{
+  flex-shrink:0;height:52px;
+  background:rgba(5,9,16,0.97);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 1rem;gap:1rem;
+  position:relative;z-index:200;
+}
+.tb-brand{
+  display:flex;align-items:center;gap:0.6rem;
+  flex-shrink:0;width:var(--sb-width);
+  padding-left:0.2rem;
+}
+.tb-dk{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold3));
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.68rem;font-weight:800;color:#060a12;
+  box-shadow:0 0 14px rgba(201,151,60,0.45);
+  flex-shrink:0;
+}
+.tb-name{
+  font-size:0.72rem;font-weight:700;
+  background:linear-gradient(135deg,var(--gold),var(--gold3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:1.5px;text-transform:uppercase;
+}
+.tb-name small{
+  display:block;font-size:0.55rem;font-weight:500;
+  color:var(--text3);letter-spacing:0.5px;text-transform:none;
+  -webkit-text-fill-color:var(--text3);
+}
+.ticker-wrap{
+  flex:1;overflow:hidden;height:100%;
+  display:flex;align-items:center;border-left:1px solid var(--border);
+  padding-left:1rem;
+}
+.ticker-track{
+  display:flex;gap:2.5rem;white-space:nowrap;
+  animation:tick 38s linear infinite;
+}
+.ticker-track:hover{animation-play-state:paused;}
+@keyframes tick{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+.t-item{
+  display:flex;align-items:center;gap:0.5rem;
+  font-size:0.72rem;flex-shrink:0;
+}
+.t-sym{color:var(--text2);font-weight:600;letter-spacing:0.5px;}
+.t-price{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums;}
+.t-chg.up{color:var(--green);}
+.t-chg.dn{color:var(--red);}
+.tb-clock{
+  flex-shrink:0;text-align:right;padding-right:0.4rem;
+  font-size:0.72rem;color:var(--text2);line-height:1.5;
+}
+.tb-clock .time{font-size:1rem;font-weight:700;color:var(--gold3);font-variant-numeric:tabular-nums;}
+
+/* ═══ BODY LAYOUT ═══ */
+.body-wrap{flex:1;display:flex;overflow:hidden;}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  width:var(--sb-width);flex-shrink:0;
+  background:linear-gradient(180deg,var(--navy2) 0%,var(--navy1) 100%);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-track{background:transparent;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--navy5);}
+.sb-section-label{
+  font-size:0.58rem;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--text4);
+  padding:1.2rem 1.2rem 0.4rem;
+}
+.nav-item{
+  display:flex;align-items:center;gap:0.75rem;
+  padding:0.65rem 1.2rem;
+  cursor:pointer;transition:all 0.2s;
+  border-left:3px solid transparent;
+  position:relative;
+}
+.nav-item:hover{
+  background:rgba(201,151,60,0.05);
+  border-left-color:rgba(201,151,60,0.3);
+}
+.nav-item.active{
+  background:rgba(201,151,60,0.08);
+  border-left-color:var(--gold);
+}
+.nav-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.nav-label{font-size:0.78rem;font-weight:600;color:var(--text2);}
+.nav-item.active .nav-label{color:var(--gold3);}
+.nav-badge{
+  margin-left:auto;
+  min-width:18px;height:18px;padding:0 5px;
+  border-radius:9px;
+  background:rgba(201,151,60,0.2);
+  color:var(--gold);
+  font-size:0.6rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.sb-divider{height:1px;background:var(--border);margin:0.6rem 1.2rem;}
+.sb-quick{padding:1rem 1.2rem;margin-top:auto;}
+.sb-quick-title{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--text4);margin-bottom:0.7rem;}
+.sb-stat{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.sb-stat:last-child{border-bottom:none;}
+.ss-label{font-size:0.68rem;color:var(--text3);}
+.ss-val{font-size:0.75rem;font-weight:700;color:var(--gold3);}
+
+/* ═══ MAIN CONTENT ═══ */
+.main{
+  flex:1;overflow-y:auto;
+  background:var(--navy0);
+}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-track{background:transparent;}
+.main::-webkit-scrollbar-thumb{background:var(--navy5);border-radius:3px;}
+
+.section{display:none;padding:1.5rem 1.8rem 2rem;animation:fadeIn 0.3s ease;}
+.section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+.sec-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:1.4rem;padding-bottom:0.9rem;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:0.8rem;
+}
+.sh-left .sec-label{
+  font-size:0.6rem;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:0.2rem;
+}
+.sh-left .sec-title{
+  font-size:1.4rem;font-weight:800;
+  background:linear-gradient(135deg,var(--text),var(--text2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  padding:0.45rem 1rem;
+  background:rgba(201,151,60,0.08);
+  border:1px solid rgba(201,151,60,0.3);
+  color:var(--gold);
+  font-size:0.72rem;font-weight:600;letter-spacing:0.5px;
+  cursor:pointer;transition:all 0.2s;
+  font-family:inherit;
+}
+.btn:hover{background:rgba(201,151,60,0.15);border-color:var(--gold);}
+.btn.cyan{
+  background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.3);color:var(--cyan);
+}
+.btn.cyan:hover{background:rgba(6,182,212,0.15);}
+.btn.green{
+  background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.3);color:var(--green);
+}
+.btn.danger{
+  background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);color:var(--red);
+}
+
+/* ═══════════════════════════════
+   OVERVIEW / COMMAND SECTION
+════════════════════════════════ */
+.kpi-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1rem;margin-bottom:1.4rem;
+}
+.kpi-card{
+  background:linear-gradient(145deg,var(--navy2),var(--navy3));
+  border:1px solid var(--border);
+  padding:1.1rem 1.2rem;position:relative;overflow:hidden;
+}
+.kpi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),var(--gold3));
+}
+.kpi-card.cyan::before{background:linear-gradient(90deg,var(--cyan),var(--cyan2));}
+.kpi-card.green::before{background:linear-gradient(90deg,var(--green),var(--green2));}
+.kpi-card.purple::before{background:linear-gradient(90deg,var(--purple),#a78bfa);}
+.kpi-icon{font-size:1.4rem;margin-bottom:0.5rem;}
+.kpi-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:0.2rem;}
+.kpi-value{font-size:1.5rem;font-weight:800;color:var(--gold3);line-height:1;}
+.kpi-card.cyan .kpi-value{color:var(--cyan2);}
+.kpi-card.green .kpi-value{color:var(--green2);}
+.kpi-card.purple .kpi-value{color:#a78bfa;}
+.kpi-sub{font-size:0.65rem;color:var(--text3);margin-top:0.3rem;}
+
+.ov-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.2rem;
+}
+@media(max-width:900px){.ov-grid{grid-template-columns:1fr;}}
+
+.ov-card{
+  background:var(--navy2);border:1px solid var(--border);
+  padding:1.2rem;
+}
+.ov-card-title{
+  font-size:0.65rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:0.9rem;padding-bottom:0.6rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ov-card-title button{
+  font-size:0.6rem;color:var(--text3);background:none;border:none;
+  cursor:pointer;color:var(--cyan);font-family:inherit;
+}
+
+/* ═══════════════════════════════
+   MARKET DATA SECTION
+════════════════════════════════ */
+.market-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.2rem;margin-bottom:1.4rem;
+}
+.mkt-card{
+  background:var(--navy2);border:1px solid var(--border);
+  padding:1.3rem;position:relative;overflow:hidden;
+}
+.mkt-card.live::after{
+  content:'LIVE';
+  position:absolute;top:0.6rem;right:0.6rem;
+  font-size:0.52rem;font-weight:800;letter-spacing:1.5px;
+  color:var(--green);border:1px solid rgba(16,185,129,0.3);
+  padding:0.1rem 0.4rem;
+  animation:pulse-live 2s ease-in-out infinite;
+}
+@keyframes pulse-live{
+  0%,100%{opacity:1;}50%{opacity:0.4;}
+}
+.mkt-sector{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.3rem;}
+.mkt-name{font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.9rem;}
+.mkt-main{
+  font-size:2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--gold3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;margin-bottom:0.3rem;
+}
+.mkt-sub{font-size:0.7rem;color:var(--text3);margin-bottom:0.8rem;}
+.mkt-row{
+  display:flex;justify-content:space-between;
+  padding:0.35rem 0;border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:0.72rem;
+}
+.mkt-row:last-child{border-bottom:none;}
+.mr-label{color:var(--text3);}
+.mr-val{font-weight:600;color:var(--text);}
+.mr-val.up{color:var(--green);}
+.mr-val.dn{color:var(--red);}
+.mr-val.cyan{color:var(--cyan2);}
+
+.stock-table{width:100%;border-collapse:collapse;font-size:0.78rem;}
+.stock-table thead tr{background:rgba(201,151,60,0.06);border-bottom:1px solid var(--border);}
+.stock-table th{padding:0.6rem 0.8rem;text-align:left;font-size:0.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700;}
+.stock-table td{padding:0.6rem 0.8rem;border-bottom:1px solid rgba(255,255,255,0.03);}
+.stock-table tr:hover td{background:rgba(201,151,60,0.02);}
+.sym-cell{font-weight:700;color:var(--text);}
+.chg-cell.up{color:var(--green);font-weight:600;}
+.chg-cell.dn{color:var(--red);font-weight:600;}
+.price-cell{font-variant-numeric:tabular-nums;color:var(--text);}
+
+/* ═══════════════════════════════
+   DEAL PIPELINE SECTION
+════════════════════════════════ */
+.pipeline-stages{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+  align-items:start;
+}
+@media(max-width:1100px){.pipeline-stages{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:700px){.pipeline-stages{grid-template-columns:1fr;}}
+
+.pipeline-col{background:var(--navy2);border:1px solid var(--border);padding:0.8rem;}
+.pc-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:0.8rem;padding-bottom:0.7rem;
+  border-bottom:2px solid var(--gold);
+}
+.pc-header.prospect{border-bottom-color:var(--text3);}
+.pc-header.negotiating{border-bottom-color:var(--orange);}
+.pc-header.closing{border-bottom-color:var(--cyan);}
+.pc-header.won{border-bottom-color:var(--green);}
+.pc-title{font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);}
+.pc-count{
+  font-size:0.65rem;font-weight:700;
+  background:rgba(255,255,255,0.06);
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+
+.deal-card{
+  background:var(--navy3);border:1px solid rgba(255,255,255,0.05);
+  padding:0.8rem;margin-bottom:0.6rem;cursor:pointer;
+  transition:all 0.2s;position:relative;
+}
+.deal-card:hover{border-color:rgba(201,151,60,0.3);transform:translateY(-1px);}
+.deal-card:last-child{margin-bottom:0;}
+.dc-name{font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;}
+.dc-meta{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;}
+.dc-tag{
+  font-size:0.58rem;padding:0.15rem 0.5rem;
+  background:rgba(201,151,60,0.1);border:1px solid rgba(201,151,60,0.2);
+  color:var(--gold);font-weight:600;letter-spacing:0.5px;
+}
+.dc-tag.region{background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.2);color:var(--cyan);}
+.dc-value{font-size:0.9rem;font-weight:800;color:var(--gold3);}
+.dc-date{font-size:0.62rem;color:var(--text3);margin-top:0.2rem;}
+.dc-actions{display:flex;gap:0.4rem;margin-top:0.6rem;}
+.dc-btn{
+  font-size:0.6rem;padding:0.2rem 0.5rem;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  color:var(--text3);cursor:pointer;font-family:inherit;
+  transition:all 0.15s;
+}
+.dc-btn:hover{border-color:var(--gold);color:var(--gold);}
+.dc-btn.del:hover{border-color:var(--red);color:var(--red);}
+
+.add-deal-row{
+  text-align:center;padding:0.5rem;
+  border:1px dashed rgba(255,255,255,0.08);
+  cursor:pointer;font-size:0.68rem;color:var(--text4);
+  transition:all 0.2s;margin-top:0.4rem;
+}
+.add-deal-row:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ═══════════════════════════════
+   CRM SECTION
+════════════════════════════════ */
+.crm-toolbar{display:flex;gap:0.8rem;margin-bottom:1.2rem;flex-wrap:wrap;align-items:center;}
+.crm-search{
+  flex:1;min-width:200px;
+  background:var(--navy3);border:1px solid var(--border);
+  padding:0.5rem 0.8rem;color:var(--text);font-size:0.78rem;font-family:inherit;
+  outline:none;
+}
+.crm-search:focus{border-color:rgba(201,151,60,0.4);}
+.crm-search::placeholder{color:var(--text4);}
+
+.crm-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:1rem;
+}
+.contact-card{
+  background:var(--navy2);border:1px solid var(--border);
+  padding:1.1rem;position:relative;overflow:hidden;
+  transition:all 0.2s;cursor:pointer;
+}
+.contact-card:hover{border-color:rgba(201,151,60,0.3);transform:translateY(-2px);}
+.cc-top{display:flex;align-items:flex-start;gap:0.8rem;margin-bottom:0.7rem;}
+.cc-avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;font-weight:800;
+  background:linear-gradient(135deg,var(--navy5),var(--navy6));
+  border:1.5px solid var(--border);
+  color:var(--gold3);
+}
+.cc-info .cc-name{font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.15rem;}
+.cc-info .cc-role{font-size:0.68rem;color:var(--text3);}
+.cc-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.6rem;}
+.cc-tag{
+  font-size:0.6rem;padding:0.12rem 0.45rem;
+  background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);
+  color:var(--cyan);font-weight:600;
+}
+.cc-tag.gold{background:rgba(201,151,60,0.08);border-color:rgba(201,151,60,0.2);color:var(--gold);}
+.cc-tag.green{background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:var(--green);}
+.cc-email{font-size:0.68rem;color:var(--text3);}
+.cc-actions{display:flex;gap:0.5rem;margin-top:0.7rem;padding-top:0.6rem;border-top:1px solid rgba(255,255,255,0.04);}
+
+/* ═══════════════════════════════
+   TASKS SECTION
+════════════════════════════════ */
+.tasks-layout{display:grid;grid-template-columns:1fr 320px;gap:1.2rem;}
+@media(max-width:900px){.tasks-layout{grid-template-columns:1fr;}}
+
+.task-add-bar{
+  display:flex;gap:0.6rem;margin-bottom:1rem;
+}
+.task-input{
+  flex:1;
+  background:var(--navy3);border:1px solid var(--border);
+  padding:0.6rem 0.8rem;color:var(--text);font-size:0.8rem;font-family:inherit;
+  outline:none;
+}
+.task-input:focus{border-color:rgba(201,151,60,0.4);}
+.task-input::placeholder{color:var(--text4);}
+
+.task-filters{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.tf-btn{
+  padding:0.3rem 0.8rem;font-size:0.68rem;font-weight:600;
+  background:none;border:1px solid rgba(255,255,255,0.08);
+  color:var(--text3);cursor:pointer;font-family:inherit;transition:all 0.15s;
+}
+.tf-btn.active{background:rgba(201,151,60,0.1);border-color:rgba(201,151,60,0.3);color:var(--gold);}
+
+.task-list{}
+.task-item{
+  display:flex;align-items:flex-start;gap:0.75rem;
+  padding:0.75rem;background:var(--navy2);border:1px solid rgba(255,255,255,0.04);
+  margin-bottom:0.5rem;transition:all 0.2s;
+}
+.task-item:hover{border-color:rgba(201,151,60,0.15);}
+.task-item.done{opacity:0.5;}
+.task-check{
+  width:18px;height:18px;flex-shrink:0;margin-top:1px;
+  border:2px solid rgba(255,255,255,0.2);
+  border-radius:3px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;font-size:0.7rem;color:transparent;
+  background:none;
+}
+.task-item.done .task-check{
+  background:var(--green);border-color:var(--green);color:white;
+}
+.task-body{flex:1;}
+.task-text{font-size:0.8rem;color:var(--text);line-height:1.4;}
+.task-item.done .task-text{text-decoration:line-through;color:var(--text4);}
+.task-meta{display:flex;gap:0.6rem;margin-top:0.35rem;flex-wrap:wrap;}
+.task-tag{
+  font-size:0.58rem;padding:0.1rem 0.4rem;font-weight:600;letter-spacing:0.5px;
+}
+.task-tag.high{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);}
+.task-tag.med{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:var(--orange);}
+.task-tag.low{background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.2);color:var(--text3);}
+.task-date{font-size:0.62rem;color:var(--text4);}
+.task-del{
+  background:none;border:none;color:var(--text4);cursor:pointer;
+  font-size:0.75rem;padding:0.2rem;opacity:0;transition:opacity 0.15s;
+  flex-shrink:0;
+}
+.task-item:hover .task-del{opacity:1;}
+.task-del:hover{color:var(--red);}
+
+.task-sidebar-card{
+  background:var(--navy2);border:1px solid var(--border);padding:1.1rem;
+  margin-bottom:1rem;
+}
+.tsc-title{
+  font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:0.9rem;font-weight:700;
+}
+.priority-item{
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:0.75rem;color:var(--text2);
+}
+.priority-item:last-child{border-bottom:none;}
+.pri-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+
+/* ═══════════════════════════════
+   MODAL
+════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(2,5,8,0.85);
+  backdrop-filter:blur(8px);
+  z-index:1000;
+  display:none;align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:linear-gradient(145deg,var(--navy3),var(--navy4));
+  border:1px solid var(--border);
+  width:100%;max-width:520px;
+  max-height:90vh;overflow-y:auto;
+  padding:1.8rem;
+  animation:modalIn 0.25s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+.modal h3{
+  font-size:1.1rem;font-weight:800;color:var(--gold3);
+  margin-bottom:1.3rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border);
+}
+.form-group{margin-bottom:0.9rem;}
+.form-group label{font-size:0.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:0.35rem;}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  background:var(--navy2);border:1px solid var(--border);
+  padding:0.55rem 0.75rem;
+  color:var(--text);font-size:0.8rem;font-family:inherit;outline:none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{border-color:rgba(201,151,60,0.4);}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-group select option{background:var(--navy2);}
+.modal-actions{display:flex;gap:0.6rem;margin-top:1.3rem;justify-content:flex-end;}
+
+/* ═══ RESEARCH ENGINE ═══ */
+.rp-card{
+  background:var(--navy3);border:1px solid rgba(139,92,246,0.15);
+  padding:0.9rem;cursor:pointer;transition:all 0.2s;
+  position:relative;
+}
+.rp-card:hover{border-color:rgba(139,92,246,0.4);transform:translateY(-2px);}
+.rp-tag{
+  font-size:0.58rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:#a78bfa;margin-bottom:0.4rem;
+}
+.rp-text{font-size:0.72rem;color:var(--text2);line-height:1.5;}
+.rp-copy{
+  font-size:0.62rem;color:var(--text3);margin-top:0.5rem;
+  transition:color 0.2s;
+}
+.rp-card:hover .rp-copy{color:#a78bfa;}
+.rp-card.copied{border-color:var(--green);background:rgba(16,185,129,0.05);}
+
+/* Notes */
+.note-card{
+  background:var(--navy2);border:1px solid var(--border);
+  padding:0.9rem;margin-bottom:0.6rem;
+  position:relative;
+}
+.note-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;}
+.note-title{font-size:0.82rem;font-weight:700;color:var(--text);}
+.note-tag-badge{
+  font-size:0.58rem;padding:0.1rem 0.45rem;font-weight:700;letter-spacing:0.5px;
+  background:rgba(201,151,60,0.1);border:1px solid rgba(201,151,60,0.2);color:var(--gold);
+}
+.note-body{font-size:0.73rem;color:var(--text2);line-height:1.55;white-space:pre-wrap;}
+.note-date{font-size:0.6rem;color:var(--text4);margin-top:0.4rem;}
+
+/* Setup Checklist */
+.setup-checklist{}
+.setup-item{
+  display:flex;align-items:flex-start;gap:0.65rem;
+  padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  cursor:pointer;transition:all 0.15s;
+}
+.setup-item:last-child{border-bottom:none;}
+.setup-item:hover{background:rgba(201,151,60,0.02);margin:0 -0.5rem;padding-left:0.5rem;padding-right:0.5rem;}
+.setup-checkbox{
+  width:16px;height:16px;border-radius:3px;flex-shrink:0;margin-top:1px;
+  border:1.5px solid rgba(255,255,255,0.18);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.65rem;transition:all 0.2s;
+  background:none;color:transparent;
+}
+.setup-item.done .setup-checkbox{
+  background:var(--green);border-color:var(--green);color:white;
+}
+.setup-label{font-size:0.75rem;color:var(--text2);line-height:1.4;}
+.setup-item.done .setup-label{text-decoration:line-through;color:var(--text4);}
+.setup-sublabel{font-size:0.63rem;color:var(--text4);margin-top:0.1rem;}
+
+/* ═══ SCROLLBAR MAIN ═══ */
+.main::-webkit-scrollbar{width:4px;}
+.main::-webkit-scrollbar-thumb{background:var(--navy5);}
+
+/* ═══ OVERVIEW MINI DEAL ═══ */
+.mini-deal{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  font-size:0.75rem;
+}
+.mini-deal:last-child{border-bottom:none;}
+.md-name{color:var(--text);font-weight:600;}
+.md-stage{
+  font-size:0.6rem;font-weight:700;padding:0.1rem 0.4rem;
+  letter-spacing:0.5px;
+}
+.md-stage.prospect{background:rgba(100,116,139,0.15);color:var(--text3);}
+.md-stage.negotiating{background:rgba(245,158,11,0.1);color:var(--orange);}
+.md-stage.closing{background:rgba(6,182,212,0.1);color:var(--cyan);}
+.md-stage.won{background:rgba(16,185,129,0.1);color:var(--green);}
+.md-val{color:var(--gold3);font-weight:700;font-size:0.72rem;}
+
+/* ═══ MINI TASK ═══ */
+.mini-task{
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.45rem 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  font-size:0.75rem;cursor:pointer;
+}
+.mini-task:last-child{border-bottom:none;}
+.mt-check{
+  width:14px;height:14px;border-radius:3px;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;
+}
+.mini-task.done .mt-check{background:var(--green);border-color:var(--green);color:white;}
+.mt-text{color:var(--text2);}
+.mini-task.done .mt-text{text-decoration:line-through;color:var(--text4);}
+.mt-pri{margin-left:auto;font-size:0.58rem;font-weight:700;}
+.mt-pri.high{color:var(--red);}
+.mt-pri.med{color:var(--orange);}
+
+/* ═══ PROGRESS RING ═══ */
+.progress-ring-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  padding:0.8rem 0;
+}
+.progress-ring-wrap svg{transform:rotate(-90deg);}
+.prc-label{font-size:0.65rem;color:var(--text3);margin-top:0.5rem;text-align:center;}
+.prc-val{font-size:1.1rem;font-weight:800;color:var(--gold3);text-align:center;margin-top:0.1rem;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TOP BAR ═══════════ -->
+<header class="topbar">
+  <div class="tb-brand">
+    <div class="tb-dk">DK</div>
+    <div class="tb-name">
+      SOVEREIGN
+      <small>Indus Nexus Command Centre</small>
+    </div>
+  </div>
+
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="ticker">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <div class="tb-clock">
+    <div class="time" id="clock">--:--:--</div>
+    <div id="date-display" style="font-size:0.62rem;color:var(--text3)"></div>
+  </div>
+</header>
+
+<!-- ═══════════ BODY ═══════════ -->
+<div class="body-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-section-label">Navigation</div>
+
+    <div class="nav-item active" data-section="overview">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-label">Command Overview</span>
+    </div>
+    <div class="nav-item" data-section="market">
+      <span class="nav-icon">📈</span>
+      <span class="nav-label">Market Intelligence</span>
+    </div>
+    <div class="nav-item" data-section="pipeline">
+      <span class="nav-icon">💼</span>
+      <span class="nav-label">Deal Pipeline</span>
+      <span class="nav-badge" id="sb-deal-count">5</span>
+    </div>
+    <div class="nav-item" data-section="crm">
+      <span class="nav-icon">🌍</span>
+      <span class="nav-label">Partners &amp; CRM</span>
+      <span class="nav-badge" id="sb-contact-count">5</span>
+    </div>
+    <div class="nav-item" data-section="tasks">
+      <span class="nav-icon">✅</span>
+      <span class="nav-label">Tasks &amp; Priorities</span>
+      <span class="nav-badge" id="sb-task-count">0</span>
+    </div>
+    <div class="nav-item" data-section="research">
+      <span class="nav-icon">🔬</span>
+      <span class="nav-label">Research Engine</span>
+      <span class="nav-badge" style="background:rgba(139,92,246,0.2);color:#a78bfa;">AI</span>
+    </div>
+    <div class="nav-item" data-section="setup">
+      <span class="nav-icon">🏛️</span>
+      <span class="nav-label">Company Setup</span>
+      <span class="nav-badge" id="sb-setup-count" style="background:rgba(16,185,129,0.15);color:var(--green);">0%</span>
+    </div>
+
+    <div class="sb-divider"></div>
+    <div class="sb-section-label">Business Health</div>
+
+    <div class="sb-quick">
+      <div class="sb-stat">
+        <span class="ss-label">Pipeline Value</span>
+        <span class="ss-val" id="sb-pipeline-val">—</span>
+      </div>
+      <div class="sb-stat">
+        <span class="ss-label">Active Deals</span>
+        <span class="ss-val" id="sb-active-deals">—</span>
+      </div>
+      <div class="sb-stat">
+        <span class="ss-label">Continents</span>
+        <span class="ss-val">5</span>
+      </div>
+      <div class="sb-stat">
+        <span class="ss-label">Semi Market 2030</span>
+        <span class="ss-val">$1T+</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ══════════ OVERVIEW ══════════ -->
+    <section class="section active" id="section-overview">
+      <div class="sec-header">
+        <div class="sh-left">
+          <div class="sec-label">Command Overview</div>
+          <div class="sec-title">Good <span id="greeting-time">day</span>, DK 👋</div>
+        </div>
+        <div id="overview-date" style="font-size:0.75rem;color:var(--text3);text-align:right;line-height:1.5;"></div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">Pipeline Value</div>
+          <div class="kpi-value" id="kpi-pipeline">—</div>
+          <div class="kpi-sub">Active opportunities</div>
+        </div>
+        <div class="kpi-card cyan">
+          <div class="kpi-icon">🤝</div>
+          <div class="kpi-label">Open Deals</div>
+          <div class="kpi-value cyan" id="kpi-deals">—</div>
+          <div class="kpi-sub">Across all stages</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">✅</div>
+          <div class="kpi-label">Tasks Pending</div>
+          <div class="kpi-value green" id="kpi-tasks">—</div>
+          <div class="kpi-sub">Due this week</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-icon">🌍</div>
+          <div class="kpi-label">Contacts</div>
+          <div class="kpi-value" id="kpi-contacts">—</div>
+          <div class="kpi-sub">Global network</div>
+        </div>
+      </div>
+
+      <!-- 2-col grid -->
+      <div class="ov-grid">
+        <!-- Recent Deals -->
+        <div class="ov-card">
+          <div class="ov-card-title">
+            Latest Deals
+            <button onclick="showSection('pipeline')">View all →</button>
+          </div>
+          <div id="ov-deals-list"></div>
+        </div>
+
+        <!-- Task snapshot -->
+        <div class="ov-card">
+          <div class="ov-card-title">
+            Priority Tasks
+            <button onclick="showSection('tasks')">View all →</button>
+          </div>
+          <div id="ov-tasks-list"></div>
+        </div>
+
+        <!-- Market snapshot -->
+        <div class="ov-card">
+          <div class="ov-card-title">
+            Market Snapshot
+            <button onclick="showSection('market')">View all →</button>
+          </div>
+          <div id="ov-market-snap" style="font-size:0.78rem;"></div>
+        </div>
+
+        <!-- Pipeline by stage -->
+        <div class="ov-card">
+          <div class="ov-card-title">Pipeline by Stage</div>
+          <div id="ov-stage-bars"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ MARKET INTELLIGENCE ══════════ -->
+    <section class="section" id="section-market">
+      <div class="sec-header">
+        <div class="sh-left">
+          <div class="sec-label">Sector 01–04</div>
+          <div class="sec-title">Market Intelligence</div>
+        </div>
+        <div style="font-size:0.68rem;color:var(--text3);">Sources verified · PwC · Deloitte · Statista · Mordor · Precedence</div>
+      </div>
+
+      <!-- Live Semiconductor Stocks (simulated) -->
+      <div style="background:var(--navy2);border:1px solid var(--border);padding:1.2rem;margin-bottom:1.2rem;">
+        <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.8rem;">
+          Semiconductor Stocks — Live Simulation
+        </div>
+        <table class="stock-table">
+          <thead><tr>
+            <th>Symbol</th><th>Company</th><th>Price (USD)</th><th>Change</th><th>Sector</th>
+          </tr></thead>
+          <tbody id="stock-table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="market-grid">
+        <!-- Semiconductor -->
+        <div class="mkt-card live">
+          <div class="mkt-sector">Semiconductor Market</div>
+          <div class="mkt-name">Global Revenue 2024–2030</div>
+          <div class="mkt-main">$627B</div>
+          <div class="mkt-sub">2024 Actual · Source: PwC / Deloitte</div>
+          <div class="mkt-row"><span class="mr-label">2025 forecast</span><span class="mr-val up">$697B (+11%)</span></div>
+          <div class="mkt-row"><span class="mr-label">2030 projection</span><span class="mr-val up">$1.0T+</span></div>
+          <div class="mkt-row"><span class="mr-label">CAGR (PwC)</span><span class="mr-val cyan">8.6%</span></div>
+          <div class="mkt-row"><span class="mr-label">CAGR (Deloitte)</span><span class="mr-val cyan">7.5%</span></div>
+          <div class="mkt-row"><span class="mr-label">EU Chips Act</span><span class="mr-val">€43B</span></div>
+        </div>
+
+        <!-- AI Chips -->
+        <div class="mkt-card live">
+          <div class="mkt-sector">AI Chips / GPU</div>
+          <div class="mkt-name">AI Hardware Market 2024–2034</div>
+          <div class="mkt-main">$59.3B</div>
+          <div class="mkt-sub">2024 Actual · Source: Precedence Research</div>
+          <div class="mkt-row"><span class="mr-label">AI Chip market 2025</span><span class="mr-val up">$40.79B</span></div>
+          <div class="mkt-row"><span class="mr-label">AI Hardware 2034</span><span class="mr-val up">$296.3B</span></div>
+          <div class="mkt-row"><span class="mr-label">CAGR 2024–2034</span><span class="mr-val cyan">18.0%</span></div>
+          <div class="mkt-row"><span class="mr-label">Data centre TAM 2024</span><span class="mr-val">$209B</span></div>
+          <div class="mkt-row"><span class="mr-label">NVIDIA data centre share</span><span class="mr-val">~86%</span></div>
+        </div>
+
+        <!-- Components -->
+        <div class="mkt-card live">
+          <div class="mkt-sector">Electronic Components Dist.</div>
+          <div class="mkt-name">Distribution Market 2025–2035</div>
+          <div class="mkt-main">$200.7B</div>
+          <div class="mkt-sub">2025 Segment · Source: Straits Research</div>
+          <div class="mkt-row"><span class="mr-label">Total components 2024</span><span class="mr-val">$484.54B</span></div>
+          <div class="mkt-row"><span class="mr-label">Distribution 2035</span><span class="mr-val up">$391.2B</span></div>
+          <div class="mkt-row"><span class="mr-label">CAGR 2025–2035</span><span class="mr-val cyan">7.7%</span></div>
+          <div class="mkt-row"><span class="mr-label">Asia-Pacific share</span><span class="mr-val">47.5%</span></div>
+          <div class="mkt-row"><span class="mr-label">India PLI incentive</span><span class="mr-val">$10B+</span></div>
+        </div>
+
+        <!-- API -->
+        <div class="mkt-card live">
+          <div class="mkt-sector">API Integration Economy</div>
+          <div class="mkt-name">API Management Market</div>
+          <div class="mkt-main">$8.86B</div>
+          <div class="mkt-sub">2024 Actual · Source: Mordor Intelligence</div>
+          <div class="mkt-row"><span class="mr-label">2030 projection</span><span class="mr-val up">$19.28B</span></div>
+          <div class="mkt-row"><span class="mr-label">CAGR (Mordor Intel.)</span><span class="mr-val cyan">16.83%</span></div>
+          <div class="mkt-row"><span class="mr-label">CAGR (MarketsandMkts)</span><span class="mr-val cyan">14.57%</span></div>
+          <div class="mkt-row"><span class="mr-label">Fortune BI 2030 est.</span><span class="mr-val">~$21B</span></div>
+          <div class="mkt-row"><span class="mr-label">Key driver</span><span class="mr-val">Open Banking + AI</span></div>
+        </div>
+      </div>
+
+      <!-- Source links -->
+      <div style="background:var(--navy2);border:1px solid var(--border);padding:1.1rem;margin-top:0.5rem;">
+        <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.7rem;">Verified Sources</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.4rem;font-size:0.72rem;">
+          <div>🔗 <a href="https://www.pwc.com/gx/en/industries/technology/publications/global-semiconductor-industry-survey.html" target="_blank" style="color:var(--cyan);text-decoration:none;">PwC — Global Semiconductor Survey 2024</a></div>
+          <div>🔗 <a href="https://www2.deloitte.com/us/en/insights/industry/technology/technology-media-telecom-outlooks/semiconductor-industry-outlook.html" target="_blank" style="color:var(--cyan);text-decoration:none;">Deloitte — Semiconductor Industry Outlook 2025</a></div>
+          <div>🔗 <a href="https://www.statista.com/statistics/270603/worldwide-revenue-of-the-semiconductor-market-since-2009/" target="_blank" style="color:var(--cyan);text-decoration:none;">Statista — Semiconductor Market Revenue</a></div>
+          <div>🔗 <a href="https://www.mordorintelligence.com/industry-reports/api-management-market" target="_blank" style="color:var(--cyan);text-decoration:none;">Mordor Intelligence — API Management Market</a></div>
+          <div>🔗 <a href="https://www.precedenceresearch.com/ai-hardware-market" target="_blank" style="color:var(--cyan);text-decoration:none;">Precedence Research — AI Hardware Market</a></div>
+          <div>🔗 <a href="https://straitsresearch.com/report/electronic-components-distribution-market" target="_blank" style="color:var(--cyan);text-decoration:none;">Straits Research — Components Distribution</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ DEAL PIPELINE ══════════ -->
+    <section class="section" id="section-pipeline">
+      <div class="sec-header">
+        <div class="sh-left">
+          <div class="sec-label">Deal Tracker</div>
+          <div class="sec-title">Pipeline &amp; Opportunities</div>
+        </div>
+        <button class="btn" onclick="openDealModal()">+ Add Deal</button>
+      </div>
+
+      <div class="pipeline-stages">
+        <div class="pipeline-col">
+          <div class="pc-header prospect">
+            <span class="pc-title">Prospect</span>
+            <span class="pc-count" id="cnt-prospect">0</span>
+          </div>
+          <div id="col-prospect"></div>
+          <div class="add-deal-row" onclick="openDealModal('Prospect')">+ Add prospect</div>
+        </div>
+        <div class="pipeline-col">
+          <div class="pc-header negotiating">
+            <span class="pc-title">Negotiating</span>
+            <span class="pc-count" id="cnt-negotiating">0</span>
+          </div>
+          <div id="col-negotiating"></div>
+          <div class="add-deal-row" onclick="openDealModal('Negotiating')">+ Add deal</div>
+        </div>
+        <div class="pipeline-col">
+          <div class="pc-header closing">
+            <span class="pc-title">Closing</span>
+            <span class="pc-count" id="cnt-closing">0</span>
+          </div>
+          <div id="col-closing"></div>
+          <div class="add-deal-row" onclick="openDealModal('Closing')">+ Add deal</div>
+        </div>
+        <div class="pipeline-col">
+          <div class="pc-header won">
+            <span class="pc-title">Won ✓</span>
+            <span class="pc-count" id="cnt-won">0</span>
+          </div>
+          <div id="col-won"></div>
+          <div class="add-deal-row" onclick="openDealModal('Won')">+ Mark won</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ CRM ══════════ -->
+    <section class="section" id="section-crm">
+      <div class="sec-header">
+        <div class="sh-left">
+          <div class="sec-label">Global Network</div>
+          <div class="sec-title">Partners &amp; Contacts</div>
+        </div>
+        <button class="btn" onclick="openContactModal()">+ Add Contact</button>
+      </div>
+
+      <div class="crm-toolbar">
+        <input type="text" class="crm-search" id="crm-search" placeholder="🔍  Search contacts..." oninput="renderCRM()">
+        <button class="btn cyan" onclick="renderCRM()">All</button>
+      </div>
+
+      <div class="crm-grid" id="crm-grid"></div>
+    </section>
+
+    <!-- ══════════ TASKS ══════════ -->
+    <section class="section" id="section-tasks">
+      <div class="sec-header">
+        <div class="sh-left">
+          <div class="sec-label">Action Items</div>
+          <div class="sec-title">Tasks &amp; Priorities</div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text3);" id="task-progress-label"></div>
+      </div>
+
+      <div class="tasks-layout">
+        <div>
+          <div class="task-add-bar">
+            <input type="text" class="task-input" id="task-input" placeholder="Add a new task or action item..." onkeydown="if(event.key==='Enter')addTask()">
+            <select id="task-priority" style="background:var(--navy3);border:1px solid var(--border);color:var(--text);padding:0.6rem;font-size:0.78rem;font-family:inherit;outline:none;">
+              <option value="high">🔴 High</option>
+              <option value="med" selected>🟡 Medium</option>
+              <option value="low">⚪ Low</option>
+            </select>
+            <button class="btn" onclick="addTask()">Add</button>
+          </div>
+
+          <div class="task-filters">
+            <button class="tf-btn active" data-filter="all" onclick="setTaskFilter('all',this)">All</button>
+            <button class="tf-btn" data-filter="pending" onclick="setTaskFilter('pending',this)">Pending</button>
+            <button class="tf-btn" data-filter="done" onclick="setTaskFilter('done',this)">Completed</button>
+            <button class="tf-btn" data-filter="high" onclick="setTaskFilter('high',this)">🔴 High Priority</button>
+          </div>
+
+          <div class="task-list" id="task-list"></div>
+        </div>
+
+        <div>
+          <div class="task-sidebar-card">
+            <div class="tsc-title">Progress</div>
+            <div class="progress-ring-wrap">
+              <svg width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
+                <circle id="prog-ring" cx="40" cy="40" r="34" fill="none" stroke="url(#goldGrad)" stroke-width="7"
+                  stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                  stroke-linecap="round" style="transition:stroke-dashoffset 0.6s ease;"/>
+                <defs>
+                  <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#c9973c"/>
+                    <stop offset="100%" stop-color="#f5d490"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="prc-val" id="prog-pct">0%</div>
+              <div class="prc-label" id="prog-label">tasks complete</div>
+            </div>
+          </div>
+
+          <div class="task-sidebar-card">
+            <div class="tsc-title">Today's Focus</div>
+            <div id="todays-focus" style="font-size:0.75rem;color:var(--text2);line-height:1.7;">
+              No high-priority tasks yet. Add tasks above to populate your focus list.
+            </div>
+          </div>
+
+          <div class="task-sidebar-card">
+            <div class="tsc-title">Quick Actions</div>
+            <div style="display:flex;flex-direction:column;gap:0.4rem;">
+              <button class="btn" onclick="addPreset('Follow up on TSMC pricing quote','high')" style="text-align:left;width:100%;font-size:0.7rem;">+ TSMC follow-up</button>
+              <button class="btn" onclick="addPreset('Review Saudi Arabia data centre proposal','high')" style="text-align:left;width:100%;font-size:0.7rem;">+ Saudi DC proposal</button>
+              <button class="btn" onclick="addPreset('Check semiconductor spot prices','med')" style="text-align:left;width:100%;font-size:0.7rem;">+ Spot price check</button>
+              <button class="btn cyan" onclick="addPreset('Update deal pipeline status','med')" style="text-align:left;width:100%;font-size:0.7rem;">+ Pipeline update</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+    <!-- ══════════ RESEARCH ENGINE ══════════ -->
+    <section class="section" id="section-research">
+      <div class="sec-header">
+        <div class="sh-left">
+          <div class="sec-label">AI Research Engine</div>
+          <div class="sec-title">Market Research Workbench</div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text3);">Save findings · Track intelligence · Run with Claude</div>
+      </div>
+
+      <!-- Research Prompts -->
+      <div style="background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(6,182,212,0.04));border:1px solid rgba(139,92,246,0.2);padding:1.3rem;margin-bottom:1.2rem;">
+        <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;font-weight:700;margin-bottom:0.9rem;">⚡ Quick Research Triggers — Copy &amp; Run in New Claude Chat</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.7rem;" id="research-prompts">
+          <div class="rp-card" onclick="copyPrompt(this)">
+            <div class="rp-tag">Semiconductor</div>
+            <div class="rp-text">Semiconductor spot market intelligence: Latest DRAM, NAND, and logic chip pricing. Supply/demand dynamics this week. Key distributor quotes. TSMC utilisation rate and lead times.</div>
+            <div class="rp-copy">📋 Copy prompt</div>
+          </div>
+          <div class="rp-card" onclick="copyPrompt(this)">
+            <div class="rp-tag">AI Chips</div>
+            <div class="rp-text">NVIDIA H100/H200/B200 GPU availability intelligence. Current spot pricing on grey market and authorised channels. Data centre demand signals. Competitor AMD MI300X status.</div>
+            <div class="rp-copy">📋 Copy prompt</div>
+          </div>
+          <div class="rp-card" onclick="copyPrompt(this)">
+            <div class="rp-tag">Middle East</div>
+            <div class="rp-text">UAE and Saudi Arabia data centre and semiconductor demand report. Vision 2030 tech procurement pipeline. NEOM technology requirements. Gulf sovereign wealth fund tech investments.</div>
+            <div class="rp-copy">📋 Copy prompt</div>
+          </div>
+          <div class="rp-card" onclick="copyPrompt(this)">
+            <div class="rp-tag">API Economy</div>
+            <div class="rp-text">UK Open Banking API market intelligence. Fintech companies actively seeking API integration partners. Regulatory update from FCA on PSD2/PSD3. Key enterprise clients in the market.</div>
+            <div class="rp-copy">📋 Copy prompt</div>
+          </div>
+          <div class="rp-card" onclick="copyPrompt(this)">
+            <div class="rp-tag">Competitor Intel</div>
+            <div class="rp-text">Who are the key semiconductor trading intermediaries and brokers operating in UK/Europe? What companies are active in cross-continental semiconductor distribution? Market gaps Indus Nexus can exploit.</div>
+            <div class="rp-copy">📋 Copy prompt</div>
+          </div>
+          <div class="rp-card" onclick="copyPrompt(this)">
+            <div class="rp-tag">Deal Sourcing</div>
+            <div class="rp-text">Identify companies in [Middle East / Asia-Pacific / Europe] actively procuring semiconductors, AI chips, or electronic components at volume. Contact intelligence and decision maker identification.</div>
+            <div class="rp-copy">📋 Copy prompt</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Notes Workbench -->
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:1.2rem;margin-bottom:1.2rem;">
+        <div>
+          <div style="background:var(--navy2);border:1px solid var(--border);padding:1.2rem;">
+            <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.8rem;">📓 Research Notes &amp; Findings</div>
+            <div style="display:flex;gap:0.6rem;margin-bottom:0.8rem;">
+              <input type="text" id="note-title-input" class="task-input" style="flex:1;" placeholder="Note title / topic...">
+              <button class="btn" onclick="addNote()">+ Save Finding</button>
+            </div>
+            <textarea id="note-body-input" class="task-input" style="width:100%;min-height:80px;resize:vertical;margin-bottom:0.6rem;" placeholder="Paste intelligence, market data, deal notes, contact info..."></textarea>
+            <select id="note-tag" style="background:var(--navy3);border:1px solid var(--border);color:var(--text);padding:0.5rem;font-size:0.75rem;font-family:inherit;outline:none;width:100%;">
+              <option value="semiconductor">🔵 Semiconductor</option>
+              <option value="ai-chips">🟣 AI Chips / GPU</option>
+              <option value="api">🟡 API Economy</option>
+              <option value="deal">🟢 Deal Intelligence</option>
+              <option value="regional">🌍 Regional Intel</option>
+              <option value="regulatory">⚖️ Regulatory</option>
+              <option value="competitor">🔴 Competitor Intel</option>
+            </select>
+          </div>
+
+          <div id="notes-list" style="margin-top:0.8rem;"></div>
+        </div>
+
+        <div>
+          <!-- Watchlist -->
+          <div style="background:var(--navy2);border:1px solid var(--border);padding:1.1rem;margin-bottom:1rem;">
+            <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.8rem;">👁 Market Watchlist</div>
+            <div style="font-size:0.73rem;color:var(--text2);line-height:1.9;">
+              <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding:0.3rem 0;">📌 <strong>TSMC Utilisation Rate</strong> — Q1 2025 target 80%+</div>
+              <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding:0.3rem 0;">📌 <strong>NVIDIA H100 Spot Price</strong> — $25K–$40K range</div>
+              <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding:0.3rem 0;">📌 <strong>Saudi Vision 2030 Procurement</strong> — $38B tech budget</div>
+              <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding:0.3rem 0;">📌 <strong>UK Open Banking Users</strong> — 10M+ active</div>
+              <div style="padding:0.3rem 0;">📌 <strong>India PLI Semiconductor</strong> — Application window open</div>
+            </div>
+          </div>
+
+          <!-- Key Research Links -->
+          <div style="background:var(--navy2);border:1px solid var(--border);padding:1.1rem;">
+            <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.8rem;">🔗 Intelligence Sources</div>
+            <div style="font-size:0.72rem;line-height:2;">
+              <div>🌐 <a href="https://www.semiconductors.org/data/" target="_blank" style="color:var(--cyan);text-decoration:none;">SIA — Semiconductor Industry Association Data</a></div>
+              <div>🌐 <a href="https://www.icinsights.com" target="_blank" style="color:var(--cyan);text-decoration:none;">IC Insights — Chip Market Data</a></div>
+              <div>🌐 <a href="https://www.techinsights.com" target="_blank" style="color:var(--cyan);text-decoration:none;">TechInsights — Competitive Analysis</a></div>
+              <div>🌐 <a href="https://www.openbanking.org.uk/api-tracker/" target="_blank" style="color:var(--cyan);text-decoration:none;">Open Banking API Tracker — UK</a></div>
+              <div>🌐 <a href="https://www.sama.gov.sa" target="_blank" style="color:var(--cyan);text-decoration:none;">SAMA — Saudi Central Bank / FinTech</a></div>
+              <div>🌐 <a href="https://www.india.gov.in/spotlight/production-linked-incentive-scheme-semiconductors" target="_blank" style="color:var(--cyan);text-decoration:none;">India PLI Semiconductor Scheme</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ COMPANY SETUP ══════════ -->
+    <section class="section" id="section-setup">
+      <div class="sec-header">
+        <div class="sh-left">
+          <div class="sec-label">Legal &amp; Operational</div>
+          <div class="sec-title">Company Setup &amp; Trading Infrastructure</div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text3);" id="setup-progress-text">0 / 0 steps complete</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+
+        <!-- Companies House Registration -->
+        <div style="background:var(--navy2);border:1px solid var(--border);padding:1.3rem;">
+          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.9rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+            🏛️ Step 1 — UK Companies House Registration
+            <span style="float:right;font-size:0.65rem;color:var(--text3);font-weight:400;letter-spacing:0;">£100 · 24hrs</span>
+          </div>
+          <div id="checklist-registration" class="setup-checklist"></div>
+          <div style="margin-top:0.8rem;padding:0.7rem;background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.15);font-size:0.7rem;color:var(--text3);">
+            🔗 <a href="https://www.gov.uk/limited-company-formation/register-your-company" target="_blank" style="color:var(--cyan);text-decoration:none;">Register now at GOV.UK — Companies House Online</a><br>
+            Cost: <strong style="color:var(--gold);">£100</strong> · Processing: <strong style="color:var(--gold);">24 hours</strong> · Registered in: <strong style="color:var(--gold);">England &amp; Wales</strong>
+          </div>
+        </div>
+
+        <!-- Business Banking -->
+        <div style="background:var(--navy2);border:1px solid var(--border);padding:1.3rem;">
+          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.9rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+            🏦 Step 2 — Business Banking Setup
+          </div>
+          <div id="checklist-banking" class="setup-checklist"></div>
+          <div style="margin-top:0.8rem;padding:0.7rem;background:rgba(16,185,129,0.04);border:1px solid rgba(16,185,129,0.15);font-size:0.7rem;color:var(--text3);">
+            Recommended: <strong style="color:var(--gold);">Revolut Business</strong> (multi-currency, FX trading) + <strong style="color:var(--gold);">HSBC Business</strong> (international wire transfers for large trades)
+          </div>
+        </div>
+
+        <!-- Trading Accounts -->
+        <div style="background:var(--navy2);border:1px solid var(--border);padding:1.3rem;">
+          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.9rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+            📈 Step 3 — Investment &amp; Trading Accounts
+          </div>
+          <div id="checklist-trading" class="setup-checklist"></div>
+          <div style="margin-top:0.8rem;padding:0.7rem;background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.15);font-size:0.7rem;color:var(--text3);">
+            ⚠️ <strong>Note:</strong> Physical commodity/semiconductor trading = no FCA licence needed. Financial instrument trading (stocks/ETFs as a business) = FCA authorisation required (~£10,880+ fees). Consult a UK regulatory solicitor.
+          </div>
+        </div>
+
+        <!-- Legal & Compliance -->
+        <div style="background:var(--navy2);border:1px solid var(--border);padding:1.3rem;">
+          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.9rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);">
+            ⚖️ Step 4 — Legal, Compliance &amp; Operations
+          </div>
+          <div id="checklist-legal" class="setup-checklist"></div>
+          <div style="margin-top:0.8rem;padding:0.7rem;background:rgba(139,92,246,0.04);border:1px solid rgba(139,92,246,0.15);font-size:0.7rem;color:var(--text3);">
+            Recommended: <strong style="color:var(--gold);">Companies made easy (Crunch)</strong> or <strong style="color:var(--gold);">Accounts &amp; Legal</strong> for bookkeeping · SIC codes: <strong style="color:var(--gold);">46520</strong> (semiconductor wholesale) + <strong style="color:var(--gold);">62020</strong> (IT consultancy)
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Key Official Links -->
+      <div style="background:var(--navy2);border:1px solid var(--border);padding:1.2rem;margin-top:1.2rem;">
+        <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:0.8rem;">🔗 Official Registration Links</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.5rem;font-size:0.75rem;">
+          <div>🏛️ <a href="https://www.gov.uk/limited-company-formation/register-your-company" target="_blank" style="color:var(--cyan);text-decoration:none;">GOV.UK — Register a Private Limited Company</a></div>
+          <div>🔍 <a href="https://find-and-update.company-information.service.gov.uk" target="_blank" style="color:var(--cyan);text-decoration:none;">Companies House — Check Name Availability</a></div>
+          <div>📋 <a href="https://www.gov.uk/government/publications/companies-house-fees/companies-house-fees" target="_blank" style="color:var(--cyan);text-decoration:none;">Companies House Fees 2025</a></div>
+          <div>⚖️ <a href="https://www.fca.org.uk/firms/authorisation" target="_blank" style="color:var(--cyan);text-decoration:none;">FCA Authorisation — Do I Need It?</a></div>
+          <div>💷 <a href="https://www.hmrc.gov.uk/companies" target="_blank" style="color:var(--cyan);text-decoration:none;">HMRC — Corporation Tax Registration</a></div>
+          <div>🌐 <a href="https://www.great.gov.uk/trade/" target="_blank" style="color:var(--cyan);text-decoration:none;">UK Export Finance — Trade Support</a></div>
+        </div>
+      </div>
+    </section>
+
+<!-- ═══ DEAL MODAL ═══ -->
+<div class="modal-overlay" id="deal-modal">
+  <div class="modal">
+    <h3>💼 <span id="deal-modal-title">New Deal</span></h3>
+    <input type="hidden" id="deal-edit-id">
+    <div class="form-group">
+      <label>Deal / Opportunity Name</label>
+      <input type="text" id="f-deal-name" placeholder="e.g. TSMC Logic Chip Supply Agreement">
+    </div>
+    <div class="form-group">
+      <label>Deal Value</label>
+      <input type="text" id="f-deal-value" placeholder="e.g. $2.3M or £180K">
+    </div>
+    <div class="form-group">
+      <label>Stage</label>
+      <select id="f-deal-stage">
+        <option>Prospect</option>
+        <option>Negotiating</option>
+        <option>Closing</option>
+        <option>Won</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Region / Continent</label>
+      <select id="f-deal-region">
+        <option>Asia-Pacific</option>
+        <option>Middle East</option>
+        <option>Europe</option>
+        <option>Americas</option>
+        <option>South Asia</option>
+        <option>Global</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Sector / Type</label>
+      <input type="text" id="f-deal-sector" placeholder="e.g. Semiconductor Trading, API Integration">
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="f-deal-notes" placeholder="Key details, next steps..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn danger" onclick="closeDealModal()">Cancel</button>
+      <button class="btn" onclick="saveDeal()">Save Deal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONTACT MODAL ═══ -->
+<div class="modal-overlay" id="contact-modal">
+  <div class="modal">
+    <h3>🌍 <span id="contact-modal-title">New Contact</span></h3>
+    <input type="hidden" id="contact-edit-id">
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="f-contact-name" placeholder="e.g. Wei Zhang">
+    </div>
+    <div class="form-group">
+      <label>Role / Title</label>
+      <input type="text" id="f-contact-role" placeholder="e.g. Procurement Director">
+    </div>
+    <div class="form-group">
+      <label>Company</label>
+      <input type="text" id="f-contact-company" placeholder="e.g. TSMC">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="f-contact-email" placeholder="email@company.com">
+    </div>
+    <div class="form-group">
+      <label>Region</label>
+      <select id="f-contact-region">
+        <option>Asia-Pacific</option>
+        <option>Middle East</option>
+        <option>Europe</option>
+        <option>Americas</option>
+        <option>South Asia</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Sector Tag</label>
+      <input type="text" id="f-contact-tag" placeholder="e.g. Semiconductor, API, Trading">
+    </div>
+    <div class="modal-actions">
+      <button class="btn danger" onclick="closeContactModal()">Cancel</button>
+      <button class="btn" onclick="saveContact()">Save Contact</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA STORE — persists in localStorage
+// ══════════════════════════════════════════
+const STORE_DEALS = 'sovereign_deals';
+const STORE_CONTACTS = 'sovereign_contacts';
+const STORE_TASKS = 'sovereign_tasks';
+
+function loadData(key, defaults){
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : defaults;
+  } catch(e){ return defaults; }
+}
+function saveData(key, data){
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+// Default seed data
+const DEFAULT_DEALS = [
+  {id:1,name:'TSMC Logic Chip Procurement',value:'$2.3M',stage:'Negotiating',region:'Asia-Pacific',sector:'Semiconductor Trading',notes:'Volume pricing under review. Next call with procurement team scheduled.',date:'2025-03-05'},
+  {id:2,name:'Saudi Arabia Data Centre Semiconductors',value:'$5.1M',stage:'Prospect',region:'Middle East',sector:'Semiconductor Supply',notes:'Initial contact via Saudi Aramco Digital. Exploring GPU procurement for Vision 2030 projects.',date:'2025-03-01'},
+  {id:3,name:'UK FinTech API Integration',value:'£180K',stage:'Closing',region:'Europe',sector:'API Integration',notes:'Contract review stage. Legal sign-off expected within 2 weeks.',date:'2025-02-28'},
+  {id:4,name:'Pakistan Tech Import Agreement',value:'$800K',stage:'Prospect',region:'South Asia',sector:'Electronic Components',notes:'Government tender aligned with PLI policy. Letter of intent drafted.',date:'2025-02-20'},
+  {id:5,name:'NVIDIA H100 GPU Resale Batch',value:'$1.2M',stage:'Won',region:'Americas',sector:'AI Chips',notes:'Completed. 30 × H100 units delivered. Invoice settled.',date:'2025-01-15'},
+];
+
+const DEFAULT_CONTACTS = [
+  {id:1,name:'Wei Zhang',role:'Procurement Director',company:'TSMC Taiwan',email:'wei.zhang@tsmc.com',region:'Asia-Pacific',tag:'Semiconductor'},
+  {id:2,name:'Ahmed Al-Rashid',role:'Head of Digital Infrastructure',company:'Saudi Aramco Digital',email:'ahmed.alrashid@aramco.com',region:'Middle East',tag:'Data Centre'},
+  {id:3,name:'Sarah Mitchell',role:'Head of Open Banking',company:'Revolut Ltd',email:'s.mitchell@revolut.com',region:'Europe',tag:'API / FinTech'},
+  {id:4,name:'Farooq Ahmed',role:'Director of Import',company:'Pakistan Telecom Authority',email:'f.ahmed@pta.gov.pk',region:'South Asia',tag:'Electronic Components'},
+  {id:5,name:'Marcus Chen',role:'Senior Sales Manager',company:'Arrow Electronics APAC',email:'m.chen@arrow.com',region:'Asia-Pacific',tag:'Distribution'},
+];
+
+const DEFAULT_TASKS = [
+  {id:1,text:'Follow up with TSMC on volume pricing quote',priority:'high',done:false,date:'2025-03-11'},
+  {id:2,text:'Draft API integration proposal for UK FinTech client',priority:'high',done:false,date:'2025-03-11'},
+  {id:3,text:'Review Indus Nexus company bank account setup',priority:'med',done:false,date:'2025-03-12'},
+  {id:4,text:'Schedule discovery call with Saudi data centre team',priority:'high',done:false,date:'2025-03-11'},
+  {id:5,text:'Research India PLI incentive application process',priority:'med',done:false,date:'2025-03-13'},
+  {id:6,text:'Update pipeline deal values with latest exchange rates',priority:'low',done:false,date:'2025-03-14'},
+];
+
+let deals = loadData(STORE_DEALS, DEFAULT_DEALS);
+let contacts = loadData(STORE_CONTACTS, DEFAULT_CONTACTS);
+let tasks = loadData(STORE_TASKS, DEFAULT_TASKS);
+let taskFilter = 'all';
+
+function persist(){
+  saveData(STORE_DEALS, deals);
+  saveData(STORE_CONTACTS, contacts);
+  saveData(STORE_TASKS, tasks);
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  document.querySelector(`[data-section="${name}"]`).classList.add('active');
+  renderAll();
+}
+
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>showSection(item.dataset.section));
+});
+
+// ══════════════════════════════════════════
+// CLOCK & DATE
+// ══════════════════════════════════════════
+function updateClock(){
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateStr = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('date-display').textContent = dateStr;
+
+  if(document.getElementById('overview-date')){
+    document.getElementById('overview-date').innerHTML = `${dateStr}<br>London · UTC+1`;
+  }
+
+  const gr = now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening';
+  const el = document.getElementById('greeting-time');
+  if(el) el.textContent = gr;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ══════════════════════════════════════════
+// TICKER
+// ══════════════════════════════════════════
+const STOCKS = [
+  {sym:'NVDA',name:'NVIDIA',base:875.4,col:'up'},
+  {sym:'TSM',name:'TSMC',base:168.2,col:'up'},
+  {sym:'AMD',name:'AMD',base:178.9,col:'dn'},
+  {sym:'INTC',name:'Intel',base:34.1,col:'dn'},
+  {sym:'QCOM',name:'Qualcomm',base:164.5,col:'up'},
+  {sym:'AVGO',name:'Broadcom',base:1420.0,col:'up'},
+  {sym:'MU',name:'Micron',base:122.3,col:'up'},
+  {sym:'AMAT',name:'Applied Mat.',base:188.6,col:'dn'},
+];
+
+let stockPrices = STOCKS.map(s=>({...s, price: s.base, chg: 0}));
+
+function jitter(v){ return +(v + (Math.random()-0.5)*v*0.003).toFixed(2); }
+
+function updateTicker(){
+  stockPrices = stockPrices.map(s=>{
+    const newP = jitter(s.price);
+    const chg = +((newP - s.base)/s.base*100).toFixed(2);
+    return {...s, price: newP, chg};
+  });
+  const html = [...stockPrices,...stockPrices].map(s=>`
+    <div class="t-item">
+      <span class="t-sym">${s.sym}</span>
+      <span class="t-price" id="tp-${s.sym}">$${s.price.toFixed(2)}</span>
+      <span class="t-chg ${s.chg>=0?'up':'dn'}">${s.chg>=0?'▲':'▼'}${Math.abs(s.chg)}%</span>
+    </div>
+  `).join('');
+  document.getElementById('ticker').innerHTML = html;
+  renderStockTable();
+}
+setInterval(updateTicker, 3000);
+updateTicker();
+
+function renderStockTable(){
+  const tbody = document.getElementById('stock-table-body');
+  if(!tbody) return;
+  tbody.innerHTML = stockPrices.map(s=>`
+    <tr>
+      <td class="sym-cell">${s.sym}</td>
+      <td style="color:var(--text2)">${s.name}</td>
+      <td class="price-cell">$${s.price.toFixed(2)}</td>
+      <td class="chg-cell ${s.chg>=0?'up':'dn'}">${s.chg>=0?'+':''}${s.chg}%</td>
+      <td style="color:var(--text3);font-size:0.7rem;">Semiconductors</td>
+    </tr>
+  `).join('');
+}
+
+// ══════════════════════════════════════════
+// PIPELINE
+// ══════════════════════════════════════════
+function renderPipeline(){
+  const stages = ['Prospect','Negotiating','Closing','Won'];
+  stages.forEach(stage=>{
+    const col = document.getElementById('col-'+stage.toLowerCase());
+    if(!col) return;
+    const stagDeals = deals.filter(d=>d.stage===stage);
+    col.innerHTML = stagDeals.map(d=>`
+      <div class="deal-card">
+        <div class="dc-name">${d.name}</div>
+        <div class="dc-meta">
+          <span class="dc-tag">${d.sector||'Trading'}</span>
+          <span class="dc-tag region">${d.region}</span>
+        </div>
+        <div class="dc-value">${d.value}</div>
+        <div class="dc-date">${d.date||''}</div>
+        ${d.notes?`<div style="font-size:0.68rem;color:var(--text3);margin-top:0.4rem;line-height:1.5;">${d.notes.substring(0,80)}${d.notes.length>80?'…':''}</div>`:''}
+        <div class="dc-actions">
+          <button class="dc-btn" onclick="advanceDeal(${d.id})">→ Advance</button>
+          <button class="dc-btn" onclick="editDeal(${d.id})">Edit</button>
+          <button class="dc-btn del" onclick="deleteDeal(${d.id})">✕</button>
+        </div>
+      </div>
+    `).join('');
+    const cnt = document.getElementById('cnt-'+stage.toLowerCase());
+    if(cnt) cnt.textContent = stagDeals.length;
+  });
+  updateSidebarStats();
+}
+
+function advanceDeal(id){
+  const stages = ['Prospect','Negotiating','Closing','Won'];
+  const d = deals.find(x=>x.id===id);
+  if(!d) return;
+  const i = stages.indexOf(d.stage);
+  if(i < stages.length-1){ d.stage = stages[i+1]; persist(); renderAll(); }
+}
+
+function deleteDeal(id){
+  deals = deals.filter(x=>x.id!==id);
+  persist(); renderAll();
+}
+
+function editDeal(id){
+  const d = deals.find(x=>x.id===id);
+  if(!d) return;
+  document.getElementById('deal-edit-id').value = id;
+  document.getElementById('deal-modal-title').textContent = 'Edit Deal';
+  document.getElementById('f-deal-name').value = d.name;
+  document.getElementById('f-deal-value').value = d.value;
+  document.getElementById('f-deal-stage').value = d.stage;
+  document.getElementById('f-deal-region').value = d.region;
+  document.getElementById('f-deal-sector').value = d.sector||'';
+  document.getElementById('f-deal-notes').value = d.notes||'';
+  document.getElementById('deal-modal').classList.add('open');
+}
+
+function openDealModal(stage){
+  document.getElementById('deal-edit-id').value = '';
+  document.getElementById('deal-modal-title').textContent = 'New Deal';
+  document.getElementById('f-deal-name').value = '';
+  document.getElementById('f-deal-value').value = '';
+  document.getElementById('f-deal-stage').value = stage || 'Prospect';
+  document.getElementById('f-deal-region').value = 'Asia-Pacific';
+  document.getElementById('f-deal-sector').value = '';
+  document.getElementById('f-deal-notes').value = '';
+  document.getElementById('deal-modal').classList.add('open');
+}
+
+function closeDealModal(){ document.getElementById('deal-modal').classList.remove('open'); }
+
+function saveDeal(){
+  const editId = parseInt(document.getElementById('deal-edit-id').value);
+  const name = document.getElementById('f-deal-name').value.trim();
+  if(!name) return;
+  const d = {
+    id: editId || Date.now(),
+    name,
+    value: document.getElementById('f-deal-value').value.trim()||'TBD',
+    stage: document.getElementById('f-deal-stage').value,
+    region: document.getElementById('f-deal-region').value,
+    sector: document.getElementById('f-deal-sector').value.trim(),
+    notes: document.getElementById('f-deal-notes').value.trim(),
+    date: new Date().toISOString().split('T')[0],
+  };
+  if(editId){ const i = deals.findIndex(x=>x.id===editId); if(i>-1) deals[i]=d; }
+  else deals.push(d);
+  persist(); closeDealModal(); renderAll();
+}
+
+// ══════════════════════════════════════════
+// CRM
+// ══════════════════════════════════════════
+const REGION_FLAGS = {'Asia-Pacific':'🌏','Middle East':'🌍','Europe':'🇬🇧','Americas':'🌎','South Asia':'🇵🇰'};
+
+function renderCRM(){
+  const q = (document.getElementById('crm-search')||{value:''}).value.toLowerCase();
+  const grid = document.getElementById('crm-grid');
+  if(!grid) return;
+  const filtered = contacts.filter(c=>
+    !q || c.name.toLowerCase().includes(q) ||
+    (c.company||'').toLowerCase().includes(q) ||
+    (c.region||'').toLowerCase().includes(q) ||
+    (c.tag||'').toLowerCase().includes(q)
+  );
+  grid.innerHTML = filtered.map(c=>{
+    const initials = c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `
+    <div class="contact-card">
+      <div class="cc-top">
+        <div class="cc-avatar">${initials}</div>
+        <div class="cc-info">
+          <div class="cc-name">${c.name}</div>
+          <div class="cc-role">${c.role} · ${c.company}</div>
+        </div>
+      </div>
+      <div class="cc-tags">
+        <span class="cc-tag">${REGION_FLAGS[c.region]||'🌐'} ${c.region}</span>
+        ${c.tag?`<span class="cc-tag gold">${c.tag}</span>`:''}
+      </div>
+      ${c.email?`<div class="cc-email">✉ <a href="mailto:${c.email}" style="color:var(--cyan);text-decoration:none;">${c.email}</a></div>`:''}
+      <div class="cc-actions">
+        <button class="btn cyan" onclick="editContact(${c.id})" style="font-size:0.65rem;padding:0.3rem 0.7rem;">Edit</button>
+        <button class="btn danger" onclick="deleteContact(${c.id})" style="font-size:0.65rem;padding:0.3rem 0.7rem;">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('sb-contact-count').textContent = contacts.length;
+}
+
+function openContactModal(){
+  document.getElementById('contact-edit-id').value='';
+  document.getElementById('contact-modal-title').textContent='New Contact';
+  ['name','role','company','email','tag'].forEach(f=>document.getElementById('f-contact-'+f).value='');
+  document.getElementById('contact-modal').classList.add('open');
+}
+function closeContactModal(){ document.getElementById('contact-modal').classList.remove('open'); }
+
+function editContact(id){
+  const c = contacts.find(x=>x.id===id);
+  if(!c) return;
+  document.getElementById('contact-edit-id').value=id;
+  document.getElementById('contact-modal-title').textContent='Edit Contact';
+  document.getElementById('f-contact-name').value=c.name;
+  document.getElementById('f-contact-role').value=c.role;
+  document.getElementById('f-contact-company').value=c.company;
+  document.getElementById('f-contact-email').value=c.email;
+  document.getElementById('f-contact-region').value=c.region;
+  document.getElementById('f-contact-tag').value=c.tag||'';
+  document.getElementById('contact-modal').classList.add('open');
+}
+
+function saveContact(){
+  const editId = parseInt(document.getElementById('contact-edit-id').value);
+  const name = document.getElementById('f-contact-name').value.trim();
+  if(!name) return;
+  const c = {
+    id: editId||Date.now(),
+    name,
+    role: document.getElementById('f-contact-role').value.trim(),
+    company: document.getElementById('f-contact-company').value.trim(),
+    email: document.getElementById('f-contact-email').value.trim(),
+    region: document.getElementById('f-contact-region').value,
+    tag: document.getElementById('f-contact-tag').value.trim(),
+  };
+  if(editId){ const i=contacts.findIndex(x=>x.id===editId); if(i>-1) contacts[i]=c; }
+  else contacts.push(c);
+  persist(); closeContactModal(); renderAll();
+}
+
+function deleteContact(id){
+  contacts=contacts.filter(x=>x.id!==id);
+  persist(); renderAll();
+}
+
+// ══════════════════════════════════════════
+// TASKS
+// ══════════════════════════════════════════
+function addTask(){
+  const input = document.getElementById('task-input');
+  const text = input.value.trim();
+  if(!text) return;
+  const priority = document.getElementById('task-priority').value;
+  tasks.push({id:Date.now(),text,priority,done:false,date:new Date().toISOString().split('T')[0]});
+  input.value='';
+  persist(); renderAll();
+}
+
+function addPreset(text, priority){
+  tasks.push({id:Date.now(),text,priority,done:false,date:new Date().toISOString().split('T')[0]});
+  persist(); renderAll();
+}
+
+function toggleTask(id){
+  const t = tasks.find(x=>x.id===id);
+  if(t){ t.done=!t.done; persist(); renderAll(); }
+}
+
+function deleteTask(id){
+  tasks=tasks.filter(x=>x.id!==id);
+  persist(); renderAll();
+}
+
+function setTaskFilter(f, btn){
+  taskFilter=f;
+  document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTasks();
+}
+
+function renderTasks(){
+  const list = document.getElementById('task-list');
+  if(!list) return;
+  let filtered = tasks;
+  if(taskFilter==='pending') filtered=tasks.filter(t=>!t.done);
+  else if(taskFilter==='done') filtered=tasks.filter(t=>t.done);
+  else if(taskFilter==='high') filtered=tasks.filter(t=>t.priority==='high');
+
+  list.innerHTML = filtered.map(t=>`
+    <div class="task-item ${t.done?'done':''}">
+      <div class="task-check" onclick="toggleTask(${t.id})">${t.done?'✓':''}</div>
+      <div class="task-body">
+        <div class="task-text">${t.text}</div>
+        <div class="task-meta">
+          <span class="task-tag ${t.priority}">${t.priority==='high'?'🔴 High':t.priority==='med'?'🟡 Medium':'⚪ Low'}</span>
+          <span class="task-date">${t.date||''}</span>
+        </div>
+      </div>
+      <button class="task-del" onclick="deleteTask(${t.id})">✕</button>
+    </div>
+  `).join('') || '<div style="text-align:center;color:var(--text4);padding:1.5rem;font-size:0.8rem;">No tasks match this filter.</div>';
+
+  // Progress ring
+  const total = tasks.length;
+  const done = tasks.filter(t=>t.done).length;
+  const pct = total>0 ? Math.round(done/total*100) : 0;
+  const circ = 213.6;
+  const offset = circ - (circ * pct/100);
+  const ring = document.getElementById('prog-ring');
+  if(ring) ring.style.strokeDashoffset = offset;
+  const pctEl = document.getElementById('prog-pct');
+  if(pctEl) pctEl.textContent = pct+'%';
+  const lblEl = document.getElementById('prog-label');
+  if(lblEl) lblEl.textContent = `${done} of ${total} complete`;
+
+  // Task progress label
+  const tpl = document.getElementById('task-progress-label');
+  if(tpl) tpl.textContent = `${done}/${total} tasks complete`;
+
+  // Today's focus
+  const focus = document.getElementById('todays-focus');
+  if(focus){
+    const highs = tasks.filter(t=>t.priority==='high'&&!t.done);
+    focus.innerHTML = highs.length
+      ? highs.slice(0,4).map(t=>`<div style="padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.04);">🔴 ${t.text}</div>`).join('')
+      : '<div style="color:var(--green);">✓ All high-priority tasks complete!</div>';
+  }
+
+  // Sidebar badge
+  const badge = document.getElementById('sb-task-count');
+  if(badge) badge.textContent = tasks.filter(t=>!t.done).length;
+}
+
+// ══════════════════════════════════════════
+// OVERVIEW
+// ══════════════════════════════════════════
+function renderOverview(){
+  // KPIs
+  const activeDls = deals.filter(d=>d.stage!=='Won').length;
+  document.getElementById('kpi-deals').textContent = activeDls;
+  document.getElementById('kpi-contacts').textContent = contacts.length;
+  document.getElementById('kpi-tasks').textContent = tasks.filter(t=>!t.done).length;
+
+  // Pipeline value (sum won + closing)
+  const pipelineLabel = `${deals.filter(d=>d.stage!=='Won').length} active`;
+  document.getElementById('kpi-pipeline').textContent = pipelineLabel;
+
+  // Recent deals
+  const ovDeals = document.getElementById('ov-deals-list');
+  if(ovDeals){
+    ovDeals.innerHTML = deals.slice(-5).reverse().map(d=>`
+      <div class="mini-deal">
+        <span class="md-name">${d.name.substring(0,32)}${d.name.length>32?'…':''}</span>
+        <span class="md-stage ${d.stage.toLowerCase()}">${d.stage}</span>
+        <span class="md-val">${d.value}</span>
+      </div>
+    `).join('') || '<div style="color:var(--text4);font-size:0.75rem;padding:0.5rem 0;">No deals yet.</div>';
+  }
+
+  // Tasks overview
+  const ovTasks = document.getElementById('ov-tasks-list');
+  if(ovTasks){
+    const top5 = tasks.filter(t=>!t.done).slice(0,5);
+    ovTasks.innerHTML = top5.map(t=>`
+      <div class="mini-task ${t.done?'done':''}" onclick="toggleTask(${t.id})">
+        <div class="mt-check">${t.done?'✓':''}</div>
+        <span class="mt-text">${t.text.substring(0,40)}${t.text.length>40?'…':''}</span>
+        <span class="mt-pri ${t.priority}">${t.priority==='high'?'🔴':t.priority==='med'?'🟡':'⚪'}</span>
+      </div>
+    `).join('') || '<div style="color:var(--green);font-size:0.75rem;padding:0.5rem 0;">✓ All tasks complete!</div>';
+  }
+
+  // Market snapshot
+  const ms = document.getElementById('ov-market-snap');
+  if(ms){
+    ms.innerHTML = `
+      <div class="mkt-row"><span class="mr-label">Semiconductor market 2024</span><span class="mr-val up">$627B</span></div>
+      <div class="mkt-row"><span class="mr-label">AI Hardware CAGR</span><span class="mr-val cyan">18.0%</span></div>
+      <div class="mkt-row"><span class="mr-label">API Management 2030</span><span class="mr-val up">$19.28B</span></div>
+      <div class="mkt-row"><span class="mr-label">NVIDIA market cap</span><span class="mr-val">~$2.1T</span></div>
+      <div class="mkt-row"><span class="mr-label">Components dist. CAGR</span><span class="mr-val cyan">7.7%</span></div>
+    `;
+  }
+
+  // Pipeline stage bars
+  const sb = document.getElementById('ov-stage-bars');
+  if(sb){
+    const stages = ['Prospect','Negotiating','Closing','Won'];
+    const max = Math.max(...stages.map(s=>deals.filter(d=>d.stage===s).length),1);
+    const colors = {'Prospect':'var(--text3)','Negotiating':'var(--orange)','Closing':'var(--cyan)','Won':'var(--green)'};
+    sb.innerHTML = stages.map(s=>{
+      const cnt = deals.filter(d=>d.stage===s).length;
+      const pct = Math.round(cnt/max*100);
+      return `
+        <div style="margin-bottom:0.7rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text3);margin-bottom:0.3rem;">
+            <span>${s}</span><span style="color:${colors[s]};font-weight:700;">${cnt} deal${cnt!==1?'s':''}</span>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:3px;">
+            <div style="height:100%;width:${pct}%;background:${colors[s]};border-radius:3px;transition:width 0.6s ease;"></div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+}
+
+function updateSidebarStats(){
+  const active = deals.filter(d=>d.stage!=='Won');
+  document.getElementById('sb-active-deals').textContent = active.length;
+  document.getElementById('sb-pipeline-val').textContent = active.length + ' open';
+  document.getElementById('sb-deal-count').textContent = deals.length;
+}
+
+// ══════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════
+function renderAll(){
+  renderPipeline();
+  renderCRM();
+  renderTasks();
+  renderOverview();
+}
+
+// Modal close on overlay click
+['deal-modal','contact-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this) this.classList.remove('open');
+  });
+});
+
+// ══════════════════════════════════════════
+// RESEARCH ENGINE
+// ══════════════════════════════════════════
+const STORE_NOTES = 'sovereign_notes';
+let notes = loadData(STORE_NOTES, [
+  {id:1, title:'Semiconductor Market 2024 Intelligence', tag:'semiconductor', date:'2025-03-13',
+   body:'Global semiconductor market: $627B (2024) → $697B (2025) → $1T+ (2030). CAGR 8.6% (PwC) / 7.5% (Deloitte). Memory recovery drove 2024 beat. AI/data centre chips = fastest growing segment. EU Chips Act: €43B investment target. Source: PwC, Deloitte, Statista.'},
+  {id:2, title:'NVIDIA H100 Market Intel', tag:'ai-chips', date:'2025-03-13',
+   body:'NVIDIA holds ~86% of data centre semiconductor market share. H100 pricing: $25K–$40K per unit depending on channel. H200 command premium. B200 (Blackwell) expected to shift pricing in H2 2025. Grey market availability varies by region. Strong demand from Gulf region data centre buildout.'},
+  {id:3, title:'Saudi Vision 2030 Tech Procurement', tag:'regional', date:'2025-03-13',
+   body:'Saudi Arabia allocating $38B+ to tech infrastructure under Vision 2030. NEOM smart city requiring significant semiconductor and component procurement. Saudi Aramco Digital arm is key decision maker. UAE: Hub71 Abu Dhabi and DIFC Dubai are tech procurement centres. Contact: Ahmed Al-Rashid (Saudi Aramco Digital) is first point of contact.'},
+]);
+
+function addNote(){
+  const title = document.getElementById('note-title-input').value.trim();
+  const body = document.getElementById('note-body-input').value.trim();
+  if(!title && !body) return;
+  const tag = document.getElementById('note-tag').value;
+  notes.unshift({id:Date.now(), title:title||'Untitled Finding', body, tag, date:new Date().toISOString().split('T')[0]});
+  localStorage.setItem(STORE_NOTES, JSON.stringify(notes));
+  document.getElementById('note-title-input').value='';
+  document.getElementById('note-body-input').value='';
+  renderNotes();
+}
+
+const TAG_LABELS = {
+  'semiconductor':'🔵 Semiconductor','ai-chips':'🟣 AI Chips','api':'🟡 API Economy',
+  'deal':'🟢 Deal Intel','regional':'🌍 Regional','regulatory':'⚖️ Regulatory','competitor':'🔴 Competitor'
+};
+
+function renderNotes(){
+  const el = document.getElementById('notes-list');
+  if(!el) return;
+  el.innerHTML = notes.map(n=>`
+    <div class="note-card">
+      <div class="note-header">
+        <div class="note-title">${n.title}</div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span class="note-tag-badge">${TAG_LABELS[n.tag]||n.tag}</span>
+          <button onclick="deleteNote(${n.id})" style="background:none;border:none;color:var(--text4);cursor:pointer;font-size:0.75rem;">✕</button>
+        </div>
+      </div>
+      <div class="note-body">${n.body}</div>
+      <div class="note-date">${n.date}</div>
+    </div>
+  `).join('') || '<div style="color:var(--text4);font-size:0.78rem;text-align:center;padding:1.5rem;">Save your first research finding above.</div>';
+}
+
+function deleteNote(id){
+  notes = notes.filter(x=>x.id!==id);
+  localStorage.setItem(STORE_NOTES, JSON.stringify(notes));
+  renderNotes();
+}
+
+function copyPrompt(el){
+  const text = el.querySelector('.rp-text').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    el.classList.add('copied');
+    el.querySelector('.rp-copy').textContent = '✓ Copied! Paste into new Claude chat';
+    setTimeout(()=>{
+      el.classList.remove('copied');
+      el.querySelector('.rp-copy').textContent = '📋 Copy prompt';
+    }, 2500);
+  }).catch(()=>{
+    el.querySelector('.rp-copy').textContent = '✓ Select text above to copy';
+  });
+}
+
+// ══════════════════════════════════════════
+// COMPANY SETUP CHECKLISTS
+// ══════════════════════════════════════════
+const STORE_SETUP = 'sovereign_setup';
+const SETUP_DATA = {
+  registration: [
+    {id:'r1', label:'Check "Indus Nexus Limited" name availability', sub:'→ Companies House name checker'},
+    {id:'r2', label:'Gather director details (DOB, nationality, residential address)', sub:'Required for Companies House filing'},
+    {id:'r3', label:'Choose registered office address (UK address required)', sub:'Can use accountant / agent address'},
+    {id:'r4', label:'Decide share structure (e.g. 100 shares @ £1 ordinary)', sub:'You as sole shareholder initially'},
+    {id:'r5', label:'Select SIC codes: 46520 (semiconductor wholesale) + 62020 (IT consultancy)', sub:'Describes your business activity'},
+    {id:'r6', label:'Register online at GOV.UK Companies House (£100 fee)', sub:'Usually approved within 24 hours'},
+    {id:'r7', label:'Complete identity verification (mandatory from Nov 2025)', sub:'Required for all directors'},
+    {id:'r8', label:'Receive Certificate of Incorporation', sub:'Your company is legally formed ✓'},
+  ],
+  banking: [
+    {id:'b1', label:'Open Revolut Business account (multi-currency, instant)', sub:'Best for FX and international transfers'},
+    {id:'b2', label:'Open HSBC Business Premier or Barclays Business account', sub:'Required for large trade settlements'},
+    {id:'b3', label:'Set up Wise Business for low-cost international payments', sub:'Ideal for Asia-Pacific supplier payments'},
+    {id:'b4', label:'Apply for a business credit card (Amex Business)', sub:'For operational expenses + travel'},
+    {id:'b5', label:'Register for CHAPS and SWIFT payment capabilities', sub:'Needed for large semiconductor deal settlements'},
+  ],
+  trading: [
+    {id:'t1', label:'Open Interactive Brokers (IBKR) corporate account', sub:'Best for semiconductor stock trading (NVDA, TSM, AMD)'},
+    {id:'t2', label:'Open Saxo Bank corporate account for CFDs and commodities', sub:'Structured trading with leverage options'},
+    {id:'t3', label:'Set up Bloomberg Terminal or FactSet access (if budget allows)', sub:'Real-time semiconductor pricing and intelligence'},
+    {id:'t4', label:'Register on IHS Markit / CHIPS.org for supply chain data', sub:'B2B semiconductor market data feeds'},
+    {id:'t5', label:'Assess if FCA authorisation needed (consult solicitor first)', sub:'Physical commodity trading = no FCA required'},
+  ],
+  legal: [
+    {id:'l1', label:'Register for Corporation Tax with HMRC (within 3 months)', sub:'Register at gov.uk/register-for-corporation-tax'},
+    {id:'l2', label:'Apply for VAT registration (if turnover >£90,000)', sub:'Essential for B2B semiconductor trading'},
+    {id:'l3', label:'Appoint an accountant / bookkeeper (Crunch or similar)', sub:'Quarterly VAT returns + annual accounts'},
+    {id:'l4', label:'Draft standard trading agreements / NDAs (solicitor)', sub:'Protect deal terms with partners'},
+    {id:'l5', label:'Get Professional Indemnity Insurance', sub:'Required for consulting/advisory work'},
+    {id:'l6', label:'Register for EORI number (for international goods trading)', sub:'Required for importing/exporting semiconductors to/from UK'},
+    {id:'l7', label:'Open Companies House WebFiling account for ongoing compliance', sub:'Annual confirmation statement due each year'},
+  ],
+};
+
+let setupChecks = loadData(STORE_SETUP, {});
+
+function renderSetup(){
+  Object.keys(SETUP_DATA).forEach(cat=>{
+    const el = document.getElementById('checklist-'+cat);
+    if(!el) return;
+    el.innerHTML = SETUP_DATA[cat].map(item=>`
+      <div class="setup-item ${setupChecks[item.id]?'done':''}" onclick="toggleSetup('${item.id}')">
+        <div class="setup-checkbox">${setupChecks[item.id]?'✓':''}</div>
+        <div>
+          <div class="setup-label">${item.label}</div>
+          ${item.sub?`<div class="setup-sublabel">${item.sub}</div>`:''}
+        </div>
+      </div>
+    `).join('');
+  });
+
+  // Progress
+  const allItems = Object.values(SETUP_DATA).flat();
+  const done = allItems.filter(i=>setupChecks[i.id]).length;
+  const pct = allItems.length > 0 ? Math.round(done/allItems.length*100) : 0;
+  const badge = document.getElementById('sb-setup-count');
+  if(badge) badge.textContent = pct+'%';
+  const txt = document.getElementById('setup-progress-text');
+  if(txt) txt.textContent = `${done} / ${allItems.length} steps complete — ${pct}%`;
+}
+
+function toggleSetup(id){
+  setupChecks[id] = !setupChecks[id];
+  localStorage.setItem(STORE_SETUP, JSON.stringify(setupChecks));
+  renderSetup();
+}
+
+// Initial render
+renderAll();
+renderNotes();
+renderSetup();
+</script>
+</body>
+</html>

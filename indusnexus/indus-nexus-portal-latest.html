@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indus Nexus — The Intelligent Layer of Global Trade</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bk:#030303;--d1:#080808;--d2:#0e0e0e;--d3:#161616;
+  --gold:#c9a84c;--gold-l:#dfc373;--gg:rgba(201,168,76,.12);
+  --w:#f5f2ec;--w70:rgba(245,242,236,.7);--w50:rgba(245,242,236,.5);
+  --w30:rgba(245,242,236,.3);--w15:rgba(245,242,236,.15);--w08:rgba(245,242,236,.08);--w04:rgba(245,242,236,.04);
+  --em:#34d399;--cy:#38bdf8;--violet:#a78bfa;--rose:#fb7185;
+  --sf:'Playfair Display',Georgia,serif;--ss:'Inter',-apple-system,sans-serif;--mn:'JetBrains Mono',monospace;
+  --e:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--ss);background:var(--bk);color:var(--w);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--gold);color:var(--bk)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bk)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+img{display:block;width:100%;height:100%;object-fit:cover}
+a{text-decoration:none;color:inherit}
+canvas#ptc{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.3rem 2.5rem;display:flex;align-items:center;justify-content:space-between;transition:all .5s var(--e)}
+.nav.s{background:rgba(3,3,3,.93);backdrop-filter:blur(24px);padding:.9rem 2.5rem;border-bottom:1px solid var(--w08)}
+.nl{font-family:var(--sf);font-size:1.15rem;font-weight:700}.nl i{color:var(--gold);font-style:normal}
+.nlinks{display:flex;align-items:center;gap:2rem}
+.nlinks a{color:var(--w50);font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;transition:color .3s}
+.nlinks a:hover{color:var(--gold)}
+.nc{background:var(--gold)!important;color:var(--bk)!important;padding:.45rem 1.2rem;border-radius:100px;font-weight:600!important;transition:all .3s!important}
+.nc:hover{box-shadow:0 6px 22px rgba(201,168,76,.35);transform:translateY(-1px)}
+.nt{display:none;background:0;border:0;cursor:pointer;z-index:101}
+.nt span{display:block;width:20px;height:1.5px;background:var(--w);margin:4.5px 0;transition:all .3s}
+.nt.on span:nth-child(1){transform:rotate(45deg) translate(3.5px,4.5px)}.nt.on span:nth-child(2){opacity:0}.nt.on span:nth-child(3){transform:rotate(-45deg) translate(3.5px,-4.5px)}
+@media(max-width:800px){.nav{padding:1rem 1.5rem}.nt{display:block}.nlinks{position:fixed;inset:0;background:rgba(3,3,3,.98);flex-direction:column;justify-content:center;align-items:center;gap:2rem;opacity:0;pointer-events:none;transition:opacity .4s}.nlinks.op{opacity:1;pointer-events:all}.nlinks a{font-size:1rem}}
+
+/* HERO */
+.hero{height:100vh;position:relative;overflow:hidden;display:flex;align-items:center}
+.hcar{position:absolute;inset:0}.hsl{position:absolute;inset:0;opacity:0;transition:opacity 1.8s ease}.hsl.on{opacity:1}
+.hsl img{filter:brightness(.18) saturate(.5);transform:scale(1.06);animation:sz 22s ease-in-out infinite alternate}
+@keyframes sz{0%{transform:scale(1.06)}100%{transform:scale(1.13)}}
+.hov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(3,3,3,.7),rgba(3,3,3,.3) 50%,rgba(201,168,76,.03) 80%,rgba(3,3,3,.6));z-index:1}
+.hgr{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");z-index:2;pointer-events:none}
+.hc{position:relative;z-index:3;padding:0 3rem;max-width:700px}
+.htag{font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.28em;color:var(--gold);margin-bottom:2rem;opacity:0;animation:rI 1s var(--e) .3s forwards}
+.hero h1{font-family:var(--sf);font-size:clamp(2.8rem,7.5vw,6.5rem);font-weight:400;line-height:.92;letter-spacing:-.03em;margin-bottom:1.2rem;opacity:0;animation:rI 1.2s var(--e) .45s forwards}
+.hero h1 em{font-style:italic;font-weight:300;color:var(--gold-l)}
+.hero-tl{font-family:var(--sf);font-size:clamp(1rem,2vw,1.3rem);font-weight:300;font-style:italic;color:var(--gold-l);margin-bottom:1.5rem;opacity:0;animation:rI 1s var(--e) .6s forwards}
+.hero-sub{font-size:.95rem;font-weight:300;color:var(--w50);line-height:1.7;max-width:480px;margin-bottom:2.5rem;opacity:0;animation:rI 1s var(--e) .72s forwards}
+.hero-btns{display:flex;gap:.7rem;flex-wrap:wrap;opacity:0;animation:rI 1s var(--e) .88s forwards}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.8rem;font-family:var(--ss);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;border-radius:100px;border:none;cursor:pointer;transition:all .35s var(--e)}
+.bG{background:var(--gold);color:var(--bk)}.bG:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(201,168,76,.35)}
+.bO{background:0;color:var(--w50);border:1px solid var(--w15)}.bO:hover{color:var(--gold);border-color:var(--gold)}
+.btn svg{width:13px;height:13px;transition:transform .3s}.btn:hover svg{transform:translateX(3px)}
+@keyframes rI{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:translateY(0)}}
+.hero-ring{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:3;width:340px;height:340px;pointer-events:none}
+.rc{width:100%;height:100%;border-radius:50%;border:1px solid var(--w08);animation:sp 35s linear infinite;position:relative}
+@keyframes sp{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.ro{position:absolute;width:58px;height:58px;border-radius:50%;overflow:hidden;border:2px solid var(--w15);box-shadow:0 6px 22px rgba(0,0,0,.5);pointer-events:all;cursor:pointer;transition:all .4s var(--e)}
+.ro:hover{transform:scale(1.35)!important;border-color:var(--gold);box-shadow:0 10px 30px rgba(201,168,76,.3);z-index:5}
+.ro img{animation:cs 35s linear infinite}@keyframes cs{0%{transform:rotate(0)}100%{transform:rotate(-360deg)}}
+.rctr{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.rctr .rn{font-family:var(--sf);font-size:2.6rem;font-weight:700;color:var(--gold);line-height:1}
+.rctr .rl{font-size:.48rem;text-transform:uppercase;letter-spacing:.15em;color:var(--w30)}
+@media(max-width:1000px){.hero-ring{display:none}}
+.hscr{position:absolute;bottom:2rem;left:3rem;z-index:3;display:flex;align-items:center;gap:.6rem;opacity:0;animation:rI 1s var(--e) 1.1s forwards}
+.hscr span{font-size:.48rem;text-transform:uppercase;letter-spacing:.2em;color:var(--w30)}
+.scl{width:35px;height:1px;background:var(--w08);position:relative;overflow:hidden}
+.scl::after{content:'';position:absolute;left:-100%;top:0;width:100%;height:100%;background:var(--gold);animation:scA 2.5s ease-in-out infinite}
+@keyframes scA{0%{left:-100%}50%{left:100%}100%{left:100%}}
+
+/* MARQUEE */
+.cmq{padding:1.2rem 0;border-top:1px solid var(--w08);border-bottom:1px solid var(--w08);overflow:hidden;position:relative;z-index:1;background:var(--d1)}
+.cmt{display:flex;gap:0;animation:cmS 28s linear infinite;width:max-content}
+.cmi{display:flex;align-items:center;gap:.6rem;padding:0 2rem;white-space:nowrap}
+.cmi .cf{font-size:1.5rem;filter:grayscale(.6);transition:filter .3s}.cmi:hover .cf{filter:grayscale(0)}
+.cmi .cn{font-size:.65rem;font-weight:600;color:var(--w50);text-transform:uppercase;letter-spacing:.06em}
+.cms{color:var(--gold);opacity:.3;font-size:.5rem;padding:0 .4rem}
+@keyframes cmS{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* TAGLINE */
+.tls{padding:5rem 3rem;text-align:center;position:relative}
+.tls::before{content:'';position:absolute;top:50%;left:50%;width:400px;height:400px;background:radial-gradient(circle,var(--gg),transparent 70%);transform:translate(-50%,-50%);pointer-events:none}
+.tls p{font-family:var(--sf);font-size:clamp(1.1rem,2.2vw,1.6rem);font-weight:300;line-height:1.65;color:var(--w50);max-width:680px;margin:0 auto;position:relative;z-index:1}
+.tls strong{color:var(--gold-l);font-weight:500}.tls em{font-style:italic;color:var(--w)}
+.tls .th{font-size:.58rem;color:var(--w30);text-transform:uppercase;letter-spacing:.15em;margin-top:1.2rem}
+
+/* SECTIONS */
+.sec{padding:6rem 3rem;position:relative;z-index:1}
+.si{max-width:1240px;margin:0 auto}
+.tg{font-size:.52rem;font-weight:600;text-transform:uppercase;letter-spacing:.25em;color:var(--gold);display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
+.tg::before{content:'';width:22px;height:1px;background:var(--gold)}
+.hd{font-family:var(--sf);font-size:clamp(1.7rem,3.8vw,2.8rem);font-weight:400;line-height:1.08;letter-spacing:-.02em;max-width:600px;margin-bottom:.7rem}
+.hd em{font-style:italic;font-weight:300;color:var(--gold-l)}
+.sb{font-size:.85rem;font-weight:300;color:var(--w50);line-height:1.7;max-width:450px}
+.r{opacity:0;transform:translateY(28px);transition:all .8s var(--e)}.r.v{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+@media(max-width:600px){.sec{padding:4rem 1.5rem}.tls{padding:3.5rem 1.5rem}}
+
+/* CORRIDORS */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.6rem;margin-top:2.5rem}
+.cc{position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:8px;border:1px solid var(--w08);cursor:default;transition:all .45s var(--e)}
+.cc:hover{border-color:var(--gold);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.cc img{transition:transform .6s var(--e),filter .4s;filter:brightness(.3) saturate(.6)}.cc:hover img{transform:scale(1.12);filter:brightness(.45) saturate(.9)}
+.ccov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(3,3,3,.9) 100%);z-index:1}
+.ccdir{position:absolute;top:.5rem;right:.5rem;z-index:2;font-size:.4rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.15rem .4rem;border-radius:100px;background:var(--gg);border:1px solid rgba(201,168,76,.25);color:var(--gold);backdrop-filter:blur(6px)}
+.ccc{position:absolute;bottom:0;left:0;right:0;padding:1rem;z-index:2}
+.cc .cf2{font-size:1.4rem;margin-bottom:.25rem;display:block}
+.cc h4{font-family:var(--sf);font-size:.88rem;font-weight:500;margin-bottom:.12rem}
+.cc p{font-size:.55rem;color:var(--w50);line-height:1.3}
+
+/* FULLWIDTH */
+.fw{position:relative;height:50vh;overflow:hidden}
+.fw img{position:absolute;inset:0;filter:brightness(.2) saturate(.5)}
+.fwov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,3,3,.3),rgba(3,3,3,.6));z-index:1}
+.fwc{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+.fw h2{font-family:var(--sf);font-size:clamp(1.5rem,4vw,2.5rem);font-weight:400;line-height:1.12;max-width:550px}
+.fw h2 em{font-style:italic;color:var(--gold-l);font-weight:300}
+.fw p{font-size:.82rem;color:var(--w50);margin-top:.6rem;max-width:380px;font-weight:300}
+.fw .fwt{font-size:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);margin-bottom:.8rem}
+
+/* SECTOR + PRODUCTS */
+.sblk{margin-top:3rem}
+.shdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid var(--w08)}
+.stit{font-family:var(--sf);font-size:1.25rem;font-weight:500;display:flex;align-items:center;gap:.4rem}
+.stit .sico{font-size:1.1rem}
+.shint{font-size:.48rem;color:var(--w30);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:.3rem}
+.shint svg{width:12px;height:12px;stroke:var(--w30);fill:none;stroke-width:2;animation:swH 2s ease-in-out infinite}
+@keyframes swH{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+.ps{display:flex;gap:1rem;overflow-x:auto;padding-bottom:.7rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.ps::-webkit-scrollbar{height:2px}.ps::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+.pc{min-width:270px;max-width:270px;scroll-snap-align:start;border:1px solid var(--w08);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .4s var(--e);background:var(--d1);flex-shrink:0}
+.pc:hover{border-color:var(--gold);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.pcimg{height:175px;overflow:hidden;position:relative}
+.pcimg img{transition:transform .5s var(--e);filter:brightness(.55) saturate(.8)}.pc:hover .pcimg img{transform:scale(1.1);filter:brightness(.7) saturate(1)}
+.pcdm{position:absolute;top:.6rem;left:.6rem;z-index:2;font-size:.46rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.18rem .55rem;border-radius:100px;backdrop-filter:blur(8px)}
+.pcdm.hi{background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.4);color:var(--gold)}
+.pcdm.bs{background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);color:var(--em)}
+.pcdm.tr{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:var(--violet)}
+.pcor{position:absolute;bottom:.5rem;right:.5rem;z-index:2;display:flex;gap:.12rem}
+.pcor span{width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;font-size:.68rem;border:1px solid var(--w15)}
+.pcb{padding:1rem}
+.pc h5{font-family:var(--sf);font-size:.92rem;font-weight:500;margin-bottom:.22rem;line-height:1.2}
+.pc .pd2{font-size:.66rem;color:var(--w50);line-height:1.4;margin-bottom:.5rem}
+.pcsp{display:flex;flex-wrap:wrap;gap:.2rem}
+.pcsp span{background:var(--w04);border:1px solid var(--w08);padding:.1rem .4rem;border-radius:100px;font-size:.48rem;color:var(--w30);font-weight:500}
+.pcbt{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;border-top:1px solid var(--w08)}
+.pcpr{font-family:var(--mn);font-size:.62rem;color:var(--gold)}
+.pcac{font-size:.48rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--w30);display:flex;align-items:center;gap:.2rem;transition:color .3s}
+.pc:hover .pcac{color:var(--gold)}
+.pcac svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;transition:transform .3s}
+.pc:hover .pcac svg{transform:translateX(3px)}
+
+/* ===== PARTNERSHIP BANNER ===== */
+.partner-banner{position:relative;z-index:1;padding:4.5rem 3rem;background:linear-gradient(135deg,var(--d2),var(--d3));border-top:1px solid var(--w08);border-bottom:1px solid var(--w08);overflow:hidden}
+.partner-banner::before{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,.08),transparent 70%);pointer-events:none}
+.pb-inner{max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:1}
+.pb-icon{font-size:2rem;margin-bottom:1rem}
+.pb-inner h2{font-family:var(--sf);font-size:clamp(1.4rem,3vw,2.2rem);font-weight:400;line-height:1.2;margin-bottom:1rem}
+.pb-inner h2 em{font-style:italic;color:var(--gold-l);font-weight:300}
+.pb-inner p{font-size:.88rem;color:var(--w50);line-height:1.7;max-width:600px;margin:0 auto 2rem}
+.pb-cta{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2.2rem;background:var(--gold);color:var(--bk);font-family:var(--ss);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;border-radius:100px;cursor:pointer;border:none;transition:all .35s var(--e)}
+.pb-cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(201,168,76,.35)}
+.pb-cta svg{width:14px;height:14px;transition:transform .3s}
+.pb-cta:hover svg{transform:translateX(3px)}
+
+/* ===== PRODUCT MODAL + CRM ===== */
+.mbg{position:fixed;inset:0;background:rgba(3,3,3,.85);backdrop-filter:blur(12px);z-index:200;opacity:0;pointer-events:none;transition:opacity .4s}
+.mbg.open{opacity:1;pointer-events:all}
+.mdl{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.95);z-index:201;background:var(--d1);border:1px solid var(--w08);border-radius:10px;max-width:500px;width:92%;max-height:85vh;overflow-y:auto;opacity:0;pointer-events:none;transition:all .4s var(--e)}
+.mdl.open{opacity:1;pointer-events:all;transform:translate(-50%,-50%) scale(1)}
+.mdl::-webkit-scrollbar{width:2px}.mdl::-webkit-scrollbar-thumb{background:var(--gold)}
+.mclose{position:sticky;top:0;right:0;float:right;margin:.8rem;background:var(--w04);border:1px solid var(--w08);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--w50);font-size:.9rem;transition:all .3s;z-index:5}
+.mclose:hover{background:var(--w08);color:var(--gold)}
+.mimg{height:200px;overflow:hidden;margin-top:-2.5rem}
+.mcont{padding:1.5rem}
+.mcont .mcat{font-size:.55rem;color:var(--gold);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem}
+.mcont h3{font-family:var(--sf);font-size:1.3rem;font-weight:500;margin-bottom:.4rem}
+.mcont .mdesc{font-size:.8rem;color:var(--w50);line-height:1.6;margin-bottom:1.2rem}
+.mspecs{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.2rem}
+.msp{padding:.5rem .7rem;background:var(--w04);border:1px solid var(--w08);border-radius:4px}
+.msp .mspl{font-size:.48rem;color:var(--w30);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.1rem}
+.msp .mspv{font-size:.75rem;font-weight:500}
+.menq{width:100%;padding:.75rem;background:var(--gold);color:var(--bk);border:none;border-radius:100px;font-family:var(--ss);font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;transition:all .3s}
+.menq:hover{box-shadow:0 6px 22px rgba(201,168,76,.3)}
+
+/* CRM COMMENTS */
+.mcm{margin-top:1.2rem;border-top:1px solid var(--w08);padding-top:1rem}
+.mcm h4{font-size:.58rem;color:var(--w30);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.7rem;display:flex;align-items:center;gap:.4rem}
+.mcm h4 .cnt{background:var(--gold);color:var(--bk);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:.45rem;font-weight:700}
+.cmt2{padding:.5rem 0;border-bottom:1px solid var(--w04)}
+.cmt2 .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:.15rem}
+.cmt2 .cna{font-size:.68rem;font-weight:600}.cmt2 .cdt{font-size:.5rem;color:var(--w30)}
+.cmt2 .ctx{font-size:.7rem;color:var(--w50);line-height:1.45}
+.cmt2.staff .cna{color:var(--gold)}
+.cinp{display:flex;gap:.4rem;margin-top:.7rem}
+.cinp input{flex:1;padding:.5rem .7rem;background:var(--bk);border:1px solid var(--w08);border-radius:4px;color:var(--w);font-family:var(--ss);font-size:.72rem;outline:none}
+.cinp input:focus{border-color:var(--gold)}
+.cinp button{padding:.5rem .9rem;background:var(--gold);color:var(--bk);border:none;border-radius:4px;font-family:var(--ss);font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all .3s}
+.cinp button:hover{box-shadow:0 4px 15px rgba(201,168,76,.3)}
+
+/* ENQUIRY */
+.eq{background:var(--d2)}
+.eql{display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;margin-top:2.5rem;align-items:start}
+.eqf{max-width:480px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.6rem}
+.fg{display:flex;flex-direction:column;gap:.22rem}.fg.fu{grid-column:1/-1}
+.fg label{font-size:.48rem;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--w50)}
+.fg input,.fg select,.fg textarea{padding:.65rem .75rem;background:var(--bk);border:1px solid var(--w08);border-radius:4px;color:var(--w);font-family:var(--ss);font-size:.78rem;outline:none;transition:border-color .3s;resize:vertical}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg select option{background:var(--d1)}
+.sbtn{margin-top:.8rem;width:100%;padding:.78rem;background:var(--gold);color:var(--bk);border:none;border-radius:100px;font-family:var(--ss);font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;transition:all .3s}
+.sbtn:hover{box-shadow:0 8px 25px rgba(201,168,76,.3);transform:translateY(-2px)}
+.ok{display:none;margin-top:.5rem;padding:.6rem;text-align:center;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:4px;font-size:.75rem;color:var(--em)}
+.eqs h3{font-family:var(--sf);font-size:1.6rem;font-weight:400;line-height:1.12;margin-bottom:.7rem}
+.eqs h3 em{font-style:italic;color:var(--gold-l);font-weight:300}
+.eqs>p{font-size:.8rem;color:var(--w50);line-height:1.7;margin-bottom:1rem}
+.bds{display:flex;flex-wrap:wrap;gap:.3rem}
+.bd{padding:.25rem .6rem;background:var(--w04);border:1px solid var(--w08);border-radius:100px;font-size:.5rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--w50)}
+@media(max-width:800px){.eql{grid-template-columns:1fr;gap:2.5rem}.fr{grid-template-columns:1fr}}
+
+/* FOOTER */
+.ft{padding:2.5rem 3rem 1rem;border-top:1px solid var(--w08);position:relative;z-index:1}
+.fti{max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.ftl{font-family:var(--sf);font-size:.88rem;font-weight:700}.ftl i{color:var(--gold);font-style:normal}
+.ftm{font-size:.55rem;color:var(--w30)}
+.ftr{display:flex;gap:1rem}.ftr a{font-size:.55rem;color:var(--w30);transition:color .3s}.ftr a:hover{color:var(--gold)}
+@media(max-width:600px){.ft{padding:2rem 1.5rem 1rem}.fti{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+
+<canvas id="ptc"></canvas>
+
+<nav class="nav" id="nav">
+  <a href="#" class="nl">Indus<i>Nexus</i></a>
+  <button class="nt" id="nt"><span></span><span></span><span></span></button>
+  <div class="nlinks" id="nlinks">
+    <a href="#corridors">Corridors</a>
+    <a href="#sectors">Products</a>
+    <a href="#partner">Partner With Us</a>
+    <a href="#enquiry" class="nc">Get a Quote</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hcar" id="hCar"></div>
+  <div class="hov"></div><div class="hgr"></div>
+  <div class="hc">
+    <div class="htag">London · Intelligent Global Distribution</div>
+    <h1>Where Trade<br><em>Evolves.</em></h1>
+    <p class="hero-tl">"Connecting continents. Powering commerce."</p>
+    <p class="hero-sub">AI enabled distribution and supply chain services across UK, Europe, Asia Pacific, and the Middle East. Inward. Outward. Your growth partner.</p>
+    <div class="hero-btns">
+      <a href="#sectors" class="btn bG">Explore Products <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="#partner" class="btn bO">Partner With Us</a>
+    </div>
+  </div>
+  <div class="hero-ring" id="hRing"></div>
+  <div class="hscr"><span>Scroll to explore</span><div class="scl"></div></div>
+</section>
+
+<div class="cmq"><div class="cmt" id="cmTrack"></div></div>
+
+<!-- TAGLINE: SINDH GLIMPSE -->
+<div class="tls">
+  <p class="r">Born from the <strong>trade routes of Sindh</strong> — where civilisation first learned to <em>connect, exchange, and prosper</em>. Today, <strong>Indus Nexus</strong> is the intelligent layer powering <em>global commerce</em> across three continents.</p>
+  <p class="th r d1">Rooted in Sindh. Engineered in London.</p>
+</div>
+
+<div class="fw">
+  <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&q=80" alt="">
+  <div class="fwov"></div>
+  <div class="fwc"><div class="fwt r">Global Logistics</div><h2 class="r">"Every product has a <em>journey.</em><br>We make it <em>intelligent."</em></h2></div>
+</div>
+
+<section class="sec" id="corridors">
+  <div class="si">
+    <div class="tg r">Trade Corridors</div>
+    <h2 class="hd r d1">Three continents.<br><em>One nexus.</em></h2>
+    <p class="sb r d2">Bidirectional trade. Asia Pacific, UK and Europe, Middle East.</p>
+    <div class="cg r d3" id="cGrid"></div>
+  </div>
+</section>
+
+<div class="fw">
+  <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80" alt="">
+  <div class="fwov"></div>
+  <div class="fwc"><div class="fwt r">Energy</div><h2 class="r">"Powering tomorrow's<br><em>infrastructure, today."</em></h2></div>
+</div>
+
+<section class="sec" id="sectors">
+  <div class="si">
+    <div class="tg r">What Moves Through the Nexus</div>
+    <h2 class="hd r d1">High demand products.<br><em>Globally sourced.</em></h2>
+    <p class="sb r d2">Click any product for full specs, customer enquiries, and to submit yours.</p>
+    <div id="secCont"></div>
+  </div>
+</section>
+
+<div class="fw">
+  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80" alt="">
+  <div class="fwov"></div>
+  <div class="fwc"><div class="fwt r">Smart Distribution</div><h2 class="r">"Source smarter.<br><em>Deliver faster."</em></h2></div>
+</div>
+
+<!-- PARTNERSHIP BANNER -->
+<div class="partner-banner" id="partner">
+  <div class="pb-inner">
+    <div class="pb-icon">🤝</div>
+    <h2 class="r">Beyond what you see here,<br>we deal in a <em>much wider</em> range of<br>products and categories.</h2>
+    <p class="r d1">Whatever your sector, whatever your scale, we could be your potential partner in maximising growth. From niche industrial components to large volume consumer goods, if it moves between continents, we can move it for you. Reach out and let's explore what's possible together.</p>
+    <a href="#enquiry" class="pb-cta r d2">Let's Talk Partnership <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+  </div>
+</div>
+
+<section class="sec eq" id="enquiry">
+  <div class="si">
+    <div class="eql">
+      <div class="eqf r">
+        <div class="tg">Enquire Now</div>
+        <h2 class="hd" style="margin-bottom:1.2rem">"Let's move<br><em>something."</em></h2>
+        <div class="fr">
+          <div class="fg"><label>Name</label><input type="text" id="fN" placeholder="Full name"></div>
+          <div class="fg"><label>Company</label><input type="text" placeholder="Company"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Email</label><input type="email" id="fE" placeholder="you@company.com"></div>
+          <div class="fg"><label>Phone</label><input type="tel" placeholder="+44 ..."></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Product / Sector</label><select id="fC"><option value="">Select</option><option>Solar & Energy</option><option>Consumer Electronics</option><option>LED & Lighting</option><option>CCTV & Security</option><option>Hardware & Tools</option><option>Other (tell us below)</option></select></div>
+          <div class="fg"><label>Direction</label><select><option>Inward (import to UK/EU)</option><option>Outward (export from UK/EU)</option><option>Cross trade</option></select></div>
+        </div>
+        <div class="fr"><div class="fg fu"><label>Details</label><textarea rows="3" placeholder="Products, quantities, origin, destination, partnership interest..."></textarea></div></div>
+        <button class="sbtn" id="sub">Submit Enquiry</button>
+        <div class="ok" id="ok">✓ Received. We respond within 48 hours.</div>
+      </div>
+      <div class="eqs r d2">
+        <h3>"Trade moves when<br><em>trust moves."</em></h3>
+        <p>Whether importing to the UK, exporting to the Gulf, or exploring a new category entirely. We handle the full chain. Let's grow together.</p>
+        <div class="bds">
+          <span class="bd">Inward + Outward</span><span class="bd">Multi Origin</span>
+          <span class="bd">RoHS</span><span class="bd">CE</span><span class="bd">UKCA</span>
+          <span class="bd">48hr Quotes</span><span class="bd">Traceability</span><span class="bd">Partnership</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ft">
+  <div class="fti">
+    <div class="ftl">Indus<i>Nexus</i></div>
+    <div class="ftm">&copy; 2026 Indus Nexus Ltd. London, England and Wales.</div>
+    <div class="ftr"><a href="mailto:info@indusnexus.com">info@indusnexus.com</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="mbg" id="mbg"></div>
+<div class="mdl" id="mdl">
+  <div class="mclose" id="mc">&times;</div>
+  <div class="mimg" id="mimg"></div>
+  <div class="mcont" id="mcont"></div>
+</div>
+
+<script>
+const heroImgs=['https://images.unsplash.com/photo-1494412574643-ff11b0a5eb19?w=1920&q=80','https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&q=80','https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80','https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80','https://images.unsplash.com/photo-1474181628748-27a2056da1fd?w=1920&q=80','https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=1920&q=80'];
+const ctry=[
+  {f:'🇬🇧',n:'United Kingdom',d:'Hub',img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=70'},
+  {f:'🇪🇺',n:'Europe',d:'In + Out',img:'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&q=70'},
+  {f:'🇦🇪',n:'UAE',d:'In + Out',img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70'},
+  {f:'🇸🇦',n:'Saudi Arabia',d:'Inward',img:'https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=400&q=70'},
+  {f:'🇨🇳',n:'China',d:'Source',img:'https://images.unsplash.com/photo-1474181628748-27a2056da1fd?w=400&q=70'},
+  {f:'🇻🇳',n:'Vietnam',d:'Source',img:'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=400&q=70'},
+  {f:'🇹🇭',n:'Thailand',d:'Source',img:'https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?w=400&q=70'},
+  {f:'🇲🇾',n:'Malaysia',d:'Source',img:'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400&q=70'},
+  {f:'🇸🇬',n:'Singapore',d:'Hub',img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=70'},
+  {f:'🇮🇩',n:'Indonesia',d:'Source',img:'https://images.unsplash.com/photo-1555899434-94d1368aa7af?w=400&q=70'},
+  {f:'🇮🇳',n:'India',d:'Source',img:'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&q=70'},
+  {f:'🇵🇰',n:'Pakistan',d:'Outward',img:'https://images.unsplash.com/photo-1567157577867-05ccb1388e13?w=400&q=70'},
+];
+const sectors=[
+  {icon:'☀️',name:'Solar & Energy',prods:[
+    {name:'550W Mono Solar Panel',desc:'Half-cut PERC cells. Tier 1. 25yr warranty.',specs:{Power:'550W',Type:'Mono PERC',Efficiency:'21.3%',Warranty:'25yr'},o:['🇨🇳','🇻🇳'],dm:'hi',img:'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=500&q=70',comments:[{n:'James R.',d:'12 Mar',t:'Need 2,000 units CIF Southampton. Can you quote?',s:false},{n:'Indus Nexus',d:'12 Mar',t:'Quoting from Tier 1 Jiangsu suppliers. Pricing within 24hrs.',s:true}]},
+    {name:'48V 200Ah LiFePO4 Battery',desc:'6,000+ cycles. Integrated BMS. Stackable.',specs:{Capacity:'200Ah',Voltage:'48V',Chemistry:'LiFePO4',Cycles:'6000+'},o:['🇨🇳'],dm:'tr',img:'https://images.unsplash.com/photo-1619641805634-e1af04be04e6?w=500&q=70',comments:[{n:'Ahmed K.',d:'10 Mar',t:'500 units to Dubai. Lead time?',s:false}]},
+    {name:'10kW Hybrid Inverter',desc:'On/off grid. MPPT. WiFi monitoring. CE + G99.',specs:{Power:'10kW',Type:'Hybrid',Tracking:'MPPT',Monitor:'WiFi'},o:['🇨🇳'],dm:'hi',img:'https://images.unsplash.com/photo-1559302504-64aae6ca6b6d?w=500&q=70',comments:[]},
+    {name:'5kW Complete Home Solar Kit',desc:'Panels + inverter + battery + mounting. Plug and play.',specs:{System:'5kW',Package:'All-in-One',Cert:'CE/UKCA',Warranty:'10yr'},o:['🇨🇳','🇲🇾'],dm:'bs',img:'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=500&q=70',comments:[]},
+  ]},
+  {icon:'📱',name:'Consumer Electronics',prods:[
+    {name:'TWS ANC Earbuds Pro',desc:'Active noise cancellation. 36hr battery. IPX5.',specs:{ANC:'Active',Battery:'36hr',Rating:'IPX5',BT:'5.3'},o:['🇨🇳','🇻🇳'],dm:'bs',img:'https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=500&q=70',comments:[{n:'Sarah M.',d:'8 Mar',t:'White label available? MOQ?',s:false},{n:'Indus Nexus',d:'8 Mar',t:'MOQ 3,000 for OEM branding + custom packaging.',s:true}]},
+    {name:'10.1" Android Tablet',desc:'Octa core. 6GB/128GB. 4G LTE. Metal body.',specs:{Display:'10.1"',RAM:'6GB',Storage:'128GB',Network:'4G LTE'},o:['🇨🇳'],dm:'hi',img:'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=500&q=70',comments:[]},
+    {name:'20000mAh Fast Charge Power Bank',desc:'65W PD output. Triple port. LED display.',specs:{Capacity:'20000mAh',Output:'65W PD',Ports:'Triple',Display:'LED'},o:['🇨🇳','🇻🇳'],dm:'tr',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=70',comments:[]},
+  ]},
+  {icon:'💡',name:'LED & Lighting',prods:[
+    {name:'200W Solar Street Light',desc:'Integrated solar. Dusk to dawn. IP66. Remote.',specs:{Power:'200W',Rating:'IP66',Sensor:'Auto',Panel:'Integrated'},o:['🇨🇳'],dm:'hi',img:'https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=500&q=70',comments:[{n:'MunirCo',d:'5 Mar',t:'1,500 units for Karachi municipality. FOB Shenzhen?',s:false}]},
+    {name:'600x600 LED Panel 40W',desc:'Commercial grade. Flicker free. 4000K. 50Khr.',specs:{Wattage:'40W',Size:'600x600',CCT:'4000K',Life:'50Khr'},o:['🇨🇳','🇲🇾'],dm:'tr',img:'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=500&q=70',comments:[]},
+  ]},
+  {icon:'📡',name:'CCTV & Security',prods:[
+    {name:'4K PoE IP Camera System (8ch)',desc:'8ch NVR + 8 cams. Night vision 30m. 2TB HDD.',specs:{Resolution:'4K',Channels:'8ch',IR:'30m',Storage:'2TB'},o:['🇨🇳'],dm:'bs',img:'https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=500&q=70',comments:[{n:'SecureTech UK',d:'7 Mar',t:'200 systems for Manchester residential dev.',s:false}]},
+    {name:'5G Industrial Router',desc:'Dual SIM failover. VPN. DIN rail. -40~75°C.',specs:{Network:'5G','SIM':'Dual',Mount:'DIN Rail',VPN:'Yes'},o:['🇨🇳','🇹🇭'],dm:'tr',img:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&q=70',comments:[]},
+  ]},
+  {icon:'🏗️',name:'Hardware & Tools',prods:[
+    {name:'21V Brushless Drill Kit',desc:'80Nm torque. 2x 4Ah batteries. Carry case.',specs:{Voltage:'21V',Motor:'Brushless',Torque:'80Nm',Batteries:'2x4Ah'},o:['🇨🇳'],dm:'hi',img:'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500&q=70',comments:[]},
+    {name:'1500W Inverter Generator',desc:'Pure sine wave. 58dB quiet. USB + AC. 6hr.',specs:{Power:'1500W',Wave:'Pure Sine',Noise:'58dB',Runtime:'6hr'},o:['🇨🇳'],dm:'tr',img:'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=500&q=70',comments:[]},
+  ]},
+];
+
+// HERO CAROUSEL
+const hC=document.getElementById('hCar');
+heroImgs.forEach((s,i)=>{const d=document.createElement('div');d.className='hsl'+(i===0?' on':'');d.innerHTML=`<img src="${s}">`;hC.appendChild(d)});
+let hI=0;setInterval(()=>{document.querySelectorAll('.hsl').forEach(s=>s.classList.remove('on'));hI=(hI+1)%heroImgs.length;document.querySelectorAll('.hsl')[hI].classList.add('on')},3500);
+
+// HERO RING
+const hRing=document.getElementById('hRing');
+const rImgs=sectors.flatMap(s=>s.prods.map(p=>p.img)).slice(0,8);
+let rH='<div class="rc">';
+rImgs.forEach((img,i)=>{const a=(i/rImgs.length)*360,rad=(a-90)*Math.PI/180,r=148;const x=Math.cos(rad)*r,y=Math.sin(rad)*r;rH+=`<div class="ro" style="left:calc(50%+${x}px - 29px);top:calc(50%+${y}px - 29px)"><img src="${img}"></div>`});
+rH+=`</div><div class="rctr"><div class="rn">${sectors.reduce((a,s)=>a+s.prods.length,0)}</div><div class="rl">Products</div></div>`;
+hRing.innerHTML=rH;
+
+// MARQUEE
+const cmT=document.getElementById('cmTrack');let cmH='';
+for(let r=0;r<3;r++)ctry.forEach(c=>{cmH+=`<div class="cmi"><span class="cf">${c.f}</span><span class="cn">${c.n}</span></div><span class="cms">·</span>`});
+cmT.innerHTML=cmH;
+
+// CORRIDORS
+const cG=document.getElementById('cGrid');
+ctry.forEach(c=>{const d=document.createElement('div');d.className='cc';d.innerHTML=`<img src="${c.img}" alt="${c.n}" loading="lazy"><div class="ccov"></div><span class="ccdir">${c.d}</span><div class="ccc"><span class="cf2">${c.f}</span><h4>${c.n}</h4><p>${c.d}</p></div>`;cG.appendChild(d)});
+
+// SECTORS
+const sC=document.getElementById('secCont');
+sectors.forEach((s,si)=>{
+  const b=document.createElement('div');b.className='sblk r';
+  let pH='';
+  s.prods.forEach((p,pi)=>{
+    const dc=p.dm==='hi'?'hi':p.dm==='bs'?'bs':'tr';
+    const dl=p.dm==='hi'?'High Demand':p.dm==='bs'?'Best Seller':'Trending';
+    pH+=`<div class="pc" data-s="${si}" data-p="${pi}">
+      <div class="pcimg"><img src="${p.img}" loading="lazy"><span class="pcdm ${dc}">${dl}</span><div class="pcor">${p.o.map(o=>`<span>${o}</span>`).join('')}</div></div>
+      <div class="pcb"><h5>${p.name}</h5><p class="pd2">${p.desc}</p><div class="pcsp">${Object.values(p.specs).map(sp=>`<span>${sp}</span>`).join('')}</div></div>
+      <div class="pcbt"><span class="pcpr">RFQ</span><span class="pcac">View Details <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></div>`;
+  });
+  b.innerHTML=`<div class="shdr"><div class="stit"><span class="sico">${s.icon}</span>${s.name}</div><div class="shint">Scroll <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></div><div class="ps">${pH}</div>`;
+  sC.appendChild(b);
+});
+
+// MODAL
+const mbg=document.getElementById('mbg'),mdl=document.getElementById('mdl'),mc2=document.getElementById('mc'),mimg=document.getElementById('mimg'),mcont=document.getElementById('mcont');
+function openM(si,pi){
+  const p=sectors[si].prods[pi];
+  mimg.innerHTML=`<img src="${p.img}">`;
+  let spH='';Object.entries(p.specs).forEach(([k,v])=>{spH+=`<div class="msp"><div class="mspl">${k}</div><div class="mspv">${v}</div></div>`});
+  let cmH2='';p.comments.forEach(c=>{cmH2+=`<div class="cmt2${c.s?' staff':''}"><div class="ch"><span class="cna">${c.n}</span><span class="cdt">${c.d}</span></div><p class="ctx">${c.t}</p></div>`});
+  mcont.innerHTML=`
+    <div class="mcat">${sectors[si].name} · ${p.dm==='hi'?'High Demand':p.dm==='bs'?'Best Seller':'Trending'}</div>
+    <h3>${p.name}</h3>
+    <p class="mdesc">${p.desc}</p>
+    <div class="mspecs">${spH}</div>
+    <div style="font-size:.6rem;color:var(--w30);margin-bottom:1rem">Origin: ${p.o.join(' ')}</div>
+    <button class="menq" onclick="closeM();document.getElementById('enquiry').scrollIntoView({behavior:'smooth'});setTimeout(()=>document.getElementById('fC').value='${sectors[si].name}',400)">Enquire About This Product</button>
+    <div class="mcm">
+      <h4>Customer Enquiries <span class="cnt">${p.comments.length}</span></h4>
+      ${cmH2||'<p style="font-size:.7rem;color:var(--w30)">No enquiries yet. Be the first to ask.</p>'}
+      <div class="cinp"><input type="text" placeholder="Ask a question about this product..." id="nCom"><button onclick="addCom(${si},${pi})">Send</button></div>
+    </div>`;
+  mbg.classList.add('open');mdl.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeM(){mbg.classList.remove('open');mdl.classList.remove('open');document.body.style.overflow=''}
+function addCom(si,pi){const inp=document.getElementById('nCom');const t=inp.value.trim();if(!t)return;const d=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});sectors[si].prods[pi].comments.push({n:'You',d,t,s:false});openM(si,pi)}
+mbg.addEventListener('click',closeM);mc2.addEventListener('click',closeM);
+document.addEventListener('click',e=>{const pc=e.target.closest('.pc');if(pc)openM(+pc.dataset.s,+pc.dataset.p)});
+
+// PARTICLES
+const cv=document.getElementById('ptc'),cx=cv.getContext('2d');let W,H;
+function rsz(){W=cv.width=innerWidth;H=cv.height=innerHeight}rsz();window.addEventListener('resize',rsz);
+const pts=[];for(let i=0;i<45;i++)pts.push({x:Math.random()*2000,y:Math.random()*2000,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:Math.random()*1.1+.4});
+(function draw(){cx.clearRect(0,0,W,H);cx.fillStyle='rgba(201,168,76,.09)';pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fill()});cx.strokeStyle='rgba(201,168,76,.025)';cx.lineWidth=.5;for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;if(Math.sqrt(dx*dx+dy*dy)<130){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.stroke()}}requestAnimationFrame(draw)})();
+
+// NAV
+const nav=document.getElementById('nav'),nt=document.getElementById('nt'),nlinks=document.getElementById('nlinks');
+window.addEventListener('scroll',()=>nav.classList.toggle('s',scrollY>50));
+nt.addEventListener('click',()=>{nt.classList.toggle('on');nlinks.classList.toggle('op')});
+nlinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nt.classList.remove('on');nlinks.classList.remove('op')}));
+
+// REVEAL
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')})},{threshold:.06,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.r').forEach(el=>obs.observe(el));
+
+// FORM
+document.getElementById('sub').addEventListener('click',e=>{e.preventDefault();const n=document.getElementById('fN').value.trim(),em=document.getElementById('fE').value.trim();if(n&&em){document.getElementById('ok').style.display='block';e.target.style.display='none'}else{[document.getElementById('fN'),document.getElementById('fE')].forEach(i=>{i.style.borderColor=i.value.trim()?'':'#e74c3c'})}});
+
+// SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})})});
+
+// PARALLAX
+window.addEventListener('scroll',()=>{const s=scrollY;const bg=document.querySelector('.hsl.on img');if(bg&&s<innerHeight)bg.style.transform=`scale(${1.06+s*.0002}) translateY(${s*.08}px)`});
+</script>
+</body>
+</html>

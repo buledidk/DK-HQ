@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indus Nexus — Trading Operations, Investment & London Opportunities</title>
+<style>
+:root {
+  --navy:#0a0e1a; --navy2:#0d1224; --navy3:#111830; --navy4:#161e38;
+  --card:#0f1628; --gold:#d4af37; --gold2:#f0c93a; --gold3:#b8960c;
+  --cyan:#00d4ff; --green:#00e676; --orange:#ff9800; --red:#ff5252;
+  --purple:#9c27b0; --pink:#e91e63;
+  --text:#e8eaf0; --muted:#8090b0;
+  --border:rgba(212,175,55,0.18); --glow:0 0 24px rgba(212,175,55,0.15);
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* CANVAS */
+#pc{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
+/* HERO */
+.hero{position:relative;min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(160deg,#0d1224,#060a14);padding:60px 20px 80px;overflow:hidden;}
+.hero-badge{position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;background:rgba(212,175,55,0.1);border:1px solid var(--gold3);border-radius:40px;padding:6px 20px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;animation:fadeD .8s ease both;}
+.hero h1{position:relative;z-index:2;font-size:clamp(1.8rem,4vw,3.2rem);font-weight:800;letter-spacing:-1px;animation:fadeD .9s ease both;}
+.hero h1 span{color:var(--gold);}
+.hero-sub{position:relative;z-index:2;font-size:1rem;color:var(--muted);max-width:660px;margin:12px auto 0;animation:fadeD 1s ease both;}
+.hero-stats{position:relative;z-index:2;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-top:36px;animation:fadeU 1.1s ease both;}
+.hstat{background:rgba(212,175,55,0.07);border:1px solid var(--border);border-radius:10px;padding:12px 20px;text-align:center;}
+.hstat .val{font-size:1.3rem;font-weight:800;color:var(--gold);}
+.hstat .lab{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+
+/* TICKER */
+.ticker{background:rgba(212,175,55,0.05);border-bottom:1px solid var(--border);overflow:hidden;padding:8px 0;}
+.ticker-inner{display:flex;gap:40px;animation:tickS 35s linear infinite;width:max-content;}
+.ticker-item{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.ticker-item span{color:var(--gold);margin-left:6px;}
+@keyframes tickS{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:4px;overflow-x:auto;}
+.nav-logo{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--gold);padding:16px 16px 16px 0;border-right:1px solid var(--border);margin-right:8px;white-space:nowrap;}
+nav a{color:var(--muted);text-decoration:none;padding:16px 12px;font-size:11px;font-weight:600;letter-spacing:.5px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;}
+nav a:hover{color:var(--text);}
+nav a.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* LAYOUT */
+.container{max-width:1160px;margin:0 auto;padding:0 24px;}
+section{padding:72px 0;}
+section:nth-child(even){background:var(--navy2);}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:flex-start;gap:18px;margin-bottom:40px;}
+.sec-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:rgba(212,175,55,0.1);border:1px solid var(--border);}
+.sec-header h2{font-size:clamp(1.3rem,2.5vw,1.9rem);font-weight:800;}
+.sec-header h2 span{color:var(--gold);}
+.sec-header p{color:var(--muted);font-size:.9rem;margin-top:5px;max-width:580px;}
+
+.phase-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.pt-blue{background:rgba(0,214,255,.12);color:var(--cyan);border:1px solid rgba(0,214,255,.3);}
+.pt-gold{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.3);}
+.pt-green{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.pt-purple{background:rgba(156,39,176,.12);color:#ce93d8;border:1px solid rgba(156,39,176,.3);}
+.pt-pink{background:rgba(233,30,99,.12);color:#f48fb1;border:1px solid rgba(233,30,99,.3);}
+.pt-orange{background:rgba(255,152,0,.12);color:var(--orange);border:1px solid rgba(255,152,0,.3);}
+
+/* CARDS */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:border-color .3s,box-shadow .3s,transform .2s;}
+.card:hover{border-color:var(--gold3);box-shadow:var(--glow);transform:translateY(-2px);}
+.card h3{font-size:.95rem;font-weight:700;margin-bottom:8px;}
+.card p{font-size:.85rem;color:var(--muted);line-height:1.65;}
+.card .cval{font-size:1.5rem;font-weight:800;color:var(--gold);margin:4px 0;}
+.card .clab{font-size:11px;color:var(--muted);}
+
+/* ALERT */
+.alert{border-radius:var(--radius);padding:16px 20px;margin:16px 0;display:flex;gap:12px;align-items:flex-start;border-left:3px solid;}
+.alert-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.alert h4{font-size:13px;font-weight:700;margin-bottom:3px;}
+.alert p{font-size:12px;line-height:1.6;}
+.a-gold{background:rgba(212,175,55,.07);border-color:var(--gold);}
+.a-gold h4{color:var(--gold);}
+.a-green{background:rgba(0,230,118,.06);border-color:var(--green);}
+.a-green h4{color:var(--green);}
+.a-cyan{background:rgba(0,214,255,.06);border-color:var(--cyan);}
+.a-cyan h4{color:var(--cyan);}
+.a-orange{background:rgba(255,152,0,.06);border-color:var(--orange);}
+.a-orange h4{color:var(--orange);}
+.a-red{background:rgba(255,82,82,.06);border-color:var(--red);}
+.a-red h4{color:var(--red);}
+.a-purple{background:rgba(156,39,176,.06);border-color:#ce93d8;}
+.a-purple h4{color:#ce93d8;}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:30px;}
+.tl::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--gold3),transparent);}
+.tl-item{position:relative;margin-bottom:28px;}
+.tl-item::before{content:'';position:absolute;left:-24px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid var(--navy);box-shadow:0 0 10px rgba(212,175,55,.5);}
+.tl-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;transition:border-color .3s,transform .2s;position:relative;overflow:hidden;}
+.tl-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold3),var(--gold2),transparent);}
+.tl-card:hover{border-color:var(--gold3);transform:translateX(4px);}
+.tl-card h3{font-size:.95rem;font-weight:700;margin-bottom:6px;}
+.tl-card p{font-size:.85rem;color:var(--muted);line-height:1.65;}
+.tl-num{position:absolute;top:14px;right:16px;font-size:26px;font-weight:800;color:rgba(212,175,55,.07);}
+
+/* CHIPS */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.ch-b{background:rgba(0,214,255,.07);color:var(--cyan);border:1px solid rgba(0,214,255,.2);}
+.ch-g{background:rgba(212,175,55,.07);color:var(--gold);border:1px solid rgba(212,175,55,.2);}
+.ch-gr{background:rgba(0,230,118,.07);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.ch-o{background:rgba(255,152,0,.07);color:var(--orange);border:1px solid rgba(255,152,0,.2);}
+.ch-r{background:rgba(255,82,82,.07);color:var(--red);border:1px solid rgba(255,82,82,.2);}
+.ch-p{background:rgba(156,39,176,.07);color:#ce93d8;border:1px solid rgba(156,39,176,.2);}
+
+/* LINK BUTTON */
+.lbtn{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);padding:5px 12px;border-radius:6px;transition:background .2s;}
+.lbtn:hover{background:rgba(212,175,55,.16);}
+.lbtn-c{color:var(--cyan);background:rgba(0,214,255,.06);border-color:rgba(0,214,255,.2);}
+.lbtn-c:hover{background:rgba(0,214,255,.12);}
+.lbtn-g{color:var(--green);background:rgba(0,230,118,.06);border-color:rgba(0,230,118,.2);}
+.lbtn-g:hover{background:rgba(0,230,118,.12);}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{background:rgba(212,175,55,.08);border:1px solid var(--border);padding:11px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;text-align:left;color:var(--gold);}
+.tbl td{border:1px solid var(--border);padding:11px 14px;font-size:12px;color:var(--text);vertical-align:top;}
+.tbl tr:hover td{background:rgba(212,175,55,.04);}
+.rec{color:var(--green);font-weight:700;}
+.opt{color:var(--cyan);}
+.caut{color:var(--orange);}
+.tbl a{color:var(--gold);text-decoration:none;font-size:11px;}
+.tbl a:hover{text-decoration:underline;}
+
+/* EMAIL DRAFT */
+.email-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:0;overflow:hidden;margin-bottom:16px;}
+.email-header{background:rgba(212,175,55,.07);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.email-subject{font-size:13px;font-weight:700;color:var(--text);}
+.email-to{font-size:11px;color:var(--muted);margin-top:2px;}
+.email-body{padding:18px 20px;font-size:12px;color:var(--muted);line-height:1.7;white-space:pre-line;}
+.copy-btn{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.25);color:var(--gold);padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:background .2s;}
+.copy-btn:hover{background:rgba(212,175,55,.22);}
+.copy-btn.copied{background:rgba(0,230,118,.15);border-color:rgba(0,230,118,.3);color:var(--green);}
+
+/* SIC DISPLAY */
+.sic-row{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid rgba(212,175,55,.07);}
+.sic-row:last-child{border-bottom:none;}
+.sic-code{font-size:1.3rem;font-weight:800;color:var(--cyan);min-width:60px;}
+.sic-name{font-size:13px;color:var(--text);}
+.sic-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.sic-status{margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+.sic-cur{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.sic-add{background:rgba(255,152,0,.1);color:var(--orange);border:1px solid rgba(255,152,0,.2);}
+
+/* OPPORTUNITY CARDS */
+.opp-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:border-color .3s,transform .2s;}
+.opp-card:hover{border-color:var(--gold3);transform:translateY(-2px);}
+.opp-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(to bottom,var(--gold),var(--gold3));}
+.opp-tag{font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;background:rgba(212,175,55,.1);color:var(--gold);margin-bottom:10px;display:inline-block;}
+.opp-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.opp-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.opp-val{font-size:1.1rem;font-weight:800;color:var(--gold);margin-top:10px;}
+.opp-score{position:absolute;top:16px;right:16px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.score-high{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.score-med{background:rgba(255,152,0,.1);color:var(--orange);border:1px solid rgba(255,152,0,.2);}
+
+/* INVEST TABLE */
+.inv-table{width:100%;border-collapse:collapse;}
+.inv-table th{background:rgba(0,214,255,.07);border:1px solid var(--border);padding:10px 14px;font-size:11px;font-weight:700;text-align:left;color:var(--cyan);}
+.inv-table td{border:1px solid var(--border);padding:10px 14px;font-size:12px;color:var(--text);vertical-align:top;}
+.inv-table tr:hover td{background:rgba(0,214,255,.03);}
+
+/* FLOW */
+.flow{display:flex;gap:0;overflow-x:auto;padding:20px 0;}
+.flow-node{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:0 6px;}
+.flow-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid var(--border);background:var(--navy4);position:relative;z-index:1;}
+.flow-title{font-size:11px;font-weight:700;}
+.flow-sub{font-size:10px;color:var(--muted);}
+.flow::before{display:none;}
+
+/* ANIM */
+@keyframes fadeD{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:none}}
+@keyframes fadeU{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.rev{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
+.vis{opacity:1;transform:none;}
+
+/* FOOTER */
+footer{background:var(--navy3);border-top:1px solid var(--border);padding:28px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-size:14px;font-weight:800;color:var(--gold);}
+.footer-note{font-size:11px;color:var(--muted);max-width:520px;line-height:1.6;}
+
+/* PRINT BUTTON */
+.fab{position:fixed;bottom:28px;right:28px;z-index:999;background:var(--gold);color:var(--navy);border:none;border-radius:50px;padding:11px 20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(212,175,55,.3);transition:all .2s;}
+.fab:hover{background:var(--gold2);transform:translateY(-2px);}
+
+@media(max-width:600px){section{padding:44px 0;}nav{padding:0 12px;}.sec-header{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker">
+<div class="ticker-inner">
+  <span class="ticker-item">INDUS NEXUS LTD<span>OPERATIONS HUB</span></span>
+  <span class="ticker-item">IMPORT/EXPORT<span>HS CODE 8542 · SEMICONDUCTORS</span></span>
+  <span class="ticker-item">ILR HOLDER<span>FULL UK WORK RIGHTS · COMPANY DIRECTOR</span></span>
+  <span class="ticker-item">ISA ALLOWANCE 2025/26<span>£20,000/YR TAX-FREE</span></span>
+  <span class="ticker-item">EIS / SEIS<span>30–50% INCOME TAX RELIEF</span></span>
+  <span class="ticker-item">LONDON TECH CLUSTER<span>2ND LARGEST IN WORLD</span></span>
+  <span class="ticker-item">UK–INDIA TECH CORRIDOR<span>£6BN BILATERAL TRADE TARGET</span></span>
+  <span class="ticker-item">EORI<span>APPLY NOW · FREE · 3 DAYS</span></span>
+  <span class="ticker-item">IMPORT/EXPORT<span>HS CODE 8542 · SEMICONDUCTORS</span></span>
+  <span class="ticker-item">ILR HOLDER<span>FULL UK WORK RIGHTS · COMPANY DIRECTOR</span></span>
+  <span class="ticker-item">ISA ALLOWANCE 2025/26<span>£20,000/YR TAX-FREE</span></span>
+  <span class="ticker-item">EIS / SEIS<span>30–50% INCOME TAX RELIEF</span></span>
+  <span class="ticker-item">LONDON TECH CLUSTER<span>2ND LARGEST IN WORLD</span></span>
+</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <canvas id="pc"></canvas>
+  <div class="hero-badge">🌍 Ground-Level Trading · Personal Investment · London Opportunities</div>
+  <h1>Indus Nexus — <span>Operations Hub</span></h1>
+  <p class="hero-sub">Your complete ground-level playbook: how to actually start trading imports/exports, grow personal wealth as an ILR holder, and dominate London's semiconductor & tech opportunities. Onwards and upwards, DK.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="val">£20K</div><div class="lab">Annual ISA Allowance</div></div>
+    <div class="hstat"><div class="val">50%</div><div class="lab">SEIS Tax Relief</div></div>
+    <div class="hstat"><div class="val">£6Bn</div><div class="lab">UK-India Tech Trade</div></div>
+    <div class="hstat"><div class="val">2nd</div><div class="lab">London Tech Cluster</div></div>
+    <div class="hstat"><div class="val">7 SICs</div><div class="lab">Recommended Codes</div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚡ INDUS NEXUS</div>
+  <a href="#import-export" class="active">Import/Export</a>
+  <a href="#accounts">Trading Accounts</a>
+  <a href="#sic">SIC Codes</a>
+  <a href="#personal">Personal Investment</a>
+  <a href="#london">London Opportunities</a>
+  <a href="#emails">Action Emails</a>
+  <a href="#oneclicks">One-Click Actions</a>
+</nav>
+
+<!-- ═══ SECTION 1: GROUND-LEVEL IMPORT/EXPORT ═══ -->
+<section id="import-export">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">🚢</div>
+    <div>
+      <div class="phase-tag pt-blue">GROUND LEVEL TRADING · HOW TO ACTUALLY START</div>
+      <h2>Import/Export <span>Trading Operations</span></h2>
+      <p>This is the practical ground-floor guide — the exact steps DK takes from day one to place Indus Nexus's first real semiconductor trade. No fluff, just action.</p>
+    </div>
+  </div>
+
+  <div class="alert a-gold rev">
+    <div class="alert-icon">⚡</div>
+    <div><h4>The Indus Nexus Trading Model — Simplified</h4>
+    <p>Buy semiconductor components (chips, GPUs, MCUs, modules) from manufacturers and distributors in Asia (Taiwan, South Korea, China) and the US → ship to UK under your EORI → sell to UK/European/Middle East buyers at margin. Alternatively: source UK-available stock and export to South Asia (Pakistan, India, Bangladesh) where demand outstrips local availability.</p></div>
+  </div>
+
+  <div class="tl" style="margin-top:32px">
+    <div class="tl-item rev">
+      <div class="tl-card"><div class="tl-num">01</div>
+        <h3>Step 1 — Get Your EORI Number (Do This Today)</h3>
+        <p>Without an EORI number, no shipment can clear UK customs. Apply online at GOV.UK — it's free and takes 3 working days. You'll use this number on every commercial invoice, packing list, and customs declaration for every trade Indus Nexus does.</p>
+        <div class="chips"><span class="chip ch-r">URGENT — Day 1 Task</span><span class="chip ch-gr">Free</span><span class="chip ch-b">3 working days</span></div>
+        <a class="lbtn" href="https://www.gov.uk/eori" target="_blank">🌍 Apply EORI — gov.uk/eori</a>
+      </div>
+    </div>
+
+    <div class="tl-item rev" style="transition-delay:.05s">
+      <div class="tl-card"><div class="tl-num">02</div>
+        <h3>Step 2 — Identify Your Commodity (HS/Tariff Code)</h3>
+        <p>Every imported/exported product needs a Harmonized System (HS) code — a 10-digit number that determines the import duty rate and any restrictions. Semiconductors fall under Chapter 85. Use the UK Government's Trade Tariff tool to find the exact code for your product before placing any order.</p>
+        <div class="chips"><span class="chip ch-b">8542 = Integrated Circuits</span><span class="chip ch-b">8541 = Semiconductors</span><span class="chip ch-g">8473 = Computer parts</span></div>
+        <a class="lbtn" href="https://www.trade-tariff.service.gov.uk/find_commodity" target="_blank">📋 UK Trade Tariff Tool — trade-tariff.service.gov.uk</a>
+      </div>
+    </div>
+
+    <div class="tl-item rev" style="transition-delay:.1s">
+      <div class="tl-card"><div class="tl-num">03</div>
+        <h3>Step 3 — Source Your Suppliers</h3>
+        <p>Start with authorised distributors (safest, no minimum order issues, quality guaranteed). Build toward direct manufacturer relationships as volume grows. The top UK-accessible distributor networks with corporate trade accounts available online:</p>
+        <div class="chips">
+          <span class="chip ch-gr">Arrow Electronics ⭐</span>
+          <span class="chip ch-gr">Avnet ⭐</span>
+          <span class="chip ch-b">Mouser Electronics</span>
+          <span class="chip ch-b">RS Components</span>
+          <span class="chip ch-b">Farnell</span>
+          <span class="chip ch-g">Digi-Key</span>
+        </div>
+        <a class="lbtn" href="https://www.arrow.com/en-gb/create-account" target="_blank">🔗 Arrow UK Corporate Account</a>
+        <a class="lbtn lbtn-c" href="https://avnet.com/wps/portal/ebv/signup" target="_blank">🔗 Avnet Account Signup</a>
+      </div>
+    </div>
+
+    <div class="tl-item rev" style="transition-delay:.15s">
+      <div class="tl-card"><div class="tl-num">04</div>
+        <h3>Step 4 — Freight Forwarder &amp; Customs Broker</h3>
+        <p>A customs broker clears your goods through UK customs on your behalf — they file the import declarations, pay the duties, and handle HMRC paperwork. You pay them a fee (typically £50–£150 per shipment for standard goods). For regular trading, establish an account with a freight forwarder who handles door-to-door logistics AND customs clearance.</p>
+        <div class="chips"><span class="chip ch-g">DHL Trade Services</span><span class="chip ch-b">Kuehne+Nagel</span><span class="chip ch-b">DB Schenker</span><span class="chip ch-o">Expect: £50–£150/shipment</span></div>
+        <a class="lbtn" href="https://www.dhl.com/gb-en/home/our-divisions/freight/customer-service/customs-brokerage.html" target="_blank">🔗 DHL Customs Brokerage UK</a>
+      </div>
+    </div>
+
+    <div class="tl-item rev" style="transition-delay:.2s">
+      <div class="tl-card"><div class="tl-num">05</div>
+        <h3>Step 5 — First Import: The Document Trail</h3>
+        <p>Every import requires this exact set of documents. Indus Nexus must keep all of these for at least 4 years for HMRC audit purposes. Your customs broker generates the customs declaration (C88/E2) using your EORI.</p>
+        <div class="chips">
+          <span class="chip ch-gr">✓ Commercial Invoice</span>
+          <span class="chip ch-gr">✓ Packing List</span>
+          <span class="chip ch-b">✓ Bill of Lading / Air Waybill</span>
+          <span class="chip ch-b">✓ Certificate of Origin</span>
+          <span class="chip ch-g">✓ EORI Number</span>
+          <span class="chip ch-o">✓ HS/Commodity Code</span>
+          <span class="chip ch-o">✓ Import Duty Payment</span>
+        </div>
+        <a class="lbtn" href="https://www.gov.uk/import-goods-into-uk" target="_blank">📋 Import Goods UK Guide — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-item rev" style="transition-delay:.25s">
+      <div class="tl-card"><div class="tl-num">06</div>
+        <h3>Step 6 — VAT on Imports (Postponed VAT Accounting)</h3>
+        <p>When importing goods into the UK, import VAT is charged (currently 20%). However, if you're VAT registered, you can use Postponed VAT Accounting (PVA) — this means you don't pay VAT at the border. Instead, you declare it on your quarterly VAT return and claim it back in the same return. Net cost to you: £0. This is critical for cash flow — apply for PVA on your HMRC account.</p>
+        <div class="chips"><span class="chip ch-gr">PVA = Zero cash flow impact</span><span class="chip ch-b">VAT registration essential</span></div>
+        <a class="lbtn" href="https://www.gov.uk/guidance/check-when-you-can-account-for-import-vat-on-your-vat-return" target="_blank">📋 Postponed VAT Accounting — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-item rev" style="transition-delay:.3s">
+      <div class="tl-card"><div class="tl-num">07</div>
+        <h3>Step 7 — Selling / Exporting</h3>
+        <p>When selling to overseas buyers (Middle East, South Asia, Europe), exports from the UK are zero-rated for VAT — you charge 0% VAT. You still need to declare the export to HMRC. For exports outside the UK, file an Export Customs Declaration. Payment: always use Letter of Credit (LC) or advance payment wire for new overseas buyers to protect against non-payment.</p>
+        <div class="chips"><span class="chip ch-gr">0% VAT on exports</span><span class="chip ch-b">Export declaration required</span><span class="chip ch-o">Use LC for new buyers</span></div>
+        <a class="lbtn" href="https://www.gov.uk/export-goods" target="_blank">📋 Export Goods Guide — GOV.UK</a>
+      </div>
+    </div>
+
+    <div class="tl-item rev" style="transition-delay:.35s">
+      <div class="tl-card"><div class="tl-num">08</div>
+        <h3>Step 8 — Getting Paid Internationally</h3>
+        <p>For high-value semiconductor trades, standard bank transfers are fine for trusted partners. For new clients: request 30–50% upfront, balance on shipping document. Payment methods by region:</p>
+        <div class="chips">
+          <span class="chip ch-gr">🇹🇼 Taiwan/Asia: SWIFT + LC</span>
+          <span class="chip ch-b">🇸🇦 Middle East: Advance TT wire</span>
+          <span class="chip ch-g">🇵🇰 Pakistan: Western Union/Wise</span>
+          <span class="chip ch-g">🇪🇺 Europe: SEPA/SWIFT</span>
+        </div>
+        <p style="margin-top:8px;font-size:12px;color:var(--muted)">Use <strong style="color:var(--gold)">Wise Business</strong> for mid-market FX rates on international payments. <strong style="color:var(--gold)">Revolut Business</strong> for same-day payments to 160+ countries.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert a-green rev">
+    <div class="alert-icon">✅</div>
+    <div><h4>Your First Trade — Minimum Viable Scenario</h4>
+    <p>Order 100 × NVIDIA A100 / H100 GPUs from an authorised distributor (Arrow/Avnet) at list or near-list price → secure a buyer in UK/EU/Middle East data centre sector at 8–18% margin → ship directly from supplier to buyer (drop-ship) to minimise warehousing cost → invoice and collect payment. First trade target: £50,000–£200,000 GMV at 10% margin = £5,000–£20,000 gross profit. No warehouse, minimal capital risk.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 2: TRADING ACCOUNTS ═══ -->
+<section id="accounts">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">🖥️</div>
+    <div>
+      <div class="phase-tag pt-green">ALL ACCOUNTS — UPDATED &amp; VERIFIED</div>
+      <h2>Trading <span>Accounts Setup</span> — Complete Map</h2>
+      <p>Every account Indus Nexus needs, in the order to open them. All links verified against live platforms as of March 2026.</p>
+    </div>
+  </div>
+
+  <div class="alert a-orange rev">
+    <div class="alert-icon">⚠️</div>
+    <div><h4>Note on Links</h4>
+    <p>All links below point to the root domain or main application page of each platform — these are the permanently stable URLs. Some platforms update their specific signup page paths. If a direct link redirects, simply navigate to the platform's homepage and select "Business" or "Sign Up" — the domain is always correct.</p></div>
+  </div>
+
+  <div style="overflow-x:auto" class="rev" style="transition-delay:.1s">
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>#</th><th>Account / Platform</th><th>Type</th><th>Priority</th><th>Est. Setup Time</th><th>Cost</th><th>Official Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><strong>EORI Number (HMRC)</strong></td><td>Import/Export ID</td><td class="rec">⭐ Day 1 · CRITICAL</td><td>3 days</td><td class="rec">Free</td><td><a href="https://www.gov.uk/eori" target="_blank">gov.uk/eori</a></td></tr>
+      <tr><td>2</td><td><strong>Revolut Business</strong></td><td>Primary Bank</td><td class="rec">⭐ Day 1</td><td>1–3 days</td><td>£25/mo (Scale)</td><td><a href="https://www.revolut.com/business" target="_blank">revolut.com/business</a></td></tr>
+      <tr><td>3</td><td><strong>Wise Business</strong></td><td>FX Payments</td><td class="rec">⭐ Week 1</td><td>2–5 days</td><td>Free + tx fees</td><td><a href="https://wise.com/gb/business" target="_blank">wise.com/gb/business</a></td></tr>
+      <tr><td>4</td><td><strong>HMRC Online Account</strong></td><td>Tax/VAT/PAYE</td><td class="rec">⭐ Week 1</td><td>1–2 weeks</td><td class="rec">Free</td><td><a href="https://www.gov.uk/log-in-register-hmrc-online-services" target="_blank">gov.uk/hmrc-online</a></td></tr>
+      <tr><td>5</td><td><strong>Companies House WebFiling</strong></td><td>Annual filings</td><td class="opt">Week 1</td><td>1 day</td><td class="rec">Free</td><td><a href="https://find-and-update.company-information.service.gov.uk" target="_blank">company-information.service.gov.uk</a></td></tr>
+      <tr><td>6</td><td><strong>Arrow Electronics — Trade</strong></td><td>Supplier Account</td><td class="rec">⭐ Week 2</td><td>1–5 days</td><td class="rec">Free</td><td><a href="https://www.arrow.com/en-gb" target="_blank">arrow.com/en-gb</a></td></tr>
+      <tr><td>7</td><td><strong>Avnet UK — Trade</strong></td><td>Supplier Account</td><td class="rec">⭐ Week 2</td><td>1–5 days</td><td class="rec">Free</td><td><a href="https://www.avnet.com/wps/portal/emea/en" target="_blank">avnet.com/emea/en</a></td></tr>
+      <tr><td>8</td><td><strong>Interactive Brokers (IBKR)</strong></td><td>Corporate Brokerage</td><td class="opt">Week 3</td><td>3–7 days</td><td class="rec">Free ($0 min)</td><td><a href="https://www.interactivebrokers.co.uk" target="_blank">interactivebrokers.co.uk</a></td></tr>
+      <tr><td>9</td><td><strong>Xero Accounting</strong></td><td>Bookkeeping</td><td class="opt">Week 1</td><td>1 day</td><td>£15–£42/mo</td><td><a href="https://www.xero.com/uk" target="_blank">xero.com/uk</a></td></tr>
+      <tr><td>10</td><td><strong>UK Trade Tariff Service</strong></td><td>HS Code Lookup</td><td class="opt">Week 1</td><td>Instant</td><td class="rec">Free</td><td><a href="https://www.trade-tariff.service.gov.uk" target="_blank">trade-tariff.service.gov.uk</a></td></tr>
+      <tr><td>11</td><td><strong>GOV.UK One Login</strong></td><td>Identity Verification</td><td class="rec">⭐ Week 1</td><td>1 day</td><td class="rec">Free</td><td><a href="https://www.gov.uk/using-your-gov-uk-one-login" target="_blank">gov.uk/one-login</a></td></tr>
+      <tr><td>12</td><td><strong>HSBC Business (future)</strong></td><td>Trade Finance Bank</td><td class="caut">Month 3+</td><td>2–4 weeks</td><td>£8–£30/mo</td><td><a href="https://www.business.hsbc.uk" target="_blank">business.hsbc.uk</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 3: SIC CODES ═══ -->
+<section id="sic">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">🏷️</div>
+    <div>
+      <div class="phase-tag pt-gold">SIC CODES UPDATE · COMPANIES HOUSE</div>
+      <h2>SIC Codes — <span>Recommended Set</span></h2>
+      <p>A company can have up to 4 SIC codes. Expanding Indus Nexus's SIC codes covers all your trading, investment, and consulting activities and gives full flexibility for contracts and banking.</p>
+    </div>
+  </div>
+
+  <div class="card rev" style="padding:24px">
+    <div class="sic-row">
+      <div class="sic-code">46520</div>
+      <div><div class="sic-name">Wholesale of electronic and telecommunications equipment and parts</div><div class="sic-desc">Your primary SIC — semiconductor procurement, GPU trading, component distribution</div></div>
+      <div class="sic-status sic-cur">CURRENT ✓</div>
+    </div>
+    <div class="sic-row">
+      <div class="sic-code">62020</div>
+      <div><div class="sic-name">Information technology consultancy activities</div><div class="sic-desc">API integration services, tech advisory, software consulting contracts</div></div>
+      <div class="sic-status sic-cur">CURRENT ✓</div>
+    </div>
+    <div class="sic-row">
+      <div class="sic-code">46690</div>
+      <div><div class="sic-name">Wholesale of other machinery, equipment and supplies</div><div class="sic-desc">Broader wholesale trading classification — covers industrial electronics beyond semiconductors</div></div>
+      <div class="sic-status sic-add">ADD ← RECOMMENDED</div>
+    </div>
+    <div class="sic-row">
+      <div class="sic-code">64999</div>
+      <div><div class="sic-name">Other financial service activities, except insurance and pension funding</div><div class="sic-desc">Covers proprietary investment activities and financial trading using company funds</div></div>
+      <div class="sic-status sic-add">ADD ← RECOMMENDED</div>
+    </div>
+  </div>
+
+  <div class="alert a-cyan rev" style="margin-top:24px">
+    <div class="alert-icon">🔧</div>
+    <div><h4>How to Add SIC Codes — Companies House (2 ways)</h4>
+    <p><strong>Option A (Immediately, Free):</strong> File your next Confirmation Statement at Companies House and update your SIC codes in the form. You can do this any time — no charge if you file early. Takes 2 minutes online.<br><br><strong>Option B (Formal Change):</strong> Use the Companies House WebFiling service → Select "Change company details" → Update SIC codes. Takes effect immediately on the Companies House register.</p></div>
+  </div>
+
+  <a class="lbtn" href="https://find-and-update.company-information.service.gov.uk" target="_blank" style="margin-top:8px">🏛️ Update SIC Codes — Companies House WebFiling</a>
+  <a class="lbtn lbtn-c" href="https://resources.companieshouse.gov.uk/sic/" target="_blank" style="margin-top:8px;margin-left:8px">📋 Full SIC Code List — Companies House</a>
+</div>
+</section>
+
+<!-- ═══ SECTION 4: PERSONAL INVESTMENT ═══ -->
+<section id="personal">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">💎</div>
+    <div>
+      <div class="phase-tag pt-purple">PERSONAL WEALTH · ILR HOLDER · UK RESIDENT</div>
+      <h2>Personal <span>Investment</span> &amp; Money Optimisation</h2>
+      <p>As an ILR holder (Indefinite Leave to Remain), DK has full UK resident rights — including access to every UK tax-advantaged investment account. This is a massive wealth-building opportunity that starts with a £20,000 tax-free ISA allowance every year.</p>
+    </div>
+  </div>
+
+  <div class="alert a-green rev">
+    <div class="alert-icon">✅</div>
+    <div><h4>ILR Holder Investment Rights — Full Access Confirmed</h4>
+    <p>As an ILR holder who is UK tax resident, you qualify for: Stocks & Shares ISA · Cash ISA · Lifetime ISA · SIPP (pension) · EIS/SEIS relief · Premium Bonds · NS&I savings accounts · All retail investment platforms (HL, Vanguard, InvestEngine, Freetrade, Trading 212). You are treated identically to a British citizen for all personal investment purposes.</p></div>
+  </div>
+
+  <div style="overflow-x:auto" class="rev" style="transition-delay:.1s">
+  <table class="inv-table">
+    <thead>
+      <tr><th>Account Type</th><th>Annual Limit</th><th>Tax Benefit</th><th>Best Platform</th><th>Best For DK</th><th>Priority</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Stocks &amp; Shares ISA ⭐</strong></td>
+        <td class="rec">£20,000/yr</td>
+        <td>All gains &amp; dividends tax-free forever</td>
+        <td>Vanguard / InvestEngine</td>
+        <td>Primary wealth builder — semiconductor ETFs, global equities</td>
+        <td class="rec">Open First</td>
+      </tr>
+      <tr>
+        <td><strong>SIPP (Self-Invested Pension) ⭐</strong></td>
+        <td class="rec">£60,000/yr (2026)</td>
+        <td>25% tax relief added automatically (basic rate)</td>
+        <td>Vanguard SIPP / HL SIPP</td>
+        <td>Put £8,000 in → HMRC adds £2,000 free → £10,000 invested</td>
+        <td class="rec">Open Second</td>
+      </tr>
+      <tr>
+        <td><strong>General Investment Account</strong></td>
+        <td>Unlimited</td>
+        <td>CGT allowance: £3,000/yr tax-free gains</td>
+        <td>Interactive Brokers Personal</td>
+        <td>Trading semiconductor equities beyond ISA limits</td>
+        <td class="opt">Month 2</td>
+      </tr>
+      <tr>
+        <td><strong>Lifetime ISA (LISA)</strong></td>
+        <td>£4,000/yr</td>
+        <td>25% government bonus (£1,000 free/yr max)</td>
+        <td>Moneybox</td>
+        <td>If buying a first UK home (up to £450K) — or retirement at 60+</td>
+        <td class="caut">If applicable</td>
+      </tr>
+      <tr>
+        <td><strong>Premium Bonds (NS&amp;I)</strong></td>
+        <td>£50,000 max</td>
+        <td>Prize draws tax-free, capital guaranteed</td>
+        <td>NS&amp;I direct</td>
+        <td>Risk-free parking of business profits — wins are tax-free</td>
+        <td class="opt">Low risk</td>
+      </tr>
+      <tr>
+        <td><strong>EIS Investment</strong></td>
+        <td>£1M/yr</td>
+        <td>30% income tax relief + CGT deferral</td>
+        <td>Seedrs / Crowdcube / LP advisors</td>
+        <td>Invest £10K in EIS startup → get £3K back from HMRC</td>
+        <td class="caut">Year 2+</td>
+      </tr>
+      <tr>
+        <td><strong>SEIS Investment</strong></td>
+        <td>£200K/yr</td>
+        <td>50% income tax relief</td>
+        <td>Angel investment networks</td>
+        <td>Invest £10K in SEIS startup → get £5K back — highest relief in UK</td>
+        <td class="caut">Year 2+</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="color:var(--gold);font-size:.95rem;margin:32px 0 16px;font-weight:700;">Best Platforms for Personal Investment (DK's Recommended Stack)</h3>
+  <div class="grid3 rev" style="transition-delay:.15s">
+    <div class="card">
+      <div style="font-size:24px;margin-bottom:10px">📊</div>
+      <h3>Vanguard UK ⭐ (Primary ISA + SIPP)</h3>
+      <p>Lowest cost index funds in the UK. Open a Stocks & Shares ISA and a SIPP. Invest in FTSE All-World or S&P 500 index funds. 0.15% platform fee cap at £375/yr — best value for long-term wealth.</p>
+      <div class="chips"><span class="chip ch-gr">£0 to open</span><span class="chip ch-b">0.15% platform fee</span></div>
+      <a class="lbtn" href="https://www.vanguardinvestor.co.uk" target="_blank">🔗 vanguardinvestor.co.uk</a>
+    </div>
+    <div class="card">
+      <div style="font-size:24px;margin-bottom:10px">🌐</div>
+      <h3>InvestEngine ⭐ (Free ISA · ETFs)</h3>
+      <p>100% free Stocks & Shares ISA — no platform fee. Build a custom ETF portfolio including semiconductor sector ETFs (iShares Semiconductor ETF, VanEck Semiconductor ETF). Best for sector-specific investing aligned with Indus Nexus research.</p>
+      <div class="chips"><span class="chip ch-gr">Completely free platform</span><span class="chip ch-b">ETF-only</span></div>
+      <a class="lbtn" href="https://investengine.com" target="_blank">🔗 investengine.com</a>
+    </div>
+    <div class="card">
+      <div style="font-size:24px;margin-bottom:10px">⚡</div>
+      <h3>Hargreaves Lansdown (Comprehensive)</h3>
+      <p>UK's largest investment platform. Full range: ISA, SIPP, GIA, LISA. Individual UK and US stocks, ETFs, funds. More expensive (0.45% for first £250K) but best research tools, customer service, and widest product range.</p>
+      <div class="chips"><span class="chip ch-o">0.45% fee</span><span class="chip ch-b">Full range</span></div>
+      <a class="lbtn" href="https://www.hl.co.uk" target="_blank">🔗 hl.co.uk</a>
+    </div>
+    <div class="card">
+      <div style="font-size:24px;margin-bottom:10px">📈</div>
+      <h3>Trading 212 (Active Trading ISA)</h3>
+      <p>Free commission trades on UK/US stocks and ETFs within an ISA wrapper. Great for actively trading semiconductor sector stocks (NVDA, TSM, AMD, AMAT) while keeping gains tax-free. Best for active traders using SOVEREIGN market data.</p>
+      <div class="chips"><span class="chip ch-gr">Free trades</span><span class="chip ch-b">ISA + GIA</span></div>
+      <a class="lbtn" href="https://www.trading212.com" target="_blank">🔗 trading212.com</a>
+    </div>
+    <div class="card">
+      <div style="font-size:24px;margin-bottom:10px">🏦</div>
+      <h3>NS&amp;I Premium Bonds (Safe Parking)</h3>
+      <p>100% government-backed. No risk to capital. Monthly prize draws tax-free (equivalent to ~4% interest). Use for parking Indus Nexus profits you don't need immediately — guaranteed capital with prize upside.</p>
+      <div class="chips"><span class="chip ch-gr">100% capital safe</span><span class="chip ch-g">£50K max</span></div>
+      <a class="lbtn" href="https://www.nsandi.com/products/premium-bonds" target="_blank">🔗 nsandi.com/premium-bonds</a>
+    </div>
+    <div class="card">
+      <div style="font-size:24px;margin-bottom:10px">🔮</div>
+      <h3>Moneybox (LISA + Round-Ups)</h3>
+      <p>Open a Lifetime ISA (LISA) if buying a first UK property up to £450K — government adds 25% to every contribution up to £4K/year = free £1,000/year. Also great for pension saving for under-40s.</p>
+      <div class="chips"><span class="chip ch-g">£1,000 free/yr</span><span class="chip ch-o">First home or age 60+</span></div>
+      <a class="lbtn" href="https://www.moneyboxapp.com" target="_blank">🔗 moneyboxapp.com</a>
+    </div>
+  </div>
+
+  <div class="alert a-gold rev" style="margin-top:20px">
+    <div class="alert-icon">💡</div>
+    <div><h4>DK's Recommended Personal Money Stack (Priority Order)</h4>
+    <p>1. Max ISA first (£20K into InvestEngine free ISA → iShares World ETF + SOXX semiconductor ETF). 2. SIPP on Vanguard (pension, tax relief on contributions). 3. Premium Bonds for business cash reserves (safe, tax-free prizes). 4. Trading 212 ISA for active semiconductor stock trading. 5. When UK tax year profits are clear — explore EIS/SEIS through a reputable advisor.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 5: LONDON OPPORTUNITIES ═══ -->
+<section id="london">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">🏙️</div>
+    <div>
+      <div class="phase-tag pt-pink">LONDON · ILR HOLDER · 2026 OPPORTUNITIES</div>
+      <h2>London <span>Opportunities</span> — Deep Analysis</h2>
+      <p>London in 2026 is uniquely positioned for exactly what Indus Nexus does. As an ILR holder with a UK-registered company, DK has access to every commercial, investment, and government-backed opportunity in Europe's largest financial centre.</p>
+    </div>
+  </div>
+
+  <div class="grid2 rev">
+    <div class="opp-card">
+      <div class="opp-score score-high">🔥 HIGH</div>
+      <div class="opp-tag">AI INFRASTRUCTURE · DATA CENTRES</div>
+      <div class="opp-title">UK AI Datacentre Buildout — £25Bn Committed</div>
+      <div class="opp-desc">The UK Government committed to £25Bn in data centre investment in 2025/26. Microsoft, Google, Amazon, Oracle all building massive UK campuses. Each data centre requires thousands of GPUs and networking components — direct demand for Indus Nexus semiconductor supply chain.</div>
+      <div class="opp-val">£25Bn+ opportunity wave · 2025–2027</div>
+      <div class="chips" style="margin-top:8px"><span class="chip ch-gr">Direct demand for H100/H200 GPUs</span></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-score score-high">🔥 HIGH</div>
+      <div class="opp-tag">UK–INDIA TECH CORRIDOR</div>
+      <div class="opp-title">UK-India Technology Partnership — £6Bn Bilateral</div>
+      <div class="opp-desc">The 2025 UK-India Technology Partnership positions London as the hub for India-facing UK tech trade. As a South Asian heritage professional with ILR and a UK company, DK is uniquely placed to bridge UK semiconductor/tech companies with Indian demand. London's tech corridor from Shoreditch to King's Cross has 600+ India-connected tech firms.</div>
+      <div class="opp-val">Bridge role: UK tech ↔ India/Pakistan market</div>
+      <div class="chips" style="margin-top:8px"><span class="chip ch-b">ILR + Heritage = Competitive Moat</span></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-score score-high">🔥 HIGH</div>
+      <div class="opp-tag">SEMICONDUCTOR SHORTAGE ARBITRAGE</div>
+      <div class="opp-title">Component Lead Time Arbitrage — Still Profitable in 2026</div>
+      <div class="opp-desc">Despite normalisation, niche high-performance semiconductors (AI accelerators, networking ASICs, automotive chips) still have 6–52 week lead times. Businesses needing components urgently pay 10–35% premiums. London-based procurement specialists who can source globally and deliver quickly are in constant demand from UK manufacturers, defence, and tech firms.</div>
+      <div class="opp-val">10–35% margin premiums on spot procurement</div>
+      <div class="chips" style="margin-top:8px"><span class="chip ch-g">Near-term revenue opportunity</span></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-score score-high">🔥 HIGH</div>
+      <div class="opp-tag">SAUDI VISION 2030 · LONDON HUB</div>
+      <div class="opp-title">Saudi Tech Investment — London as Gateway</div>
+      <div class="opp-desc">Saudi Aramco, NEOM, STC, and Vision 2030 programmes are actively procuring UK tech companies for partnerships. Saudi businesses prefer London-based UK companies for contracts due to established legal frameworks and time zone convenience. A UK company with Middle East network access (like Indus Nexus) can act as a procurement and advisory bridge for Saudi digital infrastructure buildout.</div>
+      <div class="opp-val">NEOM alone: $500Bn total investment planned</div>
+      <div class="chips" style="margin-top:8px"><span class="chip ch-o">UK company required for Saudi contracts</span></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-score score-med">📈 MEDIUM</div>
+      <div class="opp-tag">EIS/SEIS ANGEL INVESTMENT</div>
+      <div class="opp-title">London Tech Startup Investment — Tax-Backed Returns</div>
+      <div class="opp-desc">London has over 1,200 SEIS-eligible startups every year. Investing £10,000 in an SEIS company returns £5,000 from HMRC (50% relief) — so your effective investment cost is just £5,000 for £10,000 of equity. This is available to UK tax residents including ILR holders. Tech-sector SEIS investments align with Indus Nexus sector knowledge.</div>
+      <div class="opp-val">Effective 50% discount on UK startup equity</div>
+      <div class="chips" style="margin-top:8px"><span class="chip ch-p">ILR holder qualifies fully</span></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-score score-med">📈 MEDIUM</div>
+      <div class="opp-tag">LONDON FINTECH × SEMICONDUCTOR</div>
+      <div class="opp-title">API Economy in UK Fintech — £11Bn Sector</div>
+      <div class="opp-desc">London is the world's leading fintech hub with £11Bn in annual FinTech investment. The API integration economy — Indus Nexus's secondary SIC 62020 — is booming with UK fintechs, neobanks, and financial infrastructure companies constantly needing tech integration expertise. Revolut, Monzo, Wise all headquartered in London — direct target clients for API consultancy.</div>
+      <div class="opp-val">£11Bn fintech ecosystem · API demand growing at 17% YoY</div>
+      <div class="chips" style="margin-top:8px"><span class="chip ch-b">Direct match to SIC 62020</span></div>
+    </div>
+  </div>
+
+  <div class="alert a-cyan rev" style="margin-top:28px">
+    <div class="alert-icon">🏆</div>
+    <div><h4>ILR Holder — Your Unique Competitive Advantages in London</h4>
+    <p>1. <strong style="color:var(--gold)">Full work rights</strong> — no visa restrictions, can hold any directorship, sign any contract. 2. <strong style="color:var(--gold)">Cultural bridge</strong> — UK business credibility + South Asian network = untapped commercial leverage. 3. <strong style="color:var(--gold)">London base</strong> — 2nd largest tech cluster globally, largest financial centre in Europe. 4. <strong style="color:var(--gold)">Tax advantages</strong> — same ISA/SIPP/EIS benefits as UK citizens. 5. <strong style="color:var(--gold)">Path to citizenship</strong> — after 12 months with ILR, eligible to apply for British Citizenship (opens UK passport = visa-free 187 countries).</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 6: ACTION EMAILS ═══ -->
+<section id="emails">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">✉️</div>
+    <div>
+      <div class="phase-tag pt-gold">DRAFT EMAILS · ONE-CLICK COPY</div>
+      <h2>Action <span>Email Templates</span></h2>
+      <p>Ready-to-send email drafts for every key Indus Nexus action. Click "Copy" to copy to clipboard, then paste into your email client. Personalise the [BRACKETS] before sending.</p>
+    </div>
+  </div>
+
+  <!-- Email 1 -->
+  <div class="email-card rev">
+    <div class="email-header">
+      <div><div class="email-subject">📧 Distributor Trade Account Application — Arrow / Avnet</div><div class="email-to">To: UKsales@arrow.com or uk.sales@avnet.com</div></div>
+      <button class="copy-btn" onclick="copyEmail(this, 'em1')">Copy</button>
+    </div>
+    <div class="email-body" id="em1">Subject: Trade Account Application — Indus Nexus Limited
+
+Dear Arrow Electronics UK Trade Team,
+
+I am writing to apply for a corporate trade account with Arrow Electronics on behalf of Indus Nexus Limited, a UK Private Limited Company incorporated at Companies House (CRN: [YOUR CRN]).
+
+About Indus Nexus Limited:
+- UK-registered company specialising in semiconductor component procurement and distribution (SIC 46520)
+- Director: [YOUR NAME] — [YOUR EMAIL] — [YOUR PHONE]
+- Registered Office: [YOUR ADDRESS]
+- Primary market: AI accelerators, GPU modules, MCUs, networking ASICs
+
+We are looking to establish a recurring procurement relationship with Arrow for the following product categories:
+- NVIDIA GPU modules (H100, A100 series)
+- Integrated Circuits (HS code 8542)
+- High-performance networking components
+
+Anticipated initial order volume: £[AMOUNT] per quarter, scaling to £[TARGET] within 12 months.
+
+Please find attached:
+- Certificate of Incorporation
+- Company Registration details
+
+I would welcome a brief call to discuss our requirements and your trade account terms.
+
+Kind regards,
+[YOUR NAME]
+Director, Indus Nexus Limited
+[YOUR PHONE] | [YOUR EMAIL]
+indus-nexus.co.uk</div>
+  </div>
+
+  <!-- Email 2 -->
+  <div class="email-card rev" style="transition-delay:.05s">
+    <div class="email-header">
+      <div><div class="email-subject">📧 EORI Application Follow-Up / First Import Enquiry to Customs Broker</div><div class="email-to">To: [Customs Broker / DHL Trade Services]</div></div>
+      <button class="copy-btn" onclick="copyEmail(this, 'em2')">Copy</button>
+    </div>
+    <div class="email-body" id="em2">Subject: New Corporate Client — Customs Brokerage Services Enquiry — Indus Nexus Limited
+
+Dear [Customs Broker Name],
+
+I am the Director of Indus Nexus Limited (UK Companies House CRN: [YOUR CRN]), a semiconductor trading company based in London. We are beginning regular imports of electronic components and semiconductor products from Asia (Taiwan, South Korea) and are seeking a reliable customs brokerage partner.
+
+Our import profile:
+- Commodity: Integrated Circuits, GPU modules, Electronic Components
+- HS Codes: primarily Chapter 85 (8542, 8541, 8473)
+- Origin: Taiwan, South Korea, China, USA
+- Frequency: Initially 2–4 shipments/month, growing to weekly
+- Value: £10,000–£500,000 per shipment
+
+We have our EORI number ([YOUR EORI]) and are VAT registered ([YOUR VAT NUMBER]).
+
+Services required:
+- Import customs clearance (C88 declarations)
+- Postponed VAT Accounting management
+- Duty deferment account setup
+- Incoterms: typically CIF or DAP
+
+Could you please provide your service schedule, fees per declaration, and contact details for your dedicated account manager?
+
+Best regards,
+[YOUR NAME]
+Director, Indus Nexus Limited</div>
+  </div>
+
+  <!-- Email 3 -->
+  <div class="email-card rev" style="transition-delay:.1s">
+    <div class="email-header">
+      <div><div class="email-subject">📧 New Business Introduction — Potential Client/Partner (Data Centre / Tech Buyer)</div><div class="email-to">To: [UK/Middle East data centre or tech firm procurement contact]</div></div>
+      <button class="copy-btn" onclick="copyEmail(this, 'em3')">Copy</button>
+    </div>
+    <div class="email-body" id="em3">Subject: Semiconductor Procurement Partnership — Indus Nexus Limited
+
+Dear [Name],
+
+I hope this message finds you well. I'm reaching out from Indus Nexus Limited, a UK-based specialist semiconductor and technology trading company, to explore whether there may be a mutual fit between our procurement capabilities and your technology infrastructure requirements.
+
+What Indus Nexus does:
+- Specialist global sourcing of AI accelerators, GPU modules, and high-performance semiconductors
+- Authorised distributor partnerships (Arrow Electronics, Avnet)
+- Direct manufacturer relationships across Asia-Pacific
+- Rapid fulfilment from UK stock and global sourcing channels
+
+Why we reach out to [COMPANY NAME]:
+We understand [COMPANY] is [expanding data centre capacity / investing in AI infrastructure / growing technology operations]. We believe we can offer:
+- Competitive pricing on NVIDIA, AMD, Intel, TSMC-manufactured components
+- Reduced lead times through our supply chain network
+- Flexible payment terms for established enterprises
+- UK-based invoicing and VAT-compliant documentation
+
+I'd welcome a 20-minute exploratory call to understand your current procurement needs and share how Indus Nexus might support your roadmap.
+
+Available: [YOUR AVAILABILITY]
+
+Kind regards,
+[YOUR NAME]
+Director, Indus Nexus Limited
+[PHONE] | [EMAIL]</div>
+  </div>
+
+  <!-- Email 4 -->
+  <div class="email-card rev" style="transition-delay:.15s">
+    <div class="email-header">
+      <div><div class="email-subject">📧 Companies House — Add SIC Codes (Internal Note / Action)</div><div class="email-to">Action: Companies House WebFiling — update your company profile</div></div>
+      <button class="copy-btn" onclick="copyEmail(this, 'em4')">Copy</button>
+    </div>
+    <div class="email-body" id="em4">ACTION CHECKLIST — Add SIC Codes to Indus Nexus Limited
+
+Step 1: Go to Companies House WebFiling
+URL: https://ewf.companieshouse.gov.uk/
+
+Step 2: Sign in with your Companies House account
+(Create one if not done: https://find-and-update.company-information.service.gov.uk/signin)
+
+Step 3: Select "Indus Nexus Limited" from your company list
+
+Step 4: Select "Change company details" or file via next Confirmation Statement
+
+Step 5: In the SIC code section, add:
+  Current: 46520, 62020
+  ADD: 46690 (Wholesale of other machinery and equipment)
+  ADD: 64999 (Other financial service activities)
+
+Step 6: Submit and confirm
+Note: SIC code changes on a Confirmation Statement cost £34 (online).
+You can add them free during your regular annual confirmation.
+
+Step 7: Verify update on public register within 24 hours:
+https://find-and-update.company-information.service.gov.uk/company/[YOUR CRN]</div>
+  </div>
+
+  <!-- Email 5 -->
+  <div class="email-card rev" style="transition-delay:.2s">
+    <div class="email-header">
+      <div><div class="email-subject">📧 HMRC Corporation Tax Registration (Action Steps)</div><div class="email-to">Action: HMRC Online — register within 3 months of trading</div></div>
+      <button class="copy-btn" onclick="copyEmail(this, 'em5')">Copy</button>
+    </div>
+    <div class="email-body" id="em5">ACTION: Register Indus Nexus Limited for Corporation Tax with HMRC
+
+Timeline: Must be done within 3 months of first trading activity
+
+Step 1: Go to HMRC's registration portal
+URL: https://www.gov.uk/limited-company-formation/set-up-your-company-for-corporation-tax
+
+Step 2: Sign in via Government Gateway
+(Or create account: https://www.gov.uk/log-in-register-hmrc-online-services)
+
+Step 3: Enrol for Corporation Tax
+Select: "Corporation Tax" from the list of taxes
+You'll need: Company Registration Number, company start date, date you started trading
+
+Step 4: HMRC sends your Corporation Tax UTR (Unique Taxpayer Reference) by POST
+Arrives within 10 working days to your registered office address
+Note: This is different from your personal UTR — keep it safe
+
+Step 5: Set up your accounting year end
+Recommend: [MONTH] year end to give you maximum planning time
+
+Step 6: First Corporation Tax return due
+12 months after your accounting period end
+Payment due: 9 months and 1 day after year end
+
+UK Corporation Tax Rates (2026):
+- Profits under £50,000: 19%
+- Profits £50,001–£250,000: Marginal relief
+- Profits over £250,000: 25%</div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ SECTION 7: ONE-CLICK ACTIONS ═══ -->
+<section id="oneclicks">
+<div class="container">
+  <div class="sec-header rev">
+    <div class="sec-icon">⚡</div>
+    <div>
+      <div class="phase-tag pt-blue">ONE-CLICK ACTIONS · VERIFIED LINKS</div>
+      <h2>Quick <span>Action</span> Links</h2>
+      <p>Every important UK government portal, financial platform, and trading resource — verified and in one place. All GOV.UK links are permanent government URLs.</p>
+    </div>
+  </div>
+
+  <div class="grid4 rev">
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🆔</div>
+      <h3>Apply EORI</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Critical for all imports/exports. Free. 3 days.</p>
+      <a class="lbtn lbtn-g" href="https://www.gov.uk/eori" target="_blank" style="justify-content:center">Apply Now →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🏛️</div>
+      <h3>Companies House</h3>
+      <p style="font-size:11px;margin:6px 0 12px">File, update SIC codes, confirmation statement.</p>
+      <a class="lbtn" href="https://find-and-update.company-information.service.gov.uk" target="_blank" style="justify-content:center">Open →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🧾</div>
+      <h3>HMRC Services</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Corp Tax, VAT, PAYE — all registrations.</p>
+      <a class="lbtn" href="https://www.gov.uk/log-in-register-hmrc-online-services" target="_blank" style="justify-content:center">Open →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">💳</div>
+      <h3>Register Company (GOV.UK)</h3>
+      <p style="font-size:11px;margin:6px 0 12px">£100 online registration. 24hr processing.</p>
+      <a class="lbtn lbtn-g" href="https://www.gov.uk/limited-company-formation/register-your-company" target="_blank" style="justify-content:center">Register →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">📦</div>
+      <h3>UK Trade Tariff</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Find HS codes, duty rates for all commodities.</p>
+      <a class="lbtn lbtn-c" href="https://www.trade-tariff.service.gov.uk/find_commodity" target="_blank" style="justify-content:center">Search →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🏦</div>
+      <h3>Revolut Business</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Open primary business bank account.</p>
+      <a class="lbtn" href="https://www.revolut.com/business" target="_blank" style="justify-content:center">Open →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">💸</div>
+      <h3>Wise Business</h3>
+      <p style="font-size:11px;margin:6px 0 12px">International FX payments — best rates.</p>
+      <a class="lbtn" href="https://wise.com/gb/business" target="_blank" style="justify-content:center">Open →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">📊</div>
+      <h3>IBKR Corporate</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Open Indus Nexus corporate brokerage account.</p>
+      <a class="lbtn lbtn-c" href="https://www.interactivebrokers.co.uk" target="_blank" style="justify-content:center">Apply →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">📈</div>
+      <h3>InvestEngine ISA</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Free personal Stocks & Shares ISA. Open today.</p>
+      <a class="lbtn lbtn-g" href="https://investengine.com" target="_blank" style="justify-content:center">Open ISA →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🏆</div>
+      <h3>Vanguard UK (SIPP)</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Lowest cost pension + ISA platform in UK.</p>
+      <a class="lbtn" href="https://www.vanguardinvestor.co.uk" target="_blank" style="justify-content:center">Open →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🎰</div>
+      <h3>NS&amp;I Premium Bonds</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Tax-free government savings. £50K max. Safe.</p>
+      <a class="lbtn lbtn-c" href="https://www.nsandi.com/products/premium-bonds" target="_blank" style="justify-content:center">Open →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">📋</div>
+      <h3>Check Name Availability</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Confirm "Indus Nexus Limited" is unique.</p>
+      <a class="lbtn lbtn-g" href="https://find-and-update.company-information.service.gov.uk/search" target="_blank" style="justify-content:center">Check →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">📦</div>
+      <h3>Arrow Electronics UK</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Apply for corporate semiconductor trade account.</p>
+      <a class="lbtn" href="https://www.arrow.com/en-gb" target="_blank" style="justify-content:center">Apply →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🔌</div>
+      <h3>Avnet UK</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Second authorised distributor account.</p>
+      <a class="lbtn lbtn-c" href="https://www.avnet.com/wps/portal/emea/en" target="_blank" style="justify-content:center">Apply →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🧮</div>
+      <h3>Xero UK Accounting</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Connect to Revolut. Automate bookkeeping.</p>
+      <a class="lbtn" href="https://www.xero.com/uk" target="_blank" style="justify-content:center">Start Trial →</a>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:28px;margin-bottom:10px">🇬🇧</div>
+      <h3>GOV.UK One Login</h3>
+      <p style="font-size:11px;margin:6px 0 12px">Universal UK gov sign-in. ID verification.</p>
+      <a class="lbtn lbtn-g" href="https://www.gov.uk/using-your-gov-uk-one-login" target="_blank" style="justify-content:center">Setup →</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">⚡ INDUS NEXUS LIMITED — OPERATIONS HUB</div>
+  <div class="footer-note">Prepared for DK · March 2026. All GOV.UK links are permanent government URLs. Platform links (bank, broker, distributor) point to root domains — navigate to "Business" or "Sign Up" if redirected. For legal/tax decisions, always verify with a qualified UK accountant or solicitor. This is not financial or legal advice.</div>
+  <div style="font-size:11px;color:var(--muted)">Part of the SOVEREIGN Intelligence Suite</div>
+</footer>
+
+<button class="fab" onclick="window.print()">🖨️ Save PDF</button>
+
+<script>
+// ── PARTICLE CANVAS
+const pc = document.getElementById('pc');
+const ctx = pc.getContext('2d');
+let W, H, pts = [];
+function rsz(){ W = pc.width = pc.offsetWidth; H = pc.height = pc.offsetHeight; }
+function init(){
+  pts = [];
+  const n = Math.min(60, Math.floor(W*H/9000));
+  for(let i=0;i<n;i++) pts.push({
+    x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35,
+    r:Math.random()*2+.8,
+    c:Math.random()>.5?'rgba(212,175,55,':'rgba(0,212,255,',
+    a:Math.random()*.4+.15
+  });
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  pts.forEach((p,i)=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>W) p.vx*=-1;
+    if(p.y<0||p.y>H) p.vy*=-1;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=p.c+p.a+')'; ctx.fill();
+    pts.slice(i+1).forEach(q=>{
+      const d=Math.hypot(p.x-q.x,p.y-q.y);
+      if(d<90){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle='rgba(212,175,55,'+(0.08*(1-d/90))+')'; ctx.lineWidth=.4; ctx.stroke(); }
+    });
+  });
+  requestAnimationFrame(draw);
+}
+rsz(); init(); draw();
+window.addEventListener('resize',()=>{ rsz(); init(); });
+
+// ── SCROLL REVEAL
+const obs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('vis');}),{threshold:.07});
+document.querySelectorAll('.rev').forEach(el=>obs.observe(el));
+
+// ── NAV ACTIVE
+const secs = document.querySelectorAll('section[id]');
+const nls = document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  secs.forEach(s=>{ if(window.scrollY>=s.offsetTop-130) cur=s.id; });
+  nls.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+});
+
+// ── COPY EMAIL
+function copyEmail(btn, id){
+  const txt = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 2200);
+  });
+}
+</script>
+</body>
+</html>

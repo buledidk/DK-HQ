@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DK Buledi — Master Command Centre v2</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --border: #1e3a5f;
+    --accent: #00d4ff;
+    --accent2: #00ff88;
+    --accent3: #ff6b35;
+    --accent4: #ffd700;
+    --accent5: #a855f7;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --red: #ef4444;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --orange: #f97316;
+    --card-shadow: 0 4px 24px rgba(0,212,255,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── TOP HEADER ── */
+  .top-header {
+    background: linear-gradient(135deg, #0d1b2e 0%, #1a2a4a 50%, #0d1b2e 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,212,255,0.2);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo { font-size: 28px; font-weight: 900; background: linear-gradient(90deg,#00d4ff,#00ff88); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing: -1px; }
+  .header-title { font-size: 13px; color: var(--text2); text-transform: uppercase; letter-spacing: 2px; }
+  .header-right { display: flex; align-items: center; gap: 20px; }
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(34,197,94,0.1); border: 1px solid var(--green);
+    padding: 4px 12px; border-radius: 20px; font-size: 11px; color: var(--green);
+  }
+  .live-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+  .datetime { font-size: 13px; color: var(--text2); }
+  .nav-tabs {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 4px;
+  }
+  .nav-tab {
+    padding: 12px 20px;
+    font-size: 13px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: var(--text2);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--accent); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── MAIN LAYOUT ── */
+  .main { padding: 24px 32px; max-width: 1920px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── GRID SYSTEMS ── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin-bottom: 24px; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 24px; }
+  .full-width { margin-bottom: 24px; }
+  @media (max-width:1200px) { .grid-4{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:768px) { .grid-4,.grid-3,.grid-2,.grid-2-1,.grid-1-2{grid-template-columns:1fr} .main{padding:16px} }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(0,212,255,0.3); }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text2); font-weight: 600; }
+  .card-icon { font-size: 18px; }
+
+  /* ── KPI CARDS ── */
+  .kpi-value { font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+  .kpi-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+  .kpi-delta { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .kpi-delta.up { color: var(--green); }
+  .kpi-delta.down { color: var(--red); }
+  .kpi-delta.flat { color: var(--text2); }
+
+  /* ── STATUS BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+  }
+  .badge.critical { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid var(--red); }
+  .badge.high { background:rgba(249,115,22,0.15); color:var(--orange); border:1px solid var(--orange); }
+  .badge.medium { background:rgba(234,179,8,0.15); color:var(--yellow); border:1px solid var(--yellow); }
+  .badge.low { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid var(--green); }
+  .badge.done { background:rgba(148,163,184,0.15); color:var(--text2); border:1px solid var(--border); }
+  .badge.pending { background:rgba(0,212,255,0.1); color:var(--accent); border:1px solid var(--accent); }
+  .badge.active { background:rgba(0,255,136,0.1); color:var(--accent2); border:1px solid var(--accent2); }
+  .badge.warning { background:rgba(234,179,8,0.15); color:var(--yellow); border:1px solid var(--yellow); }
+  .badge.offline { background:rgba(239,68,68,0.1); color:var(--red); border:1px solid rgba(239,68,68,0.4); }
+  .badge.online { background:rgba(34,197,94,0.1); color:var(--green); border:1px solid rgba(34,197,94,0.4); }
+
+  /* ── TABLES ── */
+  .data-table { width:100%; border-collapse:collapse; }
+  .data-table th { text-align:left; padding:10px 12px; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text2); border-bottom:1px solid var(--border); font-weight:600; }
+  .data-table td { padding:12px 12px; font-size:13px; border-bottom:1px solid rgba(30,58,95,0.5); vertical-align:middle; }
+  .data-table tr:last-child td { border-bottom:none; }
+  .data-table tr:hover td { background:rgba(0,212,255,0.04); }
+
+  /* ── ACTION ITEMS ── */
+  .action-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px; border-radius: 8px;
+    border: 1px solid rgba(30,58,95,0.7);
+    margin-bottom: 10px;
+    background: rgba(17,24,39,0.5);
+    transition: all 0.2s;
+  }
+  .action-item:hover { border-color: var(--accent); background: rgba(0,212,255,0.03); }
+  .action-item .check { width:18px; height:18px; border-radius:4px; border:2px solid var(--border); flex-shrink:0; margin-top:2px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+  .action-item .check.done { background:var(--green); border-color:var(--green); color:#fff; font-size:12px; }
+  .action-item .check:hover { border-color:var(--accent); }
+  .action-item .content { flex:1; min-width:0; }
+  .action-item .title { font-size:14px; font-weight:500; margin-bottom:4px; }
+  .action-item .meta { font-size:11px; color:var(--text2); display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .action-item .due { color:var(--accent4); }
+  .action-item .due.overdue { color:var(--red); }
+
+  /* ── DECISIONS ── */
+  .decision-card {
+    padding: 16px; border-radius: 10px;
+    border-left: 4px solid var(--accent5);
+    background: rgba(168,85,247,0.05);
+    margin-bottom: 12px;
+  }
+  .decision-card.approved { border-left-color: var(--green); background: rgba(34,197,94,0.04); }
+  .decision-card.pending { border-left-color: var(--yellow); background: rgba(234,179,8,0.04); }
+  .decision-card.review { border-left-color: var(--orange); background: rgba(249,115,22,0.04); }
+  .decision-card .d-title { font-size:14px; font-weight:600; margin-bottom:6px; }
+  .decision-card .d-desc { font-size:13px; color:var(--text2); margin-bottom:10px; line-height:1.5; }
+  .decision-card .d-footer { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+  /* ── CONNECTORS ── */
+  .connector-card {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    background: var(--bg2);
+    transition: all 0.2s;
+  }
+  .connector-card:hover { border-color: var(--accent); transform: translateX(2px); }
+  .connector-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+  .connector-info { flex:1; }
+  .connector-name { font-size:14px; font-weight:600; margin-bottom:3px; }
+  .connector-detail { font-size:12px; color:var(--text2); }
+  .connector-actions { display:flex; gap:8px; }
+  .btn-sm {
+    padding:5px 12px; border-radius:6px; font-size:11px; font-weight:600;
+    border:none; cursor:pointer; transition:all 0.2s;
+  }
+  .btn-sm.primary { background:var(--accent); color:#000; }
+  .btn-sm.primary:hover { background:#00bbdd; }
+  .btn-sm.secondary { background:rgba(30,58,95,0.7); color:var(--text); border:1px solid var(--border); }
+  .btn-sm.secondary:hover { border-color:var(--accent); color:var(--accent); }
+  .btn-sm.danger { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+
+  /* ── PROGRESS BARS ── */
+  .progress-bar { background: rgba(30,58,95,0.5); border-radius: 4px; height: 6px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height:100%; border-radius:4px; transition: width 0.6s ease; }
+  .progress-fill.green { background: linear-gradient(90deg,#16a34a,#22c55e); }
+  .progress-fill.blue { background: linear-gradient(90deg,#0ea5e9,#00d4ff); }
+  .progress-fill.orange { background: linear-gradient(90deg,#ea580c,#f97316); }
+  .progress-fill.purple { background: linear-gradient(90deg,#7c3aed,#a855f7); }
+  .progress-fill.red { background: linear-gradient(90deg,#b91c1c,#ef4444); }
+
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto; padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  .pipe-stage {
+    flex-shrink:0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 12px 20px;
+    min-width: 140px; text-align:center;
+    position:relative;
+    transition: all 0.2s;
+  }
+  .pipe-stage.active-stage { background:rgba(0,212,255,0.08); border-color:var(--accent); }
+  .pipe-stage .pipe-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text2); margin-bottom:4px; }
+  .pipe-stage .pipe-val { font-size:18px; font-weight:700; }
+  .pipe-arrow { color:var(--accent); font-size:20px; flex-shrink:0; padding:0 4px; }
+
+  /* ── ALERTS ── */
+  .alert {
+    display:flex; align-items:flex-start; gap:12px;
+    padding:12px 16px; border-radius:8px; margin-bottom:10px;
+  }
+  .alert.error { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); }
+  .alert.warn { background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.25); }
+  .alert.info { background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.2); }
+  .alert.success { background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.2); }
+  .alert-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+  .alert-body .a-title { font-size:13px; font-weight:600; margin-bottom:3px; }
+  .alert-body .a-desc { font-size:12px; color:var(--text2); line-height:1.4; }
+
+  /* ── CHART PLACEHOLDERS ── */
+  .chart-area {
+    height: 180px; background: rgba(0,212,255,0.02);
+    border: 1px dashed rgba(0,212,255,0.2); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .sparkline { width:100%; height:60px; }
+
+  /* ── SECTION HEADER ── */
+  .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .section-title { font-size:20px; font-weight:700; display:flex; align-items:center; gap:10px; }
+  .section-title .dot { width:10px;height:10px;border-radius:50%; }
+
+  /* ── CONNECTIVITY MAP ── */
+  .conn-map {
+    background: var(--bg2); border-radius:12px; border:1px solid var(--border);
+    padding:24px; margin-bottom:24px; position:relative; overflow:hidden;
+  }
+  .conn-node {
+    display:inline-flex; flex-direction:column; align-items:center; gap:6px;
+    background:var(--bg3); border:2px solid var(--border); border-radius:12px;
+    padding:14px 18px; min-width:100px; text-align:center; cursor:pointer;
+    transition:all 0.2s; margin:8px;
+  }
+  .conn-node:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,212,255,0.15); }
+  .conn-node.center { border-color:var(--accent); background:rgba(0,212,255,0.08); }
+  .conn-node.active-conn { border-color:var(--green); }
+  .conn-node.inactive { border-color:rgba(239,68,68,0.4); opacity:0.6; }
+  .conn-node .n-icon { font-size:28px; }
+  .conn-node .n-label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:1px; }
+  .conn-node .n-status { font-size:10px; }
+  .conn-row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:0; }
+  .conn-line {
+    width:40px; height:2px; background:var(--border); position:relative;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .conn-line.connected { background:var(--green); }
+  .conn-line::after { content:''; position:absolute; right:-1px; top:-4px; border:5px solid transparent; border-left-color:inherit; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .filter-btn {
+    padding:6px 14px; border-radius:20px; font-size:12px; cursor:pointer;
+    border:1px solid var(--border); background:transparent; color:var(--text2);
+    transition:all 0.2s;
+  }
+  .filter-btn.active,.filter-btn:hover { background:var(--accent); color:#000; border-color:var(--accent); font-weight:600; }
+
+  /* ── TIMELINE ── */
+  .timeline { position:relative; padding-left:24px; }
+  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:2px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:16px; }
+  .tl-dot { position:absolute; left:-24px; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid var(--bg3); }
+  .tl-dot.done { background:var(--green); }
+  .tl-dot.pending { background:var(--yellow); }
+  .tl-dot.future { background:var(--border); }
+  .tl-content .tl-title { font-size:13px; font-weight:500; margin-bottom:3px; }
+  .tl-content .tl-meta { font-size:11px; color:var(--text2); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+  .divider { height:1px; background:var(--border); margin:20px 0; opacity:0.5; }
+  .text-accent { color:var(--accent); }
+  .text-green { color:var(--green); }
+  .text-red { color:var(--red); }
+  .text-yellow { color:var(--yellow); }
+  .text-orange { color:var(--orange); }
+  .text-purple { color:var(--accent5); }
+  .mt-12 { margin-top:12px; }
+  .mb-12 { margin-bottom:12px; }
+  .flex { display:flex; }
+  .items-center { align-items:center; }
+  .justify-between { justify-content:space-between; }
+  .gap-8 { gap:8px; }
+  .gap-12 { gap:12px; }
+  .font-bold { font-weight:700; }
+  .text-sm { font-size:13px; }
+  .text-xs { font-size:11px; color:var(--text2); }
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<div class="top-header">
+  <div class="header-left">
+    <div>
+      <div class="logo">DK BULEDI</div>
+      <div class="header-title">Master Command Centre — Consolidated</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <div class="datetime" id="clock">--</div>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('overview')">📊 Overview</div>
+  <div class="nav-tab" onclick="switchTab('decisions')">⚖️ Decisions</div>
+  <div class="nav-tab" onclick="switchTab('actions')">✅ Action Points</div>
+  <div class="nav-tab" onclick="switchTab('financial')">💰 Financial</div>
+  <div class="nav-tab" onclick="switchTab('connectivity')">🔌 Connectivity</div>
+  <div class="nav-tab" onclick="switchTab('servers')">🖥️ Servers & Infra</div>
+  <div class="nav-tab" onclick="switchTab('timeline')">📅 Timeline</div>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION: OVERVIEW
+═══════════════════════════════════════════════════════════ -->
+<div id="section-overview" class="section active">
+  <div class="section-header">
+    <div class="section-title"><span class="dot" style="background:var(--accent)"></span>Mission Control Overview</div>
+    <span class="badge active">All Systems</span>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Net Worth</div><div class="card-icon">💎</div></div>
+      <div class="kpi-value text-accent">R 4.2M</div>
+      <div class="kpi-label">Total consolidated assets</div>
+      <div class="kpi-delta up">▲ 12.4% YTD</div>
+      <div class="progress-bar mt-12"><div class="progress-fill blue" style="width:72%"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Open Actions</div><div class="card-icon">⚡</div></div>
+      <div class="kpi-value text-orange">23</div>
+      <div class="kpi-label">Items requiring attention</div>
+      <div class="kpi-delta down">▼ 5 critical, 8 high</div>
+      <div class="progress-bar mt-12"><div class="progress-fill orange" style="width:58%"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Pending Decisions</div><div class="card-icon">⚖️</div></div>
+      <div class="kpi-value text-yellow">7</div>
+      <div class="kpi-label">Awaiting resolution</div>
+      <div class="kpi-delta flat">→ 3 due this week</div>
+      <div class="progress-bar mt-12"><div class="progress-fill purple" style="width:40%"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Systems Online</div><div class="card-icon">🖥️</div></div>
+      <div class="kpi-value text-green">9/11</div>
+      <div class="kpi-label">Infrastructure status</div>
+      <div class="kpi-delta down">▼ 2 offline</div>
+      <div class="progress-bar mt-12"><div class="progress-fill green" style="width:82%"></div></div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🚨 Active Alerts</div><span class="badge critical">5 Critical</span></div>
+      <div class="alert error">
+        <div class="alert-icon">🔴</div>
+        <div class="alert-body"><div class="a-title">Gmail API — Token Expired</div><div class="a-desc">OAuth token for Gmail connector expired 2h ago. Email automation paused. Action required immediately.</div></div>
+      </div>
+      <div class="alert error">
+        <div class="alert-icon">🔴</div>
+        <div class="alert-body"><div class="a-title">Server ZA-PROD-02 — Disk 94% Full</div><div class="a-desc">Production server disk critically low. Immediate cleanup or scale required.</div></div>
+      </div>
+      <div class="alert warn">
+        <div class="alert-icon">🟡</div>
+        <div class="alert-body"><div class="a-title">Investment Account — Transfer Pending</div><div class="a-desc">R45,000 transfer to Easy Equities initiated 48h ago, not yet reflected.</div></div>
+      </div>
+      <div class="alert warn">
+        <div class="alert-icon">🟡</div>
+        <div class="alert-body"><div class="a-title">3 Decisions Overdue</div><div class="a-desc">Business restructure, property acquisition and SARS submission decisions past review date.</div></div>
+      </div>
+      <div class="alert info">
+        <div class="alert-icon">🔵</div>
+        <div class="alert-body"><div class="a-title">New Calendar Events Detected</div><div class="a-desc">4 upcoming milestones added to timeline via Google Calendar sync.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📡 Connector Status</div></div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(234,67,53,0.1)">📧</div>
+        <div class="connector-info"><div class="connector-name">Gmail</div><div class="connector-detail">⚠️ Token expired — needs refresh</div></div>
+        <span class="badge warning">⚠ Warning</span>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(66,133,244,0.1)">📅</div>
+        <div class="connector-info"><div class="connector-name">Google Calendar</div><div class="connector-detail">✓ Synced 12 min ago</div></div>
+        <span class="badge online">● Online</span>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(0,212,255,0.1)">☁️</div>
+        <div class="connector-info"><div class="connector-name">Cloud Servers (ZA)</div><div class="connector-detail">9/11 nodes healthy</div></div>
+        <span class="badge warning">⚠ Partial</span>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(0,255,136,0.1)">💹</div>
+        <div class="connector-info"><div class="connector-name">Easy Equities</div><div class="connector-detail">✓ Portfolio synced</div></div>
+        <span class="badge online">● Online</span>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(168,85,247,0.1)">🗂️</div>
+        <div class="connector-info"><div class="connector-name">Google Drive</div><div class="connector-detail">✓ 47 docs indexed</div></div>
+        <span class="badge online">● Online</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK PIPELINE -->
+  <div class="card full-width">
+    <div class="card-header"><div class="card-title">💼 Business Pipeline Overview</div></div>
+    <div class="pipeline">
+      <div class="pipe-stage"><div class="pipe-label">Leads</div><div class="pipe-val text-accent">12</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage"><div class="pipe-label">Qualified</div><div class="pipe-val text-accent">8</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage active-stage"><div class="pipe-label">Negotiation</div><div class="pipe-val text-yellow">4</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage"><div class="pipe-label">Proposal Sent</div><div class="pipe-val text-orange">3</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage"><div class="pipe-label">Contract</div><div class="pipe-val text-green">2</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage"><div class="pipe-label">Closed Won</div><div class="pipe-val text-green">R1.2M</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-stage"><div class="pipe-label">Lost</div><div class="pipe-val text-red">1</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION: DECISIONS
+═══════════════════════════════════════════════════════════ -->
+<div id="section-decisions" class="section">
+  <div class="section-header">
+    <div class="section-title"><span class="dot" style="background:var(--accent5)"></span>Decision Register</div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterDecisions('all',this)">All</button>
+      <button class="filter-btn" onclick="filterDecisions('pending',this)">Pending</button>
+      <button class="filter-btn" onclick="filterDecisions('review',this)">In Review</button>
+      <button class="filter-btn" onclick="filterDecisions('approved',this)">Approved</button>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="decision-card pending" data-status="pending">
+        <div class="d-title">🏠 Property Acquisition — Sandton Unit</div>
+        <div class="d-desc">Evaluating R2.8M residential unit in Sandton as investment rental. Awaiting final valuation report and mortgage approval feedback from FNB.</div>
+        <div class="d-footer">
+          <span class="badge medium">Medium Priority</span>
+          <span class="badge pending">Pending</span>
+          <span class="text-xs">Due: 20 Mar 2026</span>
+          <span class="text-xs">Owner: DK Buledi</span>
+        </div>
+      </div>
+      <div class="decision-card review" data-status="review">
+        <div class="d-title">🏢 Business Restructure — Pty Ltd vs Trust</div>
+        <div class="d-desc">Consulting attorney to finalise whether to restructure DK Holdings into a Family Trust for tax efficiency and estate planning. Legal opinion received, awaiting financial modelling.</div>
+        <div class="d-footer">
+          <span class="badge critical">Critical</span>
+          <span class="badge warning">In Review</span>
+          <span class="text-xs">Due: 18 Mar 2026</span>
+          <span class="text-xs text-red">⚠ OVERDUE</span>
+        </div>
+      </div>
+      <div class="decision-card review" data-status="review">
+        <div class="d-title">📋 SARS Tax Submission Strategy</div>
+        <div class="d-desc">Decision needed on whether to submit provisional tax now or defer to June. Accountant recommends submission by 28 Feb — now overdue. Risk of penalties if not resolved.</div>
+        <div class="d-footer">
+          <span class="badge critical">Critical</span>
+          <span class="badge warning">In Review</span>
+          <span class="text-xs text-red">⚠ OVERDUE — was 28 Feb</span>
+        </div>
+      </div>
+      <div class="decision-card pending" data-status="pending">
+        <div class="d-title">📱 Tech Stack for New Project — AWS vs Azure</div>
+        <div class="d-desc">New SaaS project requires cloud infrastructure decision. AWS offers better ML tooling; Azure integrates with existing M365. Team split 50/50. Need final call before sprint 4.</div>
+        <div class="d-footer">
+          <span class="badge high">High Priority</span>
+          <span class="badge pending">Pending</span>
+          <span class="text-xs">Due: 22 Mar 2026</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="decision-card approved" data-status="approved">
+        <div class="d-title">✅ Easy Equities — R50K Investment Approved</div>
+        <div class="d-desc">Approved additional R50,000 into ETF portfolio (Satrix MSCI World + Satrix Property). Transfer initiated. Awaiting settlement.</div>
+        <div class="d-footer">
+          <span class="badge low">Low Risk</span>
+          <span class="badge active">Approved</span>
+          <span class="text-xs">Approved: 10 Mar 2026</span>
+        </div>
+      </div>
+      <div class="decision-card pending" data-status="pending">
+        <div class="d-title">👥 Hire: Senior Developer vs Outsource</div>
+        <div class="d-desc">Project capacity requires either hiring a full-time senior dev (R65k/month) or outsourcing sprint work to agency (R45k flat per sprint). Budget, risk and timeline weighed.</div>
+        <div class="d-footer">
+          <span class="badge high">High Priority</span>
+          <span class="badge pending">Pending</span>
+          <span class="text-xs">Due: 25 Mar 2026</span>
+        </div>
+      </div>
+      <div class="decision-card pending" data-status="pending">
+        <div class="d-title">🌍 International Business Expansion</div>
+        <div class="d-desc">Evaluate feasibility of UK entity setup for ZAR-GBP revenue diversification. Legal, tax and operational requirements being assessed by international consultant.</div>
+        <div class="d-footer">
+          <span class="badge medium">Medium Priority</span>
+          <span class="badge pending">Pending</span>
+          <span class="text-xs">Due: 30 Apr 2026</span>
+        </div>
+      </div>
+      <div class="decision-card approved" data-status="approved">
+        <div class="d-title">✅ Gmail Automation Pipeline — Approved</div>
+        <div class="d-desc">Decision approved to implement Gmail API automation for invoice routing, client onboarding emails and weekly digest reports.</div>
+        <div class="d-footer">
+          <span class="badge low">Implementation</span>
+          <span class="badge active">Approved</span>
+          <span class="text-xs">Approved: 5 Mar 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION: ACTION POINTS
+═══════════════════════════════════════════════════════════ -->
+<div id="section-actions" class="section">
+  <div class="section-header">
+    <div class="section-title"><span class="dot" style="background:var(--orange)"></span>Action Points</div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterActions('all',this)">All (23)</button>
+      <button class="filter-btn" onclick="filterActions('critical',this)">Critical (5)</button>
+      <button class="filter-btn" onclick="filterActions('high',this)">High (8)</button>
+      <button class="filter-btn" onclick="filterActions('medium',this)">Medium (6)</button>
+      <button class="filter-btn" onclick="filterActions('low',this)">Low (4)</button>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div style="margin-bottom:12px;font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:600;">🔴 Critical</div>
+      <div class="action-item" data-priority="critical">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Refresh Gmail OAuth Token</div>
+          <div class="meta"><span class="badge critical">Critical</span><span class="due overdue">⚠ OVERDUE — was today</span><span>Connectivity</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="critical">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Clear disk space on ZA-PROD-02 server (94% full)</div>
+          <div class="meta"><span class="badge critical">Critical</span><span class="due overdue">⚠ Urgent</span><span>Servers</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="critical">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">File SARS provisional tax return — penalties risk</div>
+          <div class="meta"><span class="badge critical">Critical</span><span class="due overdue">⚠ OVERDUE</span><span>Finance</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="critical">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Resolve pending EFT — R45K Easy Equities transfer</div>
+          <div class="meta"><span class="badge critical">Critical</span><span class="due">Due: 16 Mar</span><span>Finance</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="critical">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Finalise legal opinion on business restructure</div>
+          <div class="meta"><span class="badge critical">Critical</span><span class="due overdue">⚠ OVERDUE</span><span>Legal</span></div>
+        </div>
+      </div>
+
+      <div style="margin:16px 0 12px;font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:600;">🟠 High Priority</div>
+      <div class="action-item" data-priority="high">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Make final cloud decision: AWS vs Azure</div>
+          <div class="meta"><span class="badge high">High</span><span class="due">Due: 22 Mar</span><span>Tech</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="high">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Interview candidates for senior dev role</div>
+          <div class="meta"><span class="badge high">High</span><span class="due">Due: 20 Mar</span><span>HR</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="high">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Send proposal to Client C — contract renewal</div>
+          <div class="meta"><span class="badge high">High</span><span class="due">Due: 18 Mar</span><span>Business Dev</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="high">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Update API keys on production environment</div>
+          <div class="meta"><span class="badge high">High</span><span class="due">Due: 17 Mar</span><span>Servers</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="margin-bottom:12px;font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:600;">🟡 Medium Priority</div>
+      <div class="action-item" data-priority="medium">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Update financial model — Q2 2026 projections</div>
+          <div class="meta"><span class="badge medium">Medium</span><span class="due">Due: 25 Mar</span><span>Finance</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="medium">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Book property valuation appointment</div>
+          <div class="meta"><span class="badge medium">Medium</span><span class="due">Due: 19 Mar</span><span>Property</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="medium">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Review and update Google Drive folder structure</div>
+          <div class="meta"><span class="badge medium">Medium</span><span class="due">Due: 28 Mar</span><span>Admin</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="medium">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Setup server monitoring alerts (Uptime Robot)</div>
+          <div class="meta"><span class="badge medium">Medium</span><span class="due">Due: 24 Mar</span><span>Servers</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="medium">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Prepare Q1 board / management report</div>
+          <div class="meta"><span class="badge medium">Medium</span><span class="due">Due: 31 Mar</span><span>Admin</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="medium">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Implement Gmail automation pipeline (post-token fix)</div>
+          <div class="meta"><span class="badge medium">Medium</span><span class="due">Due: 22 Mar</span><span>Connectivity</span></div>
+        </div>
+      </div>
+
+      <div style="margin:16px 0 12px;font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:600;">🟢 Low Priority</div>
+      <div class="action-item" data-priority="low">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Research UK company registration process</div>
+          <div class="meta"><span class="badge low">Low</span><span class="due">Due: Apr</span><span>Legal</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="low">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Update LinkedIn and business profiles</div>
+          <div class="meta"><span class="badge low">Low</span><span class="due">Due: 31 Mar</span><span>Admin</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="low">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Archive old project files from server</div>
+          <div class="meta"><span class="badge low">Low</span><span class="due">Due: Apr</span><span>Servers</span></div>
+        </div>
+      </div>
+      <div class="action-item" data-priority="low">
+        <div class="check" onclick="toggleCheck(this)"></div>
+        <div class="content">
+          <div class="title">Explore Zapier/Make.com automation for admin tasks</div>
+          <div class="meta"><span class="badge low">Low</span><span class="due">Due: Apr</span><span>Connectivity</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION: FINANCIAL
+═══════════════════════════════════════════════════════════ -->
+<div id="section-financial" class="section">
+  <div class="section-header">
+    <div class="section-title"><span class="dot" style="background:var(--accent4)"></span>Financial Command Centre</div>
+    <span class="badge active">Q1 2026</span>
+  </div>
+
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Monthly Revenue</div><div class="card-icon">📈</div></div>
+      <div class="kpi-value text-green">R 185K</div>
+      <div class="kpi-label">March 2026 (projected)</div>
+      <div class="kpi-delta up">▲ 8.2% vs Feb</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Monthly Expenses</div><div class="card-icon">📉</div></div>
+      <div class="kpi-value text-red">R 98K</div>
+      <div class="kpi-label">March 2026</div>
+      <div class="kpi-delta down">▲ 3.1% vs Feb</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Net Profit</div><div class="card-icon">💵</div></div>
+      <div class="kpi-value text-accent">R 87K</div>
+      <div class="kpi-label">March 2026</div>
+      <div class="kpi-delta up">▲ 14.5% vs Feb</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Investment Portfolio</div><div class="card-icon">💹</div></div>
+      <div class="kpi-value text-green">R 620K</div>
+      <div class="kpi-label">Total portfolio value</div>
+      <div class="kpi-delta up">▲ 9.8% YTD</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">💼 Income Streams</div></div>
+      <table class="data-table">
+        <thead><tr><th>Source</th><th>Monthly</th><th>% of Total</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>DK Holdings — Consulting</td><td class="text-green">R 85,000</td><td>46%</td><td><span class="badge active">Active</span></td></tr>
+          <tr><td>Software Projects (SaaS)</td><td class="text-green">R 55,000</td><td>30%</td><td><span class="badge active">Active</span></td></tr>
+          <tr><td>Rental Income</td><td class="text-green">R 28,000</td><td>15%</td><td><span class="badge active">Active</span></td></tr>
+          <tr><td>Investment Dividends</td><td class="text-green">R 12,000</td><td>6%</td><td><span class="badge pending">Quarterly</span></td></tr>
+          <tr><td>Side Projects</td><td class="text-yellow">R 5,000</td><td>3%</td><td><span class="badge warning">Variable</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">💸 Major Expenses</div></div>
+      <table class="data-table">
+        <thead><tr><th>Category</th><th>Monthly</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Staff & Contractors</td><td class="text-red">R 42,000</td><td><span class="badge active">Recurring</span></td></tr>
+          <tr><td>Office & Infrastructure</td><td class="text-red">R 18,000</td><td><span class="badge active">Recurring</span></td></tr>
+          <tr><td>Cloud Services (AWS/GCP)</td><td class="text-red">R 12,000</td><td><span class="badge active">Recurring</span></td></tr>
+          <tr><td>Marketing & Business Dev</td><td class="text-orange">R 15,000</td><td><span class="badge active">Recurring</span></td></tr>
+          <tr><td>Professional Services</td><td class="text-orange">R 8,000</td><td><span class="badge warning">Variable</span></td></tr>
+          <tr><td>Loan Repayments</td><td class="text-red">R 3,000</td><td><span class="badge active">Recurring</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🏦 Bank Accounts</div></div>
+      <table class="data-table">
+        <thead><tr><th>Account</th><th>Balance</th></tr></thead>
+        <tbody>
+          <tr><td>FNB Business Current</td><td class="text-green">R 245,000</td></tr>
+          <tr><td>FNB Personal Cheque</td><td class="text-green">R 87,500</td></tr>
+          <tr><td>Capitec Savings</td><td class="text-green">R 135,000</td></tr>
+          <tr><td>TymeBank Emergency</td><td class="text-accent">R 50,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📊 Investment Accounts</div></div>
+      <table class="data-table">
+        <thead><tr><th>Platform</th><th>Value</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td>Easy Equities (ETFs)</td><td class="text-green">R 380,000</td><td class="text-green">+11.2%</td></tr>
+          <tr><td>Allan Gray Unit Trust</td><td class="text-green">R 145,000</td><td class="text-green">+7.4%</td></tr>
+          <tr><td>Crypto (BTC/ETH)</td><td class="text-yellow">R 95,000</td><td class="text-red">-4.1%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">📋 Upcoming Payments</div></div>
+      <table class="data-table">
+        <thead><tr><th>Item</th><th>Amount</th><th>Due</th></tr></thead>
+        <tbody>
+          <tr><td>SARS Provisional Tax</td><td class="text-red">R 38,000</td><td><span class="badge critical">OVERDUE</span></td></tr>
+          <tr><td>Cloud Services</td><td class="text-orange">R 12,000</td><td><span class="text-xs">20 Mar</span></td></tr>
+          <tr><td>Staff Payroll</td><td class="text-orange">R 42,000</td><td><span class="text-xs">25 Mar</span></td></tr>
+          <tr><td>Office Rent</td><td class="text-yellow">R 15,000</td><td><span class="text-xs">31 Mar</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION: CONNECTIVITY
+═══════════════════════════════════════════════════════════ -->
+<div id="section-connectivity" class="section">
+  <div class="section-header">
+    <div class="section-title"><span class="dot" style="background:var(--accent2)"></span>Connectivity & Integrations</div>
+    <span class="badge warning">1 Action Required</span>
+  </div>
+
+  <!-- VISUAL CONNECTOR MAP -->
+  <div class="conn-map">
+    <div style="text-align:center;margin-bottom:8px;font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;">Integration Architecture</div>
+    <div class="conn-row" style="justify-content:center;margin-bottom:8px;">
+      <div class="conn-node active-conn"><div class="n-icon">📅</div><div class="n-label">Calendar</div><div class="n-status text-green">● Live</div></div>
+      <div class="conn-node active-conn"><div class="n-icon">🗂️</div><div class="n-label">Drive</div><div class="n-status text-green">● Live</div></div>
+      <div class="conn-node inactive"><div class="n-icon">📧</div><div class="n-label">Gmail</div><div class="n-status text-red">⚠ Token Exp</div></div>
+    </div>
+    <div class="conn-row" style="justify-content:center;margin:0 0 8px;">
+      <div style="width:2px;height:30px;background:var(--border);margin:0 49px"></div>
+      <div style="width:2px;height:30px;background:var(--green)"></div>
+      <div style="width:2px;height:30px;background:rgba(239,68,68,0.4);margin:0 49px"></div>
+    </div>
+    <div class="conn-row" style="justify-content:center;">
+      <div class="conn-node center" style="transform:scale(1.1);margin:0 30px;"><div class="n-icon">🧠</div><div class="n-label">Command Centre</div><div class="n-status text-accent">● Core</div></div>
+    </div>
+    <div class="conn-row" style="justify-content:center;margin:8px 0;">
+      <div style="width:2px;height:30px;background:var(--green)"></div>
+      <div style="width:2px;height:30px;background:var(--green);margin:0 60px"></div>
+      <div style="width:2px;height:30px;background:var(--green);margin:0 60px"></div>
+    </div>
+    <div class="conn-row" style="justify-content:center;">
+      <div class="conn-node active-conn"><div class="n-icon">☁️</div><div class="n-label">Servers ZA</div><div class="n-status text-yellow">⚠ Partial</div></div>
+      <div class="conn-node active-conn"><div class="n-icon">💹</div><div class="n-label">Easy Equities</div><div class="n-status text-green">● Live</div></div>
+      <div class="conn-node active-conn"><div class="n-icon">🏦</div><div class="n-label">FNB Banking</div><div class="n-status text-green">● Live</div></div>
+      <div class="conn-node active-conn"><div class="n-icon">📊</div><div class="n-label">Allan Gray</div><div class="n-status text-green">● Live</div></div>
+    </div>
+  </div>
+
+  <!-- CONNECTOR DETAILS -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">📧 Gmail Integration</div><span class="badge warning">⚠ Token Expired</span></div>
+      <div class="alert error"><div class="alert-icon">🔴</div><div class="alert-body"><div class="a-title">OAuth 2.0 Token Expired</div><div class="a-desc">Gmail connector stopped 2 hours ago. All email automations paused. Reconnect required via Google OAuth flow.</div></div></div>
+      <table class="data-table mt-12">
+        <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Invoice Email Router</td><td><span class="badge offline">⚠ Paused</span></td></tr>
+          <tr><td>Client Onboarding Emails</td><td><span class="badge offline">⚠ Paused</span></td></tr>
+          <tr><td>Weekly Digest Reports</td><td><span class="badge offline">⚠ Paused</span></td></tr>
+          <tr><td>Gmail → Drive Archiver</td><td><span class="badge offline">⚠ Paused</span></td></tr>
+          <tr><td>Notification Webhooks</td><td><span class="badge offline">⚠ Paused</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px">
+        <button class="btn-sm primary" style="width:100%;padding:10px">🔄 Reconnect Gmail OAuth</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">📅 Google Calendar + Drive</div><span class="badge online">● Online</span></div>
+      <table class="data-table">
+        <thead><tr><th>Integration</th><th>Last Sync</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Calendar → Action Points</td><td>12 min ago</td><td><span class="badge online">● Live</span></td></tr>
+          <tr><td>Calendar → Timeline</td><td>12 min ago</td><td><span class="badge online">● Live</span></td></tr>
+          <tr><td>Drive → Document Index</td><td>34 min ago</td><td><span class="badge online">● Live</span></td></tr>
+          <tr><td>Drive → Financial Docs</td><td>34 min ago</td><td><span class="badge online">● Live</span></td></tr>
+          <tr><td>Drive → Contracts Store</td><td>2h ago</td><td><span class="badge pending">↻ Syncing</span></td></tr>
+        </tbody>
+      </table>
+      <div class="mt-12">
+        <div class="flex justify-between text-xs mb-12"><span>Drive storage used</span><span>38.2 GB / 100 GB</span></div>
+        <div class="progress-bar"><div class="progress-fill blue" style="width:38%"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">💹 Financial Connectors</div></div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(0,255,136,0.1)">💹</div>
+        <div class="connector-info">
+          <div class="connector-name">Easy Equities API</div>
+          <div class="connector-detail">Portfolio sync enabled · Last: 8 min ago</div>
+        </div>
+        <div class="connector-actions">
+          <button class="btn-sm secondary">Sync Now</button>
+        </div>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(0,212,255,0.1)">🏦</div>
+        <div class="connector-info">
+          <div class="connector-name">FNB Open Banking</div>
+          <div class="connector-detail">Read-only · Statements synced daily</div>
+        </div>
+        <div class="connector-actions">
+          <button class="btn-sm secondary">Settings</button>
+        </div>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(168,85,247,0.1)">📊</div>
+        <div class="connector-info">
+          <div class="connector-name">Allan Gray Portal</div>
+          <div class="connector-detail">Manual export · Last import: 3 days ago</div>
+        </div>
+        <div class="connector-actions">
+          <button class="btn-sm secondary">Import</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">🔗 Automation Connectors</div></div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(255,165,0,0.1)">⚡</div>
+        <div class="connector-info">
+          <div class="connector-name">Zapier / Make.com</div>
+          <div class="connector-detail">Not configured — 3 automation templates available</div>
+        </div>
+        <div class="connector-actions">
+          <button class="btn-sm primary">Setup</button>
+        </div>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(0,212,255,0.1)">🤖</div>
+        <div class="connector-info">
+          <div class="connector-name">Claude AI Automation</div>
+          <div class="connector-detail">Active · Dashboard management & reporting</div>
+        </div>
+        <div class="connector-actions">
+          <button class="btn-sm secondary">Config</button>
+        </div>
+      </div>
+      <div class="connector-card">
+        <div class="connector-icon" style="background:rgba(34,197,94,0.1)">📱</div>
+        <div class="connector-info">
+          <div class="connector-name">WhatsApp Business API</div>
+          <div class="connector-detail">Not connected — client notification pipeline</div>
+        </div>
+        <div class="connector-actions">
+          <button class="btn-sm primary">Connect</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION: SERVERS & INFRA
+═══════════════════════════════════════════════════════════ -->
+<div id="section-servers" class="section">
+  <div class="section-header">
+    <div class="section-title"><span class="dot" style="background:var(--accent)"></span>Servers & Infrastructure</div>
+    <span class="badge warning">⚠ 2 Offline</span>
+  </div>
+
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Total Nodes</div><div class="card-icon">🖥️</div></div>
+      <div class="kpi-value text-accent">11</div>
+      <div class="kpi-label">Servers configured</div>
+      <div class="kpi-delta up">9 online · 2 offline</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Avg CPU Load</div><div class="card-icon">⚡</div></div>
+      <div class="kpi-value text-yellow">42%</div>
+      <div class="kpi-label">Across all live nodes</div>
+      <div class="kpi-delta flat">→ Normal range</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Disk Usage</div><div class="card-icon">💾</div></div>
+      <div class="kpi-value text-red">94%</div>
+      <div class="kpi-label">ZA-PROD-02 critical</div>
+      <div class="kpi-delta down">▼ Requires immediate action</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Monthly Cloud Cost</div><div class="card-icon">💰</div></div>
+      <div class="kpi-value text-orange">R 12K</div>
+      <div class="kpi-label">AWS + GCP combined</div>
+      <div class="kpi-delta up">▲ 8% vs last month</div>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="card-header"><div class="card-title">🖥️ Server Status Board</div></div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Server Name</th>
+          <th>Role</th>
+          <th>Provider</th>
+          <th>Region</th>
+          <th>CPU</th>
+          <th>RAM</th>
+          <th>Disk</th>
+          <th>Uptime</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-bold">ZA-PROD-01</td><td>Production API</td><td>AWS</td><td>af-south-1</td>
+          <td><div style="min-width:80px"><div class="flex justify-between text-xs"><span>38%</span></div><div class="progress-bar"><div class="progress-fill green" style="width:38%"></div></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:55%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:61%"></div></div></td>
+          <td class="text-green">99.9% (42d)</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">SSH</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold text-red">ZA-PROD-02</td><td>Production DB</td><td>AWS</td><td>af-south-1</td>
+          <td><div class="progress-bar"><div class="progress-fill orange" style="width:71%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill orange" style="width:82%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill red" style="width:94%"></div></div></td>
+          <td class="text-green">99.8% (42d)</td>
+          <td><span class="badge critical">⚠ Disk Full</span></td>
+          <td><button class="btn-sm danger">URGENT</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold">ZA-STAGE-01</td><td>Staging</td><td>AWS</td><td>af-south-1</td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:22%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:35%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:48%"></div></div></td>
+          <td class="text-green">100% (15d)</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">SSH</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold">ZA-DEV-01</td><td>Dev Environment</td><td>GCP</td><td>africa-south1</td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:15%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:28%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:33%"></div></div></td>
+          <td class="text-green">98.5% (8d)</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">SSH</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold">EU-PROD-01</td><td>EU App Server</td><td>AWS</td><td>eu-west-1</td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:44%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:52%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:41%"></div></div></td>
+          <td class="text-green">99.95% (61d)</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">SSH</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold">CDN-01</td><td>CDN / Edge</td><td>Cloudflare</td><td>Global</td>
+          <td>—</td><td>—</td><td>—</td>
+          <td class="text-green">100%</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">Dashboard</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold">DB-REPLICA-01</td><td>DB Read Replica</td><td>AWS</td><td>af-south-1</td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:29%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:65%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:57%"></div></div></td>
+          <td class="text-green">99.7% (42d)</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">SSH</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold">BACKUP-01</td><td>Backup Server</td><td>GCP</td><td>africa-south1</td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:8%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:12%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill purple" style="width:73%"></div></div></td>
+          <td class="text-green">100% (90d)</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">SSH</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold">MONITOR-01</td><td>Monitoring</td><td>AWS</td><td>af-south-1</td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:18%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill green" style="width:31%"></div></div></td>
+          <td><div class="progress-bar"><div class="progress-fill blue" style="width:42%"></div></div></td>
+          <td class="text-green">99.9% (42d)</td>
+          <td><span class="badge online">● Online</span></td>
+          <td><button class="btn-sm secondary">SSH</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold text-red">EU-STAGE-01</td><td>EU Staging</td><td>AWS</td><td>eu-west-1</td>
+          <td>—</td><td>—</td><td>—</td>
+          <td class="text-red">0% (3d down)</td>
+          <td><span class="badge offline">● Offline</span></td>
+          <td><button class="btn-sm danger">Restart</button></td>
+        </tr>
+        <tr>
+          <td class="font-bold text-red">ANALYTICS-01</td><td>Analytics Engine</td><td>GCP</td><td>us-central1</td>
+          <td>—</td><td>—</td><td>—</td>
+          <td class="text-red">0% (1d down)</td>
+          <td><span class="badge offline">● Offline</span></td>
+          <td><button class="btn-sm danger">Investigate</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION: TIMELINE
+═══════════════════════════════════════════════════════════ -->
+<div id="section-timeline" class="section">
+  <div class="section-header">
+    <div class="section-title"><span class="dot" style="background:var(--accent4)"></span>Master Timeline & Milestones</div>
+    <span class="badge pending">Q1–Q2 2026</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">📅 Upcoming Milestones</div></div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">✅ Q4 2025 Financial Close</div><div class="tl-meta">31 Dec 2025 — Completed</div></div></div>
+        <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">✅ Business Strategy Review</div><div class="tl-meta">15 Jan 2026 — Completed</div></div></div>
+        <div class="tl-item"><div class="tl-dot done"></div><div class="tl-content"><div class="tl-title">✅ Investment Portfolio Rebalance</div><div class="tl-meta">28 Feb 2026 — Completed</div></div></div>
+        <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-content"><div class="tl-title text-red">⚠ SARS Tax Submission</div><div class="tl-meta text-red">Was 28 Feb 2026 — OVERDUE</div></div></div>
+        <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-content"><div class="tl-title text-yellow">Business Restructure Decision</div><div class="tl-meta">18 Mar 2026 — Due in 3 days</div></div></div>
+        <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-content"><div class="tl-title">Cloud Architecture Decision</div><div class="tl-meta">22 Mar 2026</div></div></div>
+        <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-content"><div class="tl-title">Property Valuation</div><div class="tl-meta">19 Mar 2026</div></div></div>
+        <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-content"><div class="tl-title">Q1 2026 Financial Report</div><div class="tl-meta">31 Mar 2026</div></div></div>
+        <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><div class="tl-title">International Expansion Assessment</div><div class="tl-meta">30 Apr 2026</div></div></div>
+        <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><div class="tl-title">Q2 2026 Strategic Review</div><div class="tl-meta">30 Jun 2026</div></div></div>
+        <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><div class="tl-title">Annual Financial Year End</div><div class="tl-meta">28 Feb 2027</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">🎯 OKR Progress — Q1 2026</div></div>
+      <div style="margin-bottom:18px;">
+        <div class="flex justify-between" style="margin-bottom:6px"><span class="text-sm font-bold">Revenue Growth to R200K/mo</span><span class="text-sm text-yellow">92%</span></div>
+        <div class="progress-bar"><div class="progress-fill blue" style="width:92%"></div></div>
+        <div class="text-xs" style="margin-top:4px">Currently at R185K · Target R200K</div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <div class="flex justify-between" style="margin-bottom:6px"><span class="text-sm font-bold">Automate 5 business workflows</span><span class="text-sm text-yellow">40%</span></div>
+        <div class="progress-bar"><div class="progress-fill purple" style="width:40%"></div></div>
+        <div class="text-xs" style="margin-top:4px">2 of 5 automations live</div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <div class="flex justify-between" style="margin-bottom:6px"><span class="text-sm font-bold">Investment Portfolio R700K</span><span class="text-sm text-green">89%</span></div>
+        <div class="progress-bar"><div class="progress-fill green" style="width:89%"></div></div>
+        <div class="text-xs" style="margin-top:4px">R620K of R700K target</div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <div class="flex justify-between" style="margin-bottom:6px"><span class="text-sm font-bold">Infrastructure — 100% uptime</span><span class="text-sm text-red">82%</span></div>
+        <div class="progress-bar"><div class="progress-fill orange" style="width:82%"></div></div>
+        <div class="text-xs" style="margin-top:4px">2 servers offline — needs action</div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <div class="flex justify-between" style="margin-bottom:6px"><span class="text-sm font-bold">Legal & Compliance — All resolved</span><span class="text-sm text-red">30%</span></div>
+        <div class="progress-bar"><div class="progress-fill red" style="width:30%"></div></div>
+        <div class="text-xs" style="margin-top:4px">3 legal items overdue</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<script>
+// ── Clock ──
+function updateClock() {
+  const now = new Date();
+  const opts = {weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'};
+  document.getElementById('clock').textContent = now.toLocaleString('en-ZA', opts);
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// ── Tab switching ──
+function switchTab(tabName) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('section-'+tabName).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── Action item check toggle ──
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  el.innerHTML = el.classList.contains('done') ? '✓' : '';
+  const item = el.closest('.action-item');
+  if (el.classList.contains('done')) {
+    item.style.opacity = '0.5';
+    item.style.textDecoration = 'line-through';
+  } else {
+    item.style.opacity = '';
+    item.style.textDecoration = '';
+  }
+}
+
+// ── Decision filter ──
+function filterDecisions(status, btn) {
+  document.querySelectorAll('.filter-bar .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.decision-card').forEach(card=>{
+    if (status === 'all' || card.dataset.status === status) {
+      card.style.display='';
+    } else {
+      card.style.display='none';
+    }
+  });
+}
+
+// ── Action filter ──
+function filterActions(priority, btn) {
+  document.querySelectorAll('.filter-bar .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.action-item').forEach(item=>{
+    if (priority === 'all' || item.dataset.priority === priority) {
+      item.style.display='';
+    } else {
+      item.style.display='none';
+    }
+  });
+}
+</script>
+</body>
+</html>

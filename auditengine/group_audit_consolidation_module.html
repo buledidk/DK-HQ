@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Audit & Consolidation Module — ABC Company</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap');
+  :root {
+    --navy:#0a0e1a;--navy-mid:#111827;--navy-light:#1e2a3a;
+    --gold:#c9a84c;--gold-bright:#e8c96d;--gold-dim:#7a5f28;
+    --cyan:#4dd9c0;--red:#e05c5c;--green:#4caf85;--amber:#e0a84c;
+    --text:#d0dcea;--text-dim:#7a8fa8;--border:#1e2d42;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Syne',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;overflow-x:hidden}
+  .header{background:linear-gradient(135deg,#0d1424,#0a1628);border-bottom:1px solid var(--gold-dim);padding:16px 28px;display:flex;align-items:center;justify-content:space-between}
+  .header-left{display:flex;align-items:center;gap:14px}
+  .header-badge{background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:var(--navy);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .header-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:.3px}
+  .header-sub{font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;margin-top:1px}
+  .header-meta{text-align:right}
+  .header-meta .entity{font-size:13px;font-weight:600;color:var(--gold)}
+  .header-meta .ref{font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace}
+  .status-dot{display:inline-block;width:7px;height:7px;background:var(--cyan);border-radius:50%;margin-right:5px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .nav{display:flex;background:var(--navy-mid);border-bottom:1px solid var(--border);padding:0 28px;gap:2px;overflow-x:auto}
+  .nav-tab{padding:11px 18px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-dim);transition:all .2s;white-space:nowrap;font-family:'DM Mono',monospace}
+  .nav-tab:hover{color:var(--text)}
+  .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+  .content{padding:24px 28px;max-width:1200px}
+  .panel{display:none}.panel.active{display:block}
+  .section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:14px;font-family:'DM Mono',monospace}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .card{background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;padding:16px 18px}
+  .card-gold{border-color:var(--gold-dim)}
+  .card-cyan{border-left:3px solid var(--cyan)}
+  .card-amber{border-left:3px solid var(--amber)}
+  .card-red{border-left:3px solid var(--red)}
+  .card-green{border-left:3px solid var(--green)}
+  .card-title{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px}
+  .card-value{font-size:22px;font-weight:800;color:var(--text);font-family:'DM Mono',monospace}
+  .card-value.gold{color:var(--gold)}.card-value.cyan{color:var(--cyan)}.card-value.red{color:var(--red)}.card-value.green{color:var(--green)}
+  .card-sub{font-size:10px;color:var(--text-dim);margin-top:4px;font-family:'DM Mono',monospace}
+  .group-chart{background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;padding:24px;margin-bottom:20px}
+  .entity-box{background:var(--navy-light);border:1px solid var(--border);border-radius:5px;padding:10px 14px;text-align:center;min-width:130px;transition:all .2s;display:inline-block}
+  .entity-box:hover{border-color:var(--gold)}
+  .entity-box.parent{border-color:var(--gold);background:#1a2235}
+  .entity-box.significant{border-color:var(--cyan)}
+  .entity-name{font-size:11px;font-weight:700}
+  .entity-pct{font-size:18px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace}
+  .entity-type{font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+  .entity-flag{font-size:9px;color:var(--cyan);margin-top:3px;font-family:'DM Mono',monospace}
+  .group-row{display:flex;justify-content:center;gap:16px;align-items:flex-start;flex-wrap:wrap}
+  .connector-v{width:1px;height:24px;background:var(--gold-dim);margin:0 auto}
+  .workpaper-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:11px;margin-bottom:20px}
+  .workpaper-table th{background:var(--navy-light);color:var(--gold);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:1px solid var(--gold-dim)}
+  .workpaper-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+  .workpaper-table tr:hover td{background:rgba(255,255,255,.02)}
+  .workpaper-table tr.elim td{color:var(--red)}
+  .workpaper-table tr.group td{color:var(--gold);font-weight:700}
+  .num{text-align:right}
+  .tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+  .tag-green{background:rgba(76,175,133,.15);color:var(--green)}
+  .tag-amber{background:rgba(224,168,76,.15);color:var(--amber)}
+  .tag-red{background:rgba(224,92,92,.15);color:var(--red)}
+  .tag-cyan{background:rgba(77,217,192,.15);color:var(--cyan)}
+  .tag-gold{background:rgba(201,168,76,.15);color:var(--gold)}
+  .risk-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);padding:12px 0;gap:12px}
+  .risk-ref{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);min-width:80px;padding-top:2px}
+  .risk-body{flex:1}
+  .risk-title{font-size:12px;font-weight:700;margin-bottom:4px}
+  .risk-desc{font-size:11px;color:var(--text-dim);line-height:1.5}
+  .risk-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+  .checklist-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .check-box{width:16px;height:16px;border:1px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .check-box.done{background:var(--green);border-color:var(--green)}
+  .check-box.done::after{content:'✓';color:#fff;font-size:10px;font-weight:700}
+  .check-body{flex:1}
+  .check-title{font-size:12px;font-weight:600}
+  .check-ref{font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;margin-top:2px}
+  .isa-banner{background:linear-gradient(135deg,#0e1d2e,#0a1520);border:1px solid var(--gold-dim);border-radius:6px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .isa-item{display:flex;flex-direction:column;align-items:center}
+  .isa-code{font-size:14px;font-weight:800;color:var(--gold);font-family:'DM Mono',monospace}
+  .isa-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px}
+  .isa-divider{width:1px;height:30px;background:var(--border)}
+  .input-row{display:flex;gap:12px;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap}
+  .input-group{display:flex;flex-direction:column;gap:5px}
+  .input-group label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+  .input-group input,.input-group select{background:var(--navy-light);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color .2s;min-width:140px}
+  .input-group input:focus,.input-group select:focus{border-color:var(--gold)}
+  .btn{padding:8px 18px;border:none;border-radius:4px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+  .btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold-bright)}
+  .progress-bar{background:var(--navy-light);border-radius:3px;height:6px;overflow:hidden;margin-top:6px}
+  .progress-fill{height:100%;border-radius:3px;transition:width .5s}
+  .opinion-box{background:linear-gradient(135deg,#0e1d2e,#0a1a2a);border:1px solid var(--gold-dim);border-radius:6px;padding:20px 24px;margin-bottom:20px}
+  .opinion-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;letter-spacing:.5px}
+  .opinion-text{font-size:12px;color:var(--text);line-height:1.8;font-family:'DM Mono',monospace}
+  .divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+  ::-webkit-scrollbar{width:4px;height:4px}
+  ::-webkit-scrollbar-track{background:var(--navy)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="header-badge">Audit Engine</div>
+    <div>
+      <div class="header-title">Group Audit &amp; Consolidation Module</div>
+      <div class="header-sub">ISA 600 · IFRS 10 · FRS 102 s9 · Intercompany Eliminations</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="entity"><span class="status-dot"></span>ABC Company Group</div>
+    <div class="ref">WP REF: GA-2025 · YE 31 DEC 2025</div>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-tab active" onclick="switchTab('overview',this)">Overview</div>
+  <div class="nav-tab" onclick="switchTab('structure',this)">Group Structure</div>
+  <div class="nav-tab" onclick="switchTab('eliminations',this)">Eliminations</div>
+  <div class="nav-tab" onclick="switchTab('risk',this)">Risk Assessment</div>
+  <div class="nav-tab" onclick="switchTab('components',this)">Component Auditors</div>
+  <div class="nav-tab" onclick="switchTab('opinion',this)">Group Opinion</div>
+</div>
+
+<div class="content">
+
+<!-- OVERVIEW -->
+<div class="panel active" id="panel-overview">
+  <div class="section-label">Module Status — ISA 600 Compliance</div>
+  <div class="isa-banner">
+    <div class="isa-item"><div class="isa-code">ISA 600</div><div class="isa-label">Group Audits</div></div>
+    <div class="isa-divider"></div>
+    <div class="isa-item"><div class="isa-code">ISA 315</div><div class="isa-label">Risk Assessment</div></div>
+    <div class="isa-divider"></div>
+    <div class="isa-item"><div class="isa-code">IFRS 10</div><div class="isa-label">Consolidated FS</div></div>
+    <div class="isa-divider"></div>
+    <div class="isa-item"><div class="isa-code">IAS 27</div><div class="isa-label">Separate FS</div></div>
+    <div class="isa-divider"></div>
+    <div class="isa-item"><div class="isa-code">IAS 28</div><div class="isa-label">Associates / JVs</div></div>
+    <div class="isa-divider"></div>
+    <div class="isa-item"><div class="isa-code">FRS 102 s9</div><div class="isa-label">UK GAAP Groups</div></div>
+  </div>
+  <div class="grid-4">
+    <div class="card card-cyan"><div class="card-title">Group Components</div><div class="card-value cyan">6</div><div class="card-sub">4 significant · 2 minor</div></div>
+    <div class="card card-gold"><div class="card-title">Consolidation Method</div><div class="card-value gold" style="font-size:14px;margin-top:4px">Full / Equity</div><div class="card-sub">IFRS 10 / IAS 28</div></div>
+    <div class="card card-amber"><div class="card-title">Elim. Adjustments</div><div class="card-value" style="color:var(--amber)">12</div><div class="card-sub">8 cleared · 4 pending</div></div>
+    <div class="card card-green"><div class="card-title">Workpaper Progress</div><div class="card-value green">67%</div><div class="progress-bar"><div class="progress-fill" style="width:67%;background:var(--green)"></div></div></div>
+  </div>
+  <div class="section-label">Group Financial Summary — Pre-Consolidation</div>
+  <table class="workpaper-table">
+    <thead><tr><th>Entity</th><th>Ownership</th><th>Method</th><th class="num">Revenue £000</th><th class="num">PBT £000</th><th class="num">Net Assets £000</th><th>Reporting Std</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ABC Company Ltd (Parent)</strong></td><td>—</td><td><span class="tag tag-gold">Parent</span></td><td class="num">8,420</td><td class="num">1,240</td><td class="num">6,180</td><td>FRS 102</td><td><span class="tag tag-green">Complete</span></td></tr>
+      <tr><td>ABC Operations Ltd</td><td>100%</td><td><span class="tag tag-cyan">Full Consol.</span></td><td class="num">3,650</td><td class="num">480</td><td class="num">2,310</td><td>FRS 102</td><td><span class="tag tag-green">Complete</span></td></tr>
+      <tr><td>ABC Digital Services Ltd</td><td>100%</td><td><span class="tag tag-cyan">Full Consol.</span></td><td class="num">1,920</td><td class="num">310</td><td class="num">1,450</td><td>FRS 102</td><td><span class="tag tag-amber">In Progress</span></td></tr>
+      <tr><td>ABC Middle East FZE</td><td>100%</td><td><span class="tag tag-cyan">Full Consol.</span></td><td class="num">2,100</td><td class="num">390</td><td class="num">1,780</td><td>IFRS</td><td><span class="tag tag-amber">In Progress</span></td></tr>
+      <tr><td>ABC Tech Ventures Ltd</td><td>40%</td><td><span class="tag tag-amber">Equity Method</span></td><td class="num">—</td><td class="num">—</td><td class="num">620</td><td>FRS 102</td><td><span class="tag tag-green">Complete</span></td></tr>
+      <tr><td>ABC Nominee Co Ltd</td><td>100%</td><td><span class="tag tag-amber">Dormant</span></td><td class="num">—</td><td class="num">—</td><td class="num">1</td><td>FRS 102</td><td><span class="tag tag-green">Complete</span></td></tr>
+      <tr class="elim"><td colspan="3"><strong>Intercompany Eliminations</strong></td><td class="num">(1,840)</td><td class="num">(210)</td><td class="num">(890)</td><td>—</td><td><span class="tag tag-red">4 Pending</span></td></tr>
+      <tr class="group"><td colspan="3"><strong>ABC Company Group — Consolidated</strong></td><td class="num">14,250</td><td class="num">2,210</td><td class="num">11,451</td><td>FRS 102 / IFRS</td><td><span class="tag tag-amber">In Progress</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- STRUCTURE -->
+<div class="panel" id="panel-structure">
+  <div class="section-label">Legal Entity Structure &amp; Control Assessment — IFRS 10</div>
+  <div class="group-chart">
+    <div style="display:flex;justify-content:center;margin-bottom:8px">
+      <div class="entity-box parent"><div class="entity-name" style="color:var(--gold)">ABC Company Ltd</div><div class="entity-pct">Parent</div><div class="entity-type">Group Parent · FRS 102</div><div class="entity-flag">UK REGISTERED</div></div>
+    </div>
+    <div class="connector-v"></div>
+    <div class="group-row">
+      <div class="entity-box significant"><div class="entity-name">ABC Operations Ltd</div><div class="entity-pct">100%</div><div class="entity-type">Significant Component</div><div class="entity-flag">FULL CONSOLIDATION</div></div>
+      <div class="entity-box significant"><div class="entity-name">ABC Digital Services</div><div class="entity-pct">100%</div><div class="entity-type">Significant Component</div><div class="entity-flag">FULL CONSOLIDATION</div></div>
+      <div class="entity-box significant"><div class="entity-name">ABC Middle East FZE</div><div class="entity-pct">100%</div><div class="entity-type">Significant Component</div><div class="entity-flag" style="color:var(--amber)">IFRS · UAE</div></div>
+      <div class="entity-box" style="border-color:var(--amber)"><div class="entity-name">ABC Tech Ventures</div><div class="entity-pct" style="color:var(--amber)">40%</div><div class="entity-type">Associate</div><div class="entity-flag" style="color:var(--amber)">EQUITY METHOD</div></div>
+      <div class="entity-box" style="opacity:.7"><div class="entity-name">ABC Nominee Co</div><div class="entity-pct" style="font-size:14px;color:var(--text-dim)">100%</div><div class="entity-type">Dormant</div><div class="entity-flag">IMMATERIAL</div></div>
+    </div>
+  </div>
+  <div class="section-label">IFRS 10 Control Assessment Workpaper</div>
+  <table class="workpaper-table">
+    <thead><tr><th>Entity</th><th>Power over Investee</th><th>Exposure to Returns</th><th>Ability to Use Power</th><th>Control Conclusion</th><th>Method</th></tr></thead>
+    <tbody>
+      <tr><td>ABC Operations Ltd</td><td>100% voting rights, board appointment</td><td>Full economic exposure via dividends and net assets</td><td>Direct management control exercised</td><td><span class="tag tag-green">Controlled</span></td><td>Full Consolidation</td></tr>
+      <tr><td>ABC Digital Services Ltd</td><td>100% voting rights, shared services agreement</td><td>Full economic exposure</td><td>Technology and commercial decisions by parent</td><td><span class="tag tag-green">Controlled</span></td><td>Full Consolidation</td></tr>
+      <tr><td>ABC Middle East FZE</td><td>100% FZE ownership, UAE free zone</td><td>Full exposure, forex risk noted</td><td>MD appointed by ABC Company Ltd board</td><td><span class="tag tag-green">Controlled</span></td><td>Full Consolidation</td></tr>
+      <tr><td>ABC Tech Ventures Ltd</td><td>40% — significant influence only, no board majority</td><td>Share of profits and net assets (40%)</td><td>One board seat, no casting vote</td><td><span class="tag tag-amber">Associate</span></td><td>Equity Method (IAS 28)</td></tr>
+      <tr><td>ABC Nominee Co Ltd</td><td>100% dormant holding entity</td><td>Nil economic activity</td><td>N/A — no operations</td><td><span class="tag tag-cyan">Dormant</span></td><td>Included — immaterial</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ELIMINATIONS -->
+<div class="panel" id="panel-eliminations">
+  <div class="section-label">Intercompany Elimination Workpaper</div>
+  <div class="input-row">
+    <div class="input-group"><label>Transaction Type</label><select id="elim-type"><option>Intercompany Revenue / Cost</option><option>Intercompany Loan / Interest</option><option>Unrealised Profit in Stock</option><option>Investment in Subsidiary</option><option>Dividends Paid / Received</option><option>Management Charge</option></select></div>
+    <div class="input-group"><label>From Entity</label><select id="elim-from"><option>ABC Company Ltd</option><option>ABC Operations Ltd</option><option>ABC Digital Services Ltd</option><option>ABC Middle East FZE</option></select></div>
+    <div class="input-group"><label>To Entity</label><select id="elim-to"><option>ABC Operations Ltd</option><option>ABC Company Ltd</option><option>ABC Digital Services Ltd</option><option>ABC Middle East FZE</option></select></div>
+    <div class="input-group"><label>Amount £000</label><input id="elim-amount" type="number" placeholder="0"></div>
+    <button class="btn btn-gold" onclick="addElimination()">Add Entry</button>
+  </div>
+  <table class="workpaper-table" id="elim-table">
+    <thead><tr><th>Ref</th><th>Transaction Type</th><th>From</th><th>To</th><th class="num">£000 Dr</th><th class="num">£000 Cr</th><th>ISA Ref</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>IC-01</td><td>Intercompany Revenue / Cost</td><td>ABC Operations Ltd</td><td>ABC Company Ltd</td><td class="num">840</td><td class="num">(840)</td><td>ISA 600.29</td><td><span class="tag tag-green">Cleared</span></td></tr>
+      <tr><td>IC-02</td><td>Management Charge</td><td>ABC Company Ltd</td><td>ABC Digital Services Ltd</td><td class="num">220</td><td class="num">(220)</td><td>ISA 600.29</td><td><span class="tag tag-green">Cleared</span></td></tr>
+      <tr><td>IC-03</td><td>Intercompany Revenue / Cost</td><td>ABC Company Ltd</td><td>ABC Middle East FZE</td><td class="num">480</td><td class="num">(480)</td><td>ISA 600.29</td><td><span class="tag tag-green">Cleared</span></td></tr>
+      <tr><td>IC-04</td><td>Intercompany Loan / Interest</td><td>ABC Company Ltd</td><td>ABC Operations Ltd</td><td class="num">300</td><td class="num">(300)</td><td>ISA 600.29</td><td><span class="tag tag-green">Cleared</span></td></tr>
+      <tr><td>IC-05</td><td>Investment in Subsidiary</td><td>ABC Company Ltd</td><td>ABC Operations Ltd</td><td class="num">—</td><td class="num">(2,310)</td><td>IFRS 10.B86</td><td><span class="tag tag-red">Pending</span></td></tr>
+      <tr><td>IC-06</td><td>Unrealised Profit in Stock</td><td>ABC Operations Ltd</td><td>ABC Company Ltd</td><td class="num">—</td><td class="num">(64)</td><td>IFRS 10.B86</td><td><span class="tag tag-red">Pending</span></td></tr>
+      <tr><td>IC-07</td><td>Dividends Paid / Received</td><td>ABC Digital Services Ltd</td><td>ABC Company Ltd</td><td class="num">150</td><td class="num">(150)</td><td>ISA 600.29</td><td><span class="tag tag-green">Cleared</span></td></tr>
+      <tr><td>IC-08</td><td>Intercompany Revenue / Cost</td><td>ABC Middle East FZE</td><td>ABC Digital Services Ltd</td><td class="num">300</td><td class="num">(300)</td><td>ISA 600.29</td><td><span class="tag tag-red">Pending</span></td></tr>
+      <tr class="elim"><td colspan="4"><strong>Total Eliminations</strong></td><td class="num">2,290</td><td class="num">(4,664)</td><td colspan="2"><span class="tag tag-red">4 Pending</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- RISK -->
+<div class="panel" id="panel-risk">
+  <div class="section-label">Group-Level Risk Assessment — ISA 600 / ISA 315</div>
+  <div class="risk-row"><div class="risk-ref">GA-R01<br>ISA 600.26</div><div class="risk-body"><div class="risk-title">Completeness of Group — Undisclosed Entities</div><div class="risk-desc">Risk that management has not identified all subsidiaries, SPVs, or structured entities subject to IFRS 10 control. Particular focus on ABC Middle East FZE and any nominee arrangements.</div><div class="risk-meta"><span class="tag tag-red">Inherent: High</span><span class="tag tag-amber">Control: Moderate</span><span class="tag tag-red">Residual: High</span><span class="tag tag-gold">Response: Obtain group chart from board · confirm at completeness representation</span></div></div></div>
+  <div class="risk-row"><div class="risk-ref">GA-R02<br>ISA 600.29</div><div class="risk-body"><div class="risk-title">Intercompany Elimination — Incomplete or Incorrect</div><div class="risk-desc">Risk that intercompany transactions, balances, unrealised profits in stock or on fixed assets are not fully eliminated on consolidation. Four IC entries remain pending.</div><div class="risk-meta"><span class="tag tag-red">Inherent: High</span><span class="tag tag-amber">Control: Moderate</span><span class="tag tag-red">Residual: High</span><span class="tag tag-gold">Response: Cast and cross-cast all IC schedules · agree to component TB</span></div></div></div>
+  <div class="risk-row"><div class="risk-ref">GA-R03<br>IFRS 10</div><div class="risk-body"><div class="risk-title">Control Assessment — Incorrect Classification of Associate vs Subsidiary</div><div class="risk-desc">ABC Tech Ventures Ltd held at 40%. Management has concluded associate treatment (IAS 28). Risk that de facto control exists via contractual arrangements or board representation giving effective majority.</div><div class="risk-meta"><span class="tag tag-amber">Inherent: Medium</span><span class="tag tag-green">Control: Strong</span><span class="tag tag-amber">Residual: Medium</span><span class="tag tag-gold">Response: Review SHA · confirm board composition · document IFRS 10 assessment</span></div></div></div>
+  <div class="risk-row"><div class="risk-ref">GA-R04<br>IAS 21</div><div class="risk-body"><div class="risk-title">Foreign Currency Translation — ABC Middle East FZE (AED)</div><div class="risk-desc">ABC Middle East FZE functional currency is AED. Risk of incorrect translation of P&amp;L at average rate vs SFP at closing rate, and misallocation of FX gains/losses to OCI vs P&amp;L.</div><div class="risk-meta"><span class="tag tag-amber">Inherent: Medium</span><span class="tag tag-amber">Control: Moderate</span><span class="tag tag-amber">Residual: Medium</span><span class="tag tag-gold">Response: Recalculate translation using published rates · agree OCI movement to TB</span></div></div></div>
+  <div class="risk-row"><div class="risk-ref">GA-R05<br>ISA 600.41</div><div class="risk-body"><div class="risk-title">Component Auditor Reliance — Sufficiency of Evidence</div><div class="risk-desc">ABC Middle East FZE audited by local UAE auditors. Risk that component auditor procedures are insufficient for group purposes. Group auditor must evaluate competence and independence of component auditor.</div><div class="risk-meta"><span class="tag tag-red">Inherent: High</span><span class="tag tag-amber">Control: Moderate</span><span class="tag tag-red">Residual: High</span><span class="tag tag-gold">Response: Issue group audit instructions · review component work · perform supplemental procedures if required</span></div></div></div>
+  <div class="risk-row"><div class="risk-ref">GA-R06<br>IAS 36</div><div class="risk-body"><div class="risk-title">Goodwill and Investment Impairment</div><div class="risk-desc">Risk that goodwill on consolidation or investment in subsidiaries carried in the parent's separate financial statements is impaired and not written down. IAS 36 annual impairment review required.</div><div class="risk-meta"><span class="tag tag-amber">Inherent: Medium</span><span class="tag tag-amber">Control: Moderate</span><span class="tag tag-amber">Residual: Medium</span><span class="tag tag-gold">Response: Obtain management's impairment review · challenge CGU definitions and discount rates</span></div></div></div>
+</div>
+
+<!-- COMPONENTS -->
+<div class="panel" id="panel-components">
+  <div class="section-label">Component Auditor Instructions &amp; Oversight — ISA 600</div>
+  <table class="workpaper-table">
+    <thead><tr><th>Component</th><th>Auditor Type</th><th>Significance</th><th>Instructions Issued</th><th>Deadline</th><th>Evidence Received</th><th>Sufficiency</th></tr></thead>
+    <tbody>
+      <tr><td>ABC Company Ltd</td><td>Group Auditor</td><td><span class="tag tag-gold">Significant</span></td><td><span class="tag tag-green">N/A — Direct</span></td><td>15 Mar 2026</td><td><span class="tag tag-green">Complete</span></td><td><span class="tag tag-green">Sufficient</span></td></tr>
+      <tr><td>ABC Operations Ltd</td><td>Group Auditor</td><td><span class="tag tag-gold">Significant</span></td><td><span class="tag tag-green">N/A — Direct</span></td><td>15 Mar 2026</td><td><span class="tag tag-amber">Partial</span></td><td><span class="tag tag-amber">Under Review</span></td></tr>
+      <tr><td>ABC Digital Services Ltd</td><td>Group Auditor</td><td><span class="tag tag-gold">Significant</span></td><td><span class="tag tag-green">N/A — Direct</span></td><td>15 Mar 2026</td><td><span class="tag tag-amber">Partial</span></td><td><span class="tag tag-amber">Under Review</span></td></tr>
+      <tr><td>ABC Middle East FZE</td><td><strong>Component Auditor (UAE)</strong></td><td><span class="tag tag-gold">Significant</span></td><td><span class="tag tag-green">Issued 10 Jan 2026</span></td><td>28 Feb 2026</td><td><span class="tag tag-red">Not Yet Received</span></td><td><span class="tag tag-red">Outstanding</span></td></tr>
+      <tr><td>ABC Tech Ventures Ltd</td><td>Separate Auditor</td><td><span class="tag tag-cyan">Associate</span></td><td><span class="tag tag-green">Equity Pack Issued</span></td><td>28 Feb 2026</td><td><span class="tag tag-green">Complete</span></td><td><span class="tag tag-green">Sufficient</span></td></tr>
+      <tr><td>ABC Nominee Co Ltd</td><td>Group Auditor</td><td><span class="tag tag-amber">Immaterial</span></td><td><span class="tag tag-green">N/A — Dormant</span></td><td>—</td><td><span class="tag tag-green">N/A</span></td><td><span class="tag tag-green">Sufficient</span></td></tr>
+    </tbody>
+  </table>
+  <hr class="divider">
+  <div class="section-label">ISA 600 Consolidation Checklist</div>
+  <div class="checklist-item"><div class="check-box done" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Obtain and agree signed group instructions to component auditors</div><div class="check-ref">ISA 600.40 · Completed 10 Jan 2026</div></div></div>
+  <div class="checklist-item"><div class="check-box done" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Confirm component auditor independence and competence</div><div class="check-ref">ISA 600.19 · UAE firm confirmed</div></div></div>
+  <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Receive and evaluate component auditor reporting packages</div><div class="check-ref">ISA 600.41 · ABC Middle East FZE outstanding</div></div></div>
+  <div class="checklist-item"><div class="check-box done" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Agree all component trial balances to consolidation schedule</div><div class="check-ref">ISA 600.29 · 4 of 6 components agreed</div></div></div>
+  <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Clear all intercompany eliminations and confirm nil balances</div><div class="check-ref">ISA 600.29 · IC-05, IC-06, IC-08 pending</div></div></div>
+  <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Recalculate foreign currency translation — ABC Middle East FZE</div><div class="check-ref">IAS 21 · Awaiting closing AED/GBP rate confirmation</div></div></div>
+  <div class="checklist-item"><div class="check-box done" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Review and conclude on equity method calculation — ABC Tech Ventures</div><div class="check-ref">IAS 28 · Equity pack received and agreed</div></div></div>
+  <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Obtain management goodwill impairment review and challenge assumptions</div><div class="check-ref">IAS 36 · Draft CGU analysis received — challenge outstanding</div></div></div>
+  <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Obtain signed group management representation letter</div><div class="check-ref">ISA 580 · To be obtained prior to opinion sign-off</div></div></div>
+  <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-body"><div class="check-title">Complete consolidation workpaper review and RM sign-off</div><div class="check-ref">ISA 600 · Target 20 March 2026</div></div></div>
+</div>
+
+<!-- OPINION -->
+<div class="panel" id="panel-opinion">
+  <div class="section-label">Group Audit Opinion Framework</div>
+  <div class="grid-3">
+    <div class="card card-cyan"><div class="card-title">Current Opinion Position</div><div class="card-value cyan" style="font-size:16px;margin-top:4px">Pending</div><div class="card-sub">Awaiting component evidence</div></div>
+    <div class="card card-amber"><div class="card-title">Outstanding Items</div><div class="card-value" style="color:var(--amber)">5</div><div class="card-sub">Before opinion can be formed</div></div>
+    <div class="card card-gold"><div class="card-title">Target Sign-Off</div><div class="card-value gold" style="font-size:16px;margin-top:4px">31 Mar 2026</div><div class="card-sub">Group statutory deadline</div></div>
+  </div>
+  <div class="section-label">Opinion Decision Tree</div>
+  <table class="workpaper-table">
+    <thead><tr><th>Scenario</th><th>Threshold</th><th>Opinion Type</th><th>Basis</th><th>Current Assessment</th></tr></thead>
+    <tbody>
+      <tr><td>No material misstatements, full evidence</td><td>All items cleared</td><td><span class="tag tag-green">Unmodified</span></td><td>ISA 700</td><td><span class="tag tag-amber">Target</span></td></tr>
+      <tr><td>Material misstatement — isolated area</td><td>Material but not pervasive</td><td><span class="tag tag-amber">Except For</span></td><td>ISA 705(b)</td><td><span class="tag tag-amber">Monitor</span></td></tr>
+      <tr><td>Pervasive misstatement across group</td><td>Material and pervasive</td><td><span class="tag tag-red">Adverse</span></td><td>ISA 705(c)</td><td><span class="tag tag-green">Not Expected</span></td></tr>
+      <tr><td>Scope limitation — component auditor</td><td>Material but not pervasive</td><td><span class="tag tag-amber">Except For (Scope)</span></td><td>ISA 705(b)</td><td><span class="tag tag-red">Risk if UAE pkg not received</span></td></tr>
+      <tr><td>Pervasive scope limitation</td><td>Material and pervasive</td><td><span class="tag tag-red">Disclaimer</span></td><td>ISA 705(d)</td><td><span class="tag tag-green">Not Expected</span></td></tr>
+    </tbody>
+  </table>
+  <div class="opinion-box">
+    <div class="opinion-title">Draft Unmodified Opinion — ABC Company Group (FRS 102)</div>
+    <div class="opinion-text">
+In our opinion, the consolidated financial statements of ABC Company Limited and its subsidiaries for the year ended 31 December 2025:<br><br>
+(a) give a true and fair view of the state of the group's affairs as at 31 December 2025 and of the group's profit for the year then ended;<br><br>
+(b) have been properly prepared in accordance with Financial Reporting Standard 102 The Financial Reporting Standard applicable in the UK and Republic of Ireland; and<br><br>
+(c) have been prepared in accordance with the requirements of the Companies Act 2006.<br><br>
+<span style="color:var(--amber)">[ DRAFT — Subject to resolution of outstanding items: UAE component package, IC-05/06/08 eliminations, FX translation, goodwill impairment review, group MRL ]</span>
+    </div>
+  </div>
+  <div class="section-label">Emphasis of Matter — Matters to Consider</div>
+  <table class="workpaper-table">
+    <thead><tr><th>Matter</th><th>ISA Ref</th><th>Assessment</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>FZE regulatory environment change — UAE VAT</td><td>ISA 706</td><td><span class="tag tag-amber">Monitor</span></td><td>Discuss with management, consider disclosure adequacy</td></tr>
+      <tr><td>Going concern — group level cash flow</td><td>ISA 570</td><td><span class="tag tag-green">No issue identified</span></td><td>Document conclusion in GC workpaper</td></tr>
+      <tr><td>Related party — intercompany SLAs at arm's length</td><td>ISA 550</td><td><span class="tag tag-amber">Review pending</span></td><td>Obtain and review intercompany SLA documentation</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<script>
+function switchTab(name,el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+function toggleCheck(el){el.classList.toggle('done')}
+let elimCount=8;
+function addElimination(){
+  const type=document.getElementById('elim-type').value;
+  const from=document.getElementById('elim-from').value;
+  const to=document.getElementById('elim-to').value;
+  const amt=parseFloat(document.getElementById('elim-amount').value)||0;
+  if(!amt)return;
+  elimCount++;
+  const ref='IC-0'+elimCount;
+  const tbody=document.getElementById('elim-table').querySelector('tbody');
+  const row=document.createElement('tr');
+  row.innerHTML=`<td>${ref}</td><td>${type}</td><td>${from}</td><td>${to}</td><td class="num">${amt.toLocaleString()}</td><td class="num">(${amt.toLocaleString()})</td><td>ISA 600.29</td><td><span class="tag tag-amber">Pending</span></td>`;
+  tbody.insertBefore(row,tbody.lastElementChild);
+  document.getElementById('elim-amount').value='';
+}
+</script>
+</body>
+</html>

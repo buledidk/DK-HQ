@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DK — Wealth Command Centre</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#060b14;--navy2:#0d1526;--navy3:#111d35;--navy4:#162040;
+  --gold:#c9a84c;--gold2:#e8c96b;--gold3:#f5e19a;
+  --cyan:#4ecdc4;--green:#2ecc71;--red:#e74c3c;--amber:#f39c12;--purple:#9b59b6;
+  --text:#e8eaf0;--muted:#7a8aaa;--border:rgba(201,168,76,0.15);
+  --card:rgba(255,255,255,0.035);--glow:0 0 40px rgba(201,168,76,0.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6}
+
+/* ── HERO ── */
+.hero{position:relative;background:linear-gradient(135deg,#040810 0%,#0c1828 40%,#060e1c 100%);padding:60px 40px 50px;text-align:center;overflow:hidden;border-bottom:1px solid var(--border)}
+.hero canvas{position:absolute;inset:0;pointer-events:none}
+.hero-inner{position:relative;z-index:2}
+.sovereign-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(90deg,rgba(201,168,76,0.15),rgba(78,205,196,0.1));border:1px solid rgba(201,168,76,0.3);border-radius:30px;padding:7px 22px;font-size:11px;letter-spacing:2px;color:var(--gold2);text-transform:uppercase;margin-bottom:22px}
+.hero h1{font-size:clamp(30px,5vw,52px);font-weight:900;background:linear-gradient(135deg,#ffffff 0%,var(--gold2) 40%,var(--cyan) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:14px}
+.hero-sub{color:var(--muted);font-size:15px;max-width:680px;margin:0 auto 32px}
+.hero-kpis{display:flex;justify-content:center;flex-wrap:wrap;gap:36px}
+.hkpi .v{font-size:30px;font-weight:800;color:var(--gold2);line-height:1}
+.hkpi .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-top:4px}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(6,11,20,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;gap:2px;padding:0 20px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{padding:14px 14px;color:var(--muted);text-decoration:none;font-size:12px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.3px}
+nav a:hover,nav a.active{color:var(--gold2);border-bottom-color:var(--gold)}
+
+/* ── LAYOUT ── */
+main{max-width:1380px;margin:0 auto;padding:36px 24px}
+section{margin-bottom:60px;scroll-margin-top:56px}
+.section-head{margin-bottom:24px}
+h2{font-size:21px;font-weight:800;color:var(--gold2);display:flex;align-items:center;gap:10px;margin-bottom:6px}
+h2::before{content:'';width:4px;height:22px;background:linear-gradient(180deg,var(--gold),var(--cyan));border-radius:2px;flex-shrink:0}
+.section-sub{color:var(--muted);font-size:13px;padding-left:14px}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--glow);transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 48px rgba(201,168,76,0.15)}
+.card-title{font-size:14px;font-weight:700;color:var(--gold2);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:22px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.g5{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px}
+
+/* ── KPI MINI ── */
+.kpi-mini{text-align:center;padding:22px 16px}
+.kpi-mini .ico{font-size:28px;margin-bottom:8px}
+.kpi-mini .val{font-size:28px;font-weight:800;line-height:1}
+.kpi-mini .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-top:5px}
+.kpi-mini .note{font-size:11px;color:var(--muted);margin-top:3px}
+.green .val{color:var(--green)} .red-v .val{color:var(--red)}
+.gold-v .val{color:var(--gold2)} .cyan-v .val{color:var(--cyan)} .purple-v .val{color:var(--purple)}
+
+/* ── CHARTS ── */
+.ch{position:relative;height:270px}
+.ch-lg{position:relative;height:340px}
+.ch-xl{position:relative;height:420px}
+
+/* ── TABLES ── */
+.dt{width:100%;border-collapse:collapse}
+.dt th{background:rgba(201,168,76,0.07);color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.7px;padding:11px 13px;text-align:left;border-bottom:1px solid var(--border)}
+.dt td{padding:11px 13px;border-bottom:1px solid rgba(255,255,255,0.035);font-size:13px;vertical-align:middle}
+.dt tr:hover td{background:rgba(255,255,255,0.02)}
+.dt tfoot td{background:rgba(201,168,76,0.06);font-weight:700;color:var(--gold2)}
+
+/* ── BADGES ── */
+.bg{display:inline-block;border-radius:10px;padding:2px 10px;font-size:11px;font-weight:600}
+.bg-red{background:rgba(231,76,60,0.15);color:#e74c3c;border:1px solid rgba(231,76,60,0.3)}
+.bg-amber{background:rgba(243,156,18,0.12);color:#f39c12;border:1px solid rgba(243,156,18,0.3)}
+.bg-green{background:rgba(46,204,113,0.12);color:#2ecc71;border:1px solid rgba(46,204,113,0.3)}
+.bg-cyan{background:rgba(78,205,196,0.12);color:#4ecdc4;border:1px solid rgba(78,205,196,0.3)}
+.bg-gold{background:rgba(201,168,76,0.15);color:var(--gold2);border:1px solid rgba(201,168,76,0.3)}
+.bg-purple{background:rgba(155,89,182,0.15);color:#9b59b6;border:1px solid rgba(155,89,182,0.3)}
+
+/* ── ALERT BOX ── */
+.ab{display:flex;gap:14px;padding:16px 18px;border-radius:12px;margin-bottom:12px}
+.ab.r{background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.25)}
+.ab.a{background:rgba(243,156,18,0.08);border:1px solid rgba(243,156,18,0.25)}
+.ab.g{background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.25)}
+.ab.b{background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.25)}
+.ab.p{background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.25)}
+.ab .icon{font-size:20px;flex-shrink:0;line-height:1.5}
+.ab strong{display:block;font-size:13px;margin-bottom:3px}
+.ab.r strong{color:#e74c3c} .ab.a strong{color:#f39c12} .ab.g strong{color:#2ecc71}
+.ab.b strong{color:var(--cyan)} .ab.p strong{color:#9b59b6}
+.ab p{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── PROGRESS BAR ── */
+.pb-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pb-label{width:130px;font-size:12px;flex-shrink:0}
+.pb-track{flex:1;background:rgba(255,255,255,0.05);border-radius:4px;height:7px;overflow:hidden}
+.pb-fill{height:7px;border-radius:4px}
+.pb-val{width:55px;text-align:right;font-size:12px;color:var(--gold2);font-weight:600}
+.pb-pct{width:35px;text-align:right;font-size:11px;color:var(--muted)}
+
+/* ── OPPORTUNITY CARDS ── */
+.opp-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all .25s}
+.opp-card:hover{border-color:var(--gold);box-shadow:0 0 24px rgba(201,168,76,0.15)}
+.opp-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.opp-icon{font-size:28px}
+.opp-earning{text-align:right}
+.opp-earning .amt{font-size:18px;font-weight:800;color:var(--green)}
+.opp-earning .freq{font-size:11px;color:var(--muted)}
+.opp-title{font-size:15px;font-weight:700;color:var(--gold2);margin-bottom:6px}
+.opp-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+.opp-meta{display:flex;gap:8px;flex-wrap:wrap}
+.opp-meta span{font-size:11px;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.05);color:var(--muted)}
+
+/* ── TRADING MODEL ── */
+.trade-col{padding:0 0 16px 0}
+.trade-scenario{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px}
+.trade-scenario.active{border-color:var(--gold);background:rgba(201,168,76,0.05)}
+.ts-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ts-name{font-size:14px;font-weight:700;color:var(--gold2)}
+.ts-annual{font-size:20px;font-weight:800}
+.ts-annual.base{color:var(--cyan)} .ts-annual.mid{color:var(--gold2)} .ts-annual.high{color:var(--green)}
+
+/* ── ACTION STEP ── */
+.action-step{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.action-step:last-child{border-bottom:none}
+.step-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#000;flex-shrink:0;margin-top:2px}
+.step-content h4{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.step-content p{font-size:12px;color:var(--muted);line-height:1.5}
+.step-save{font-size:12px;font-weight:700;margin-top:5px}
+.step-save.earn{color:var(--green)} .step-save.save{color:var(--cyan)}
+
+/* ── INVEST CARD ── */
+.inv-card{border-radius:12px;padding:18px;border:1px solid var(--border);background:var(--card)}
+.inv-icon{font-size:26px;margin-bottom:10px}
+.inv-name{font-size:14px;font-weight:700;color:var(--gold2);margin-bottom:6px}
+.inv-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.inv-metrics{display:flex;justify-content:space-between}
+.inv-m{text-align:center}
+.inv-m .v{font-size:15px;font-weight:700}
+.inv-m .l{font-size:10px;color:var(--muted);text-transform:uppercase}
+
+/* ── ROADMAP TIMELINE ── */
+.rm-item{display:flex;gap:18px;padding-bottom:24px;position:relative}
+.rm-item::after{content:'';position:absolute;left:17px;top:38px;bottom:0;width:2px;background:var(--border)}
+.rm-item:last-child::after{display:none}
+.rm-dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);background:var(--navy2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;z-index:1}
+.rm-content h4{font-size:14px;font-weight:700;color:var(--gold2);margin-bottom:4px}
+.rm-content p{font-size:12px;color:var(--muted);line-height:1.5}
+.rm-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:6px}
+
+/* ── SUBSCRIPTION CARDS ── */
+.sub-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.sub-row:last-child{border-bottom:none}
+.sub-left{display:flex;align-items:center;gap:12px}
+.sub-ico{font-size:22px;width:36px;text-align:center}
+.sub-name{font-size:13px;font-weight:600}
+.sub-freq{font-size:11px;color:var(--muted);margin-top:2px}
+.sub-right{text-align:right}
+.sub-cost{font-size:15px;font-weight:700;color:var(--gold2)}
+.sub-annual{font-size:11px;color:var(--muted)}
+
+/* ── MODEL INPUT STYLE ── */
+.model-input{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;width:100%;margin-bottom:2px;outline:none;transition:border-color .2s}
+.model-input:focus{border-color:var(--gold)}
+.model-label{font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.model-group{margin-bottom:14px}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--navy2)}
+::-webkit-scrollbar-thumb{background:var(--navy4);border-radius:3px}
+
+@media(max-width:640px){
+  .hero{padding:40px 20px 36px}
+  main{padding:24px 14px}
+  nav a{padding:11px 10px;font-size:11px}
+  .g2,.g3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <canvas id="ptcl"></canvas>
+  <div class="hero-inner">
+    <div class="sovereign-badge">⚡ SOVEREIGN WEALTH COMMAND CENTRE ⚡</div>
+    <h1>DK · Financial Intelligence<br>& Money Architecture</h1>
+    <p class="hero-sub">Complete financial model · Subscription audit · 10+ London income streams · Indus Nexus trading projections · Investment portfolio · 12-month wealth roadmap — all built from your real data.</p>
+    <div class="hero-kpis">
+      <div class="hkpi"><div class="v">£2,400+</div><div class="l">Annual recoverable waste</div></div>
+      <div class="hkpi"><div class="v">£18,000+</div><div class="l">Year-1 earnings potential</div></div>
+      <div class="hkpi"><div class="v">10</div><div class="l">London income streams</div></div>
+      <div class="hkpi"><div class="v">£75K+</div><div class="l">5-year wealth target</div></div>
+      <div class="hkpi"><div class="v">0%</div><div class="l">ISA tax on gains</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#model" class="active">💰 Financial Model</a>
+  <a href="#subs">📋 Subscriptions</a>
+  <a href="#optimise">⚡ Optimise</a>
+  <a href="#london">🏙️ London Income</a>
+  <a href="#trading">📈 Trading Model</a>
+  <a href="#invest">🏦 Invest</a>
+  <a href="#roadmap">🗺️ Roadmap</a>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════
+     § 1  PERSONAL FINANCIAL MODEL
+══════════════════════════════ -->
+<section id="model">
+  <div class="section-head">
+    <h2>Personal Financial Model</h2>
+    <p class="section-sub">Built from your actual Monzo data (Jul–Sep 2025) · Salary estimated at Senior Auditor ACCA market rate · Adjust sliders below</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="g5" style="margin-bottom:24px">
+    <div class="card kpi-mini gold-v"><div class="ico">💼</div><div class="val" id="kpi-salary">£55,000</div><div class="lbl">Est. Annual Salary</div><div class="note">Senior Auditor ACCA</div></div>
+    <div class="card kpi-mini red-v"><div class="ico">🏠</div><div class="val" id="kpi-rent">£1,000</div><div class="lbl">Monthly Rent</div><div class="note">Est. Luton 1-bed</div></div>
+    <div class="card kpi-mini cyan-v"><div class="ico">📊</div><div class="val" id="kpi-take-home">£3,560</div><div class="lbl">Monthly Take-Home</div><div class="note">After tax/NI</div></div>
+    <div class="card kpi-mini green"><div class="ico">💰</div><div class="val" id="kpi-surplus">£1,165</div><div class="lbl">Monthly Surplus</div><div class="note">Available to invest</div></div>
+    <div class="card kpi-mini purple-v"><div class="ico">📅</div><div class="val" id="kpi-annual-save">£13,980</div><div class="lbl">Annual Saving Potential</div><div class="note">With optimisation</div></div>
+  </div>
+
+  <div class="g2">
+    <!-- P&L TABLE -->
+    <div class="card">
+      <div class="card-title">📋 Personal P&L — Monthly Breakdown</div>
+      <table class="dt">
+        <thead><tr><th>Category</th><th>Current/mo</th><th>Target/mo</th><th>Annual</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(46,204,113,0.04)"><td colspan="4" style="color:var(--green);font-weight:700;font-size:12px;padding:8px 13px">INCOME</td></tr>
+          <tr><td>💼 Employment salary (est. £55K)</td><td style="color:var(--green)">£3,560</td><td style="color:var(--green)">£3,560</td><td style="color:var(--green)">£42,720</td></tr>
+          <tr><td>🏢 Indus Nexus (Year 1 est.)</td><td style="color:var(--muted)">£0 → £833</td><td style="color:var(--green)">£2,000</td><td style="color:var(--green)">£24,000</td></tr>
+          <tr style="background:rgba(46,204,113,0.06)"><td><strong>Total Income</strong></td><td style="color:var(--green)"><strong>£3,560</strong></td><td style="color:var(--green)"><strong>£5,560</strong></td><td style="color:var(--green)"><strong>£66,720</strong></td></tr>
+
+          <tr style="background:rgba(231,76,60,0.04)"><td colspan="4" style="color:#e74c3c;font-weight:700;font-size:12px;padding:8px 13px">FIXED COSTS</td></tr>
+          <tr><td>🏠 Rent (est. Luton)</td><td style="color:#e74c3c">£1,000</td><td style="color:#e74c3c">£1,000</td><td style="color:#e74c3c">£12,000</td></tr>
+          <tr><td>📱 Mobile phone (est.)</td><td style="color:#e74c3c">£35</td><td style="color:var(--amber)">£20</td><td>£240</td></tr>
+          <tr><td>🌐 Broadband (est.)</td><td style="color:#e74c3c">£35</td><td style="color:var(--amber)">£28</td><td>£336</td></tr>
+          <tr><td>🚗 Car insurance/tax (est.)</td><td style="color:#e74c3c">£120</td><td style="color:#e74c3c">£120</td><td>£1,440</td></tr>
+          <tr><td>📚 ACCA membership</td><td>£19</td><td>£19</td><td style="color:var(--green)">£226 ✅</td></tr>
+          <tr><td>🛡️ Income protection (rec.)</td><td style="color:var(--muted)">£0</td><td style="color:var(--amber)">£30</td><td>£360</td></tr>
+
+          <tr style="background:rgba(243,156,18,0.04)"><td colspan="4" style="color:var(--amber);font-weight:700;font-size:12px;padding:8px 13px">VARIABLE SPEND (from Monzo)</td></tr>
+          <tr><td>🍽️ Eating out</td><td style="color:#e74c3c">£218</td><td style="color:var(--amber)">£150</td><td>£1,800</td></tr>
+          <tr><td>🚘 Transport (Uber+car+train)</td><td style="color:#e74c3c">£209</td><td style="color:var(--amber)">£120</td><td>£1,440</td></tr>
+          <tr><td>🛒 Groceries</td><td>£107</td><td style="color:var(--green)">£100</td><td>£1,200</td></tr>
+          <tr><td>📦 General / sundries</td><td style="color:#e74c3c">£119</td><td style="color:var(--amber)">£60</td><td>£720</td></tr>
+          <tr><td>🛍️ Shopping</td><td>£50</td><td style="color:var(--amber)">£40</td><td>£480</td></tr>
+          <tr><td>🎭 Entertainment</td><td>£32</td><td style="color:var(--green)">£40</td><td>£480</td></tr>
+          <tr><td>📋 Subscriptions (all)</td><td style="color:var(--amber)">£68</td><td style="color:var(--green)">£35</td><td>£420</td></tr>
+          <tr><td>✈️ Holidays (avg)</td><td>£154</td><td style="color:var(--amber)">£80</td><td>£960</td></tr>
+
+          <tr style="background:rgba(201,168,76,0.06)"><td><strong>Total Outgoings</strong></td><td style="color:#e74c3c"><strong>£2,166</strong></td><td style="color:var(--amber)"><strong>£1,842</strong></td><td><strong>£22,104</strong></td></tr>
+          <tr style="background:rgba(46,204,113,0.08)"><td><strong style="color:var(--green)">NET MONTHLY SURPLUS</strong></td><td style="color:var(--amber)"><strong>£1,394</strong></td><td style="color:var(--green)"><strong>£3,718</strong></td><td style="color:var(--green)"><strong>£44,616</strong></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;font-size:11px;color:var(--muted);line-height:1.6">* Salary estimated at £55K (Senior Auditor ACCA, London). Rent estimated at £1,000/month for Luton. Adjust in interactive model above. Indus Nexus Year 1 target = £24K gross profit from trading.</div>
+    </div>
+
+    <!-- CHARTS -->
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card">
+        <div class="card-title">💸 Where Every £100 Goes</div>
+        <div class="ch">
+          <canvas id="plDonut"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📈 Current vs Optimised Monthly Spend</div>
+        <div class="ch">
+          <canvas id="spendCompare"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     § 2  SUBSCRIPTION AUDIT
+══════════════════════════════ -->
+<section id="subs">
+  <div class="section-head">
+    <h2>Subscription & Recurring Cost Audit</h2>
+    <p class="section-sub">Every recurring cost identified from your transactions · Cut/Keep/Renegotiate recommendations</p>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">✅ CONFIRMED (from Monzo data)</div>
+
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">📦</div><div><div class="sub-name">Amazon Prime</div><div class="sub-freq">Monthly · confirmed 3 consecutive months</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£8.99/mo</div><div class="sub-annual">£107.88/yr · <span class="bg bg-amber">REVIEW</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">🏪</div><div><div class="sub-name">Walmart Plus (ASDA)</div><div class="sub-freq">Aug 2025 charge · monthly grocery delivery</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£10.28/mo</div><div class="sub-annual">£123/yr · <span class="bg bg-red">CUT</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">📚</div><div><div class="sub-name">ACCA Membership</div><div class="sub-freq">Annual · professional qualification</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£19/mo</div><div class="sub-annual">£226/yr · <span class="bg bg-green">KEEP</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">🎓</div><div><div class="sub-name">Campus Global</div><div class="sub-freq">Jul 2025 · online learning platform</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£55</div><div class="sub-annual">One-off or annual · <span class="bg bg-cyan">VERIFY</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">🎫</div><div><div class="sub-name">16-25 Railcard</div><div class="sub-freq">Annual card purchase</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£35/yr</div><div class="sub-annual">Saves 1/3 on trains · <span class="bg bg-green">KEEP</span></div></div>
+      </div>
+
+      <div class="card-title" style="margin-top:20px">⚠️ ESTIMATED (likely on your other account)</div>
+
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">📱</div><div><div class="sub-name">Mobile Phone (est.)</div><div class="sub-freq">EE/O2/Three/Vodafone SIM or contract</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£25–45/mo</div><div class="sub-annual"><span class="bg bg-amber">RENEGOTIATE</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">🌐</div><div><div class="sub-name">Broadband (est.)</div><div class="sub-freq">BT/Sky/Virgin/Hyperoptic</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£30–55/mo</div><div class="sub-annual"><span class="bg bg-amber">RENEGOTIATE</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">🎵</div><div><div class="sub-name">Streaming (est.)</div><div class="sub-freq">Netflix / Spotify / Disney+ (likely)</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£15–30/mo</div><div class="sub-annual"><span class="bg bg-red">AUDIT & CUT</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">🚗</div><div><div class="sub-name">Car Insurance (est.)</div><div class="sub-freq">Annual · estimated Luton area</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£80–120/mo</div><div class="sub-annual"><span class="bg bg-amber">COMPARE</span></div></div>
+      </div>
+      <div class="sub-row">
+        <div class="sub-left"><div class="sub-ico">🛡️</div><div><div class="sub-name">Income Protection</div><div class="sub-freq">NOT VISIBLE — recommended add</div></div></div>
+        <div class="sub-right"><div class="sub-cost">£0 (gap)</div><div class="sub-annual"><span class="bg bg-red">MISSING</span></div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card">
+        <div class="card-title">📊 Subscription Cost Map (confirmed)</div>
+        <div class="ch" style="height:220px">
+          <canvas id="subChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💡 Subscription Optimisation Actions</div>
+        <div class="ab g">
+          <div class="icon">✅</div>
+          <div><strong>Keep: ACCA (£226/yr) + Railcard (£35/yr)</strong><p>Both deliver direct financial return. ACCA: professional credibility for Indus Nexus + freelance audit work. Railcard: saves avg £80–120/yr on London train journeys.</p></div>
+        </div>
+        <div class="ab r">
+          <div class="icon">❌</div>
+          <div><strong>Cut: Walmart Plus (£123/yr)</strong><p>You're shopping at local halal butchers, Rayyan Fish, Sainsbury's and Tesco. You don't use an ASDA delivery service consistently. Cancel immediately — that's £10.28/month back.</p></div>
+        </div>
+        <div class="ab a">
+          <div class="icon">⚠️</div>
+          <div><strong>Review: Amazon Prime (£107.88/yr)</strong><p>You made 1 Amazon purchase (£27.78) in 3 months. Prime is worth it only if you buy 3+ items/month with next-day delivery. If not, switch to free delivery with no rush option or cancel and rebuy annually at student/sale price.</p></div>
+        </div>
+        <div class="ab b">
+          <div class="icon">🔍</div>
+          <div><strong>Audit: All streaming + mobile + broadband</strong><p>These likely total £80–130/month on your other account. Call each provider — as a retention play, BT/Sky/Virgin typically offer 20–30% discounts. Bundle: broadband + mobile can save £15–25/month.</p></div>
+        </div>
+        <div class="ab p">
+          <div class="icon">💡</div>
+          <div><strong>Add: Income Protection Insurance (£25–35/mo)</strong><p>As a sole entrepreneur (Indus Nexus + employed), if you're off sick for 3+ months, your income stops. Income protection pays 60–70% of salary. Worth having from day 1.</p></div>
+        </div>
+        <div style="margin-top:16px;background:rgba(46,204,113,0.06);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:var(--green)">£396/yr saved</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">from confirmed subscription cuts · £600–900/yr potential total</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     § 3  FINANCIAL OPTIMISATION
+══════════════════════════════ -->
+<section id="optimise">
+  <div class="section-head">
+    <h2>Financial Optimisation Engine</h2>
+    <p class="section-sub">Every pound recovered is a pound that can compound. Your actual transaction data → optimised targets.</p>
+  </div>
+
+  <div class="g2" style="margin-bottom:24px">
+    <div class="card">
+      <div class="card-title">⚡ Spend Optimisation — £3,972 Recoverable Annually</div>
+      <div class="pb-row">
+        <span class="pb-label">🚘 Uber (cut 53%)</span>
+        <div class="pb-track"><div class="pb-fill" style="width:22%;background:linear-gradient(90deg,#e74c3c,#c0392b)"></div></div>
+        <span class="pb-val">£384→£192</span><span class="pb-pct">+£816/yr</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-label">🍽️ Dining (cap £150)</span>
+        <div class="pb-track"><div class="pb-fill" style="width:19%;background:linear-gradient(90deg,#f39c12,#d68910)"></div></div>
+        <span class="pb-val">£218→£150</span><span class="pb-pct">+£816/yr</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-label">✈️ Travel (budget)</span>
+        <div class="pb-track"><div class="pb-fill" style="width:10%;background:linear-gradient(90deg,#9b59b6,#7d3c98)"></div></div>
+        <span class="pb-val">£154→£80</span><span class="pb-pct">+£888/yr</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-label">📰 RV News habit</span>
+        <div class="pb-track"><div class="pb-fill" style="width:8%;background:linear-gradient(90deg,#e67e22,#b9470b)"></div></div>
+        <span class="pb-val">£70→£30</span><span class="pb-pct">+£480/yr</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-label">📋 Subscriptions</span>
+        <div class="pb-track"><div class="pb-fill" style="width:5%;background:linear-gradient(90deg,#3498db,#1a5276)"></div></div>
+        <span class="pb-val">£68→£35</span><span class="pb-pct">+£396/yr</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-label">🛵 Uber Eats (kill)</span>
+        <div class="pb-track"><div class="pb-fill" style="width:3%;background:linear-gradient(90deg,#e74c3c,#922b21)"></div></div>
+        <span class="pb-val">£16→£0</span><span class="pb-pct">+£192/yr</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-label">📱 Mobile/BB bundle</span>
+        <div class="pb-track"><div class="pb-fill" style="width:2%;background:linear-gradient(90deg,#1abc9c,#0e7252)"></div></div>
+        <span class="pb-val">est. −£25</span><span class="pb-pct">+£300/yr</span>
+      </div>
+      <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:rgba(231,76,60,0.08);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:20px;font-weight:800;color:#e74c3c">£966/mo</div>
+          <div style="font-size:11px;color:var(--muted)">Current variable spend</div>
+        </div>
+        <div style="background:rgba(46,204,113,0.08);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:20px;font-weight:800;color:var(--green)£635/mo">£635/mo</div>
+          <div style="font-size:11px;color:var(--muted)">Optimised target</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧠 Behaviour Pattern Analysis</div>
+      <div class="ab r" style="margin-bottom:10px">
+        <div class="icon">🔴</div>
+        <div><strong>September Uber Storm: £279 in 30 days</strong>
+        <p>Sept 9: Two Uber trips totalling £106 (likely airport runs). Sept 11: 5 trips in one day = £59 from Canary Wharf to various locations. Sept 28: 8 Uber trips = £120. These are all days with a pattern — Canary Wharf work + late London nights. Fix: Pre-book Uber Black not surge. Use your car for Luton trips. Use Elizabeth Line/TfL for London.</p></div>
+      </div>
+      <div class="ab a" style="margin-bottom:10px">
+        <div class="icon">⚠️</div>
+        <div><strong>RV News: 5 visits in ONE day (Jul 11)</strong>
+        <p>Transactions show: 07/11 — £3.95, £4.05, £6.80, £2.50, £4.48 all at RV News in the same day. And £21.78 in a single transaction Jul 12. This is a convenience store habit, not a newsagent subscription. You're using it as a daily cashflow leak. Solution: budget card or cash cap.</p></div>
+      </div>
+      <div class="ab b" style="margin-bottom:10px">
+        <div class="icon">🔵</div>
+        <div><strong>Theory Test: £23 (DVSA — Sep 8)</strong>
+        <p>You're studying for your driving theory test. Once you pass and get full licence, your driving confidence will increase — reducing Uber dependency significantly. This is actually a great investment: more driving = £800+ annual Uber saving.</p></div>
+      </div>
+      <div class="ab g">
+        <div class="icon">✅</div>
+        <div><strong>Transfers fund Monzo correctly (£3,222 over 3 months)</strong>
+        <p>You transferred £1,049 (Jul), £1,568 (Aug), £1,606 (Sep) into Monzo. This shows financial discipline — you don't overspend on the card beyond what you load. The goal is to reduce those load amounts by optimising spend.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🗓️ 90-Day Optimisation Sprint Plan</div>
+    <table class="dt">
+      <thead><tr><th>Week</th><th>Action</th><th>Method</th><th>Monthly Save</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td>Week 1</td><td>Cancel Walmart Plus</td><td>Log in to ASDA website → account → cancel</td><td style="color:var(--green)">+£10.28</td><td><span class="bg bg-red">DO TODAY</span></td></tr>
+        <tr><td>Week 1</td><td>Set Monzo Uber spending limit to £60/month</td><td>Monzo app → Spending → Add limit to Uber</td><td style="color:var(--green)">+£68</td><td><span class="bg bg-red">DO TODAY</span></td></tr>
+        <tr><td>Week 1</td><td>Delete Uber Eats app</td><td>Long-press app → Delete</td><td style="color:var(--green)">+£16</td><td><span class="bg bg-red">DO TODAY</span></td></tr>
+        <tr><td>Week 2</td><td>RV News: withdraw £30 cash at start of month only</td><td>ATM on 1st of month, cash envelope method</td><td style="color:var(--green)">+£40</td><td><span class="bg bg-amber">THIS WEEK</span></td></tr>
+        <tr><td>Week 2</td><td>Review Amazon Prime usage → decide keep or annual plan</td><td>Amazon account → Prime → Check delivery frequency</td><td style="color:var(--green)">0–£9</td><td><span class="bg bg-amber">THIS WEEK</span></td></tr>
+        <tr><td>Week 3</td><td>Call mobile provider — ask for retention deal</td><td>"I'm thinking of switching to X, can you match Y?"</td><td style="color:var(--green)">+£15–25</td><td><span class="bg bg-amber">THIS WEEK</span></td></tr>
+        <tr><td>Week 4</td><td>Audit broadband — compare on MoneySuperMarket</td><td>moneysupermarket.com → Broadband</td><td style="color:var(--green)">+£10–20</td><td><span class="bg bg-cyan">MONTH 1</span></td></tr>
+        <tr><td>Month 2</td><td>Open Chase savings account — auto-sweep surplus</td><td>chase.co.uk → open in 10 min</td><td style="color:var(--green)">Earns 5% AER</td><td><span class="bg bg-cyan">MONTH 2</span></td></tr>
+        <tr><td>Month 3</td><td>Open S&S ISA — first £200 deposit</td><td>investengine.com → FTSE Global All Cap</td><td style="color:var(--green)">Tax-free growth</td><td><span class="bg bg-green">MONTH 3</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     § 4  LONDON MONEY-MAKING
+══════════════════════════════ -->
+<section id="london">
+  <div class="section-head">
+    <h2>London Money-Making Opportunities</h2>
+    <p class="section-sub">10 income streams tailored to DK's exact profile: ACCA · ILR · Luton-based · Indus Nexus founder · Senior Auditor · semiconductor trader</p>
+  </div>
+
+  <div class="g3" style="margin-bottom:28px">
+
+    <div class="opp-card" style="border-color:rgba(46,204,113,0.3)">
+      <div class="opp-header">
+        <div class="opp-icon">🏢</div>
+        <div class="opp-earning"><div class="amt">£24,000+</div><div class="freq">Year 1 · Indus Nexus</div></div>
+      </div>
+      <div class="opp-title">Indus Nexus — Semiconductor Trading (SIC 46520)</div>
+      <div class="opp-desc">UK-India component arbitrage. Buy from Avnet/Arrow/Farnell at catalogue price, sell to SMEs and manufacturers at 8–15% margin. Luton's industrial corridor (M1) = logistics advantage. Saudi Vision 2030 = long-term demand. Start with £5K–£10K working capital.</div>
+      <div class="opp-meta">
+        <span>Margin: 8–15%</span><span>Start: Month 3</span><span>Capital: £5–10K</span><span>FCA: Not required</span>
+      </div>
+    </div>
+
+    <div class="opp-card" style="border-color:rgba(201,168,76,0.3)">
+      <div class="opp-header">
+        <div class="opp-icon">🔬</div>
+        <div class="opp-earning"><div class="amt">£8,000–16,000</div><div class="freq">Year 1 · Consultancy</div></div>
+      </div>
+      <div class="opp-title">ACCA Freelance Audit & Finance Consultancy</div>
+      <div class="opp-desc">Via Indus Nexus (SIC 62020 + add SIC 69201 accounting). London SMEs pay £400–£600/day for interim audit/compliance work. 20–30 days/year alongside your main job = £8K–18K additional. Clients: fintech startups, property firms, NHS/public sector contractors. Platforms: AccountingWeb, PeoplePerHour, direct.</div>
+      <div class="opp-meta">
+        <span>Rate: £400–600/day</span><span>Days: 20–30/yr</span><span>Via Indus Nexus Ltd</span>
+      </div>
+    </div>
+
+    <div class="opp-card" style="border-color:rgba(78,205,196,0.3)">
+      <div class="opp-header">
+        <div class="opp-icon">🏠</div>
+        <div class="opp-earning"><div class="amt">£6,000–18,000</div><div class="freq">Year 1 · HMO</div></div>
+      </div>
+      <div class="opp-title">Rent-to-Rent HMO — Luton Corridor (Restart Right)</div>
+      <div class="opp-desc">Your 2022 model worked (+£9,640 net). Luton is perfect: Luton Airport, Amazon warehouse, logistics firms = strong tenant demand. Take 3-bed house at £1,200/month, let 3 rooms at £650–750 each = £1,950–2,250/month gross. Net £600–900/month after bills. Use Indus Nexus Ltd as the management entity for liability protection.</div>
+      <div class="opp-meta">
+        <span>Net: £600–900/mo</span><span>Risk: Medium</span><span>Need: £2K deposit float</span>
+      </div>
+    </div>
+
+    <div class="opp-card" style="border-color:rgba(155,89,182,0.3)">
+      <div class="opp-header">
+        <div class="opp-icon">🛏️</div>
+        <div class="opp-earning"><div class="amt">£7,500</div><div class="freq">Tax-free · Rent-a-Room</div></div>
+      </div>
+      <div class="opp-title">Airbnb / Rent-a-Room (If You Have Spare Room)</div>
+      <div class="opp-desc">HMRC Rent-a-Room Scheme: first £7,500/year completely tax-free if you rent a room in your own home. Luton → London commuters, Luton Airport short-stay guests. Airbnb: £40–80/night. Long-let: £500–700/month from a lodger. This is your single highest-tax-efficiency income stream available.</div>
+      <div class="opp-meta">
+        <span>Tax-free: £7,500/yr</span><span>Zero corp tax</span><span>Starts immediately</span>
+      </div>
+    </div>
+
+    <div class="opp-card" style="border-color:rgba(52,152,219,0.3)">
+      <div class="opp-header">
+        <div class="opp-icon">🌏</div>
+        <div class="opp-earning"><div class="amt">£5,000–15,000</div><div class="freq">Year 1–2 · sourcing</div></div>
+      </div>
+      <div class="opp-title">UK-India Trade Facilitation & Sourcing</div>
+      <div class="opp-desc">With your cultural background and Indus Nexus, act as a UK buying agent for Indian exporters (textiles, engineering components, Ayurvedic goods) entering UK/EU market. Commission model: 3–8% of order value. One £200K order = £6–16K commission. Platforms: IndiaMart, TradeIndia, UK-India Business Council events in London.</div>
+      <div class="opp-meta">
+        <span>Commission: 3–8%</span><span>No capital needed</span><span>Network: India diaspora</span>
+      </div>
+    </div>
+
+    <div class="opp-card" style="border-color:rgba(231,76,60,0.3)">
+      <div class="opp-header">
+        <div class="opp-icon">📈</div>
+        <div class="opp-earning"><div class="amt">Variable</div><div class="freq">ISA + GIA investing</div></div>
+      </div>
+      <div class="opp-title">Stock Market — ISA + IBKR (Already Have Access)</div>
+      <div class="opp-desc">You mentioned IBKR in Indus Nexus setup. ILR = full ISA access. Two tracks: (1) Passive: £200/month into Vanguard FTSE Global All Cap ISA = £0 tax on gains. (2) Active via IBKR: semiconductor sector plays (NVDA, ASML, ARM, Taiwan Semi) — your trading background gives you informational edge on your own sector. Keep active trading in GIA for flexibility.</div>
+      <div class="opp-meta">
+        <span>ISA: 0% tax on gains</span><span>IBKR: sector expertise</span><span>Min: £100/month</span>
+      </div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-header">
+        <div class="opp-icon">🎓</div>
+        <div class="opp-earning"><div class="amt">£3,000–8,000</div><div class="freq">Part-time · tutoring</div></div>
+      </div>
+      <div class="opp-title">ACCA Tuition & CPD Delivery</div>
+      <div class="opp-desc">London has thousands of ACCA students. Private tutoring for P3/AAA/AFM at £50–80/hour. Or partner with Kaplan/BPP as a contract tutor at £350–450/day for weekend intensives. 2 students × 3 hours/week = £300–480/week. Zero overhead — teach online via Zoom.</div>
+      <div class="opp-meta">
+        <span>Rate: £50–80/hr</span><span>Hours: 5–10/week</span><span>Online/London</span>
+      </div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-header">
+        <div class="opp-icon">🤖</div>
+        <div class="opp-earning"><div class="amt">£2,000–6,000</div><div class="freq">Year 1 · Amazon FBA</div></div>
+      </div>
+      <div class="opp-title">Amazon FBA — Tech Accessories via Indus Nexus</div>
+      <div class="opp-desc">Your semiconductor sourcing gives access to components at near-wholesale. Create Indus Nexus branded: laptop stands, USB-C hubs, cable organisers, server rack accessories sourced via India/China. FBA = Amazon handles storage + dispatch. Margins: 30–60% on accessories. Start with £2K product test run.</div>
+      <div class="opp-meta">
+        <span>Margin: 30–60%</span><span>Via Indus Nexus</span><span>Capital: £2K test</span>
+      </div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-header">
+        <div class="opp-icon">💡</div>
+        <div class="opp-earning"><div class="amt">£3,000–10,000</div><div class="freq">EIS/SEIS tax relief</div></div>
+      </div>
+      <div class="opp-title">EIS / SEIS Angel Investing (Tax Relief Machine)</div>
+      <div class="opp-desc">As an ILR holder with income, invest £5,000–20,000 in SEIS startups = 50% income tax relief back (£2,500–10,000 refund). Invest £10,000–100,000 in EIS = 30% back. London has more EIS-qualifying startups than anywhere in Europe. The tax relief alone makes this near risk-free on small amounts. Platform: SeedLegals, Seedrs, Crowdcube.</div>
+      <div class="opp-meta">
+        <span>SEIS: 50% tax back</span><span>EIS: 30% tax back</span><span>Year 2–3</span>
+      </div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-header">
+        <div class="opp-icon">🏗️</div>
+        <div class="opp-earning"><div class="amt">£5,000–20,000</div><div class="freq">Saudi Vision 2030</div></div>
+      </div>
+      <div class="opp-title">Saudi Vision 2030 — Infrastructure Tech Sourcing</div>
+      <div class="opp-desc">Saudi Arabia's £800Bn tech infrastructure programme needs semiconductors, network equipment, server components at massive scale. As a UK-registered electronics trader with EORI, you can tender for supply contracts via the UK-Saudi business council and UKIEF. One contract = 6-12 months revenue. Work with a Saudi-based partner agent.</div>
+      <div class="opp-meta">
+        <span>Contract size: £50K+</span><span>Year 2–3</span><span>Via Indus Nexus</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Income Stream Priority Matrix</div>
+    <div class="ch-lg">
+      <canvas id="incomeMatrix"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     § 5  INDUS NEXUS TRADING MODEL
+══════════════════════════════ -->
+<section id="trading">
+  <div class="section-head">
+    <h2>Indus Nexus Trading Financial Model</h2>
+    <p class="section-sub">Semiconductor component trading + IT consultancy · SIC 46520 + 62020 · Financial projections Year 1–3</p>
+  </div>
+
+  <div class="g3" style="margin-bottom:24px">
+    <div class="card kpi-mini gold-v"><div class="ico">📦</div><div class="val">8–15%</div><div class="lbl">Gross Margin</div><div class="note">Semiconductor distribution</div></div>
+    <div class="card kpi-mini cyan-v"><div class="ico">🎯</div><div class="val">£80K</div><div class="lbl">Year 1 Revenue Target</div><div class="note">To hit £10K gross profit</div></div>
+    <div class="card kpi-mini green"><div class="ico">💼</div><div class="val">£500/day</div><div class="lbl">IT Consultancy Rate</div><div class="note">ACCA + tech = premium</div></div>
+    <div class="card kpi-mini purple-v"><div class="ico">🏦</div><div class="val">19%</div><div class="lbl">Corporation Tax</div><div class="note">On Indus Nexus profits</div></div>
+    <div class="card kpi-mini red-v"><div class="ico">📋</div><div class="val">£2,100</div><div class="lbl">Annual Compliance Cost</div><div class="note">Accountant + filings</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">📈 Indus Nexus Revenue Projections</div>
+
+      <div class="trade-scenario">
+        <div class="ts-head"><div class="ts-name">🌱 Year 1 — Establish</div><div class="ts-annual base">£10,200 net profit</div></div>
+        <table class="dt">
+          <thead><tr><th>Revenue Stream</th><th>Revenue</th><th>Margin%</th><th>Gross Profit</th></tr></thead>
+          <tbody>
+            <tr><td>Semiconductor trading</td><td>£80,000</td><td>10%</td><td>£8,000</td></tr>
+            <tr><td>IT consultancy (20 days)</td><td>£10,000</td><td>90%</td><td>£9,000</td></tr>
+            <tr><td>Total Revenue</td><td><strong>£90,000</strong></td><td></td><td><strong>£17,000</strong></td></tr>
+            <tr><td>Operating costs (accountant, EORI, software, travel)</td><td></td><td></td><td style="color:#e74c3c">−£4,200</td></tr>
+            <tr><td>SIPP employer contribution (tax deductible)</td><td></td><td></td><td style="color:#e74c3c">−£2,400</td></tr>
+            <tr><td style="color:var(--cyan)">Net taxable profit</td><td></td><td></td><td style="color:var(--cyan)"><strong>£10,400</strong></td></tr>
+            <tr><td>Corporation tax @ 19%</td><td></td><td></td><td style="color:#e74c3c">−£1,976</td></tr>
+            <tr style="background:rgba(46,204,113,0.06)"><td style="color:var(--green)"><strong>Take-home (dividend)</strong></td><td></td><td></td><td style="color:var(--green)"><strong>£8,424</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="trade-scenario active">
+        <div class="ts-head"><div class="ts-name">🚀 Year 2 — Scale</div><div class="ts-annual mid">£31,500 net profit</div></div>
+        <table class="dt">
+          <tbody>
+            <tr><td>Semiconductor trading (Saudi + UK-India)</td><td>£250,000</td><td>10%</td><td>£25,000</td></tr>
+            <tr><td>IT consultancy (40 days)</td><td>£20,000</td><td>90%</td><td>£18,000</td></tr>
+            <tr><td>Amazon FBA tech accessories</td><td>£15,000</td><td>40%</td><td>£6,000</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>£285,000</strong></td><td></td><td><strong>£49,000</strong></td></tr>
+            <tr><td>Operating costs + SIPP + salary</td><td></td><td></td><td style="color:#e74c3c">−£8,200</td></tr>
+            <tr style="background:rgba(201,168,76,0.06)"><td style="color:var(--gold2)"><strong>Net take-home (dividend)</strong></td><td></td><td></td><td style="color:var(--gold2)"><strong>£31,500</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="trade-scenario">
+        <div class="ts-head"><div class="ts-name">🏆 Year 3 — Sovereign</div><div class="ts-annual high">£72,000 net profit</div></div>
+        <table class="dt">
+          <tbody>
+            <tr><td>Semiconductor trading (multi-contract)</td><td>£600,000</td><td>10%</td><td>£60,000</td></tr>
+            <tr><td>IT consultancy (60 days)</td><td>£30,000</td><td>90%</td><td>£27,000</td></tr>
+            <tr><td>HMO rental income (2 properties)</td><td>£24,000</td><td>50%</td><td>£12,000</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>£654,000</strong></td><td></td><td><strong>£99,000</strong></td></tr>
+            <tr><td>Costs + SIPP + dividends structure</td><td></td><td></td><td style="color:#e74c3c">−£18,000</td></tr>
+            <tr style="background:rgba(46,204,113,0.08)"><td style="color:var(--green)"><strong>Net personal wealth increase</strong></td><td></td><td></td><td style="color:var(--green)"><strong>£72,000/yr</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card">
+        <div class="card-title">📊 3-Year Indus Nexus Profit Growth</div>
+        <div class="ch">
+          <canvas id="tradingChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏗️ Trading Infrastructure Required</div>
+        <table class="dt">
+          <thead><tr><th>Item</th><th>Cost</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>🏢 Companies House registration</td><td>£100</td><td><span class="bg bg-red">NOW</span></td></tr>
+            <tr><td>📋 EORI number (import/export)</td><td>FREE</td><td><span class="bg bg-red">NOW</span></td></tr>
+            <tr><td>💰 Business bank (Revolut/Wise/HSBC)</td><td>£0–25/mo</td><td><span class="bg bg-red">WEEK 1</span></td></tr>
+            <tr><td>📊 IBKR account (financial trading)</td><td>$0</td><td><span class="bg bg-amber">MONTH 1</span></td></tr>
+            <tr><td>🧾 VAT registration (once >£90K)</td><td>FREE</td><td><span class="bg bg-cyan">MONTH 6</span></td></tr>
+            <tr><td>👤 Accountant (year-end + payroll)</td><td>£800–1,500/yr</td><td><span class="bg bg-green">MONTH 3</span></td></tr>
+            <tr><td>📦 Trade insurance (cargo/liability)</td><td>£300–600/yr</td><td><span class="bg bg-green">MONTH 3</span></td></tr>
+            <tr><td>🤝 Arrow/Avnet distributor account</td><td>FREE</td><td><span class="bg bg-green">MONTH 2</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💡 Tax-Efficient Salary Structure via Indus Nexus</div>
+        <div class="ab p">
+          <div class="icon">💡</div>
+          <div><strong>Optimal Year 1 director structure</strong>
+          <p>Salary: £12,570/year (personal allowance, 0% income tax) · Employer SIPP: £3,600/year (corp tax deductible) · Remaining profit as dividend: 8.75% div tax vs 20–40% income tax · Total tax saving vs salary-only: ~£3,200–6,400/year.</p></div>
+        </div>
+        <div class="ab g">
+          <div class="icon">✅</div>
+          <div><strong>Dividend tax rates 2025/26</strong>
+          <p>First £500 of dividends: 0% · £501–50,270: 8.75% (basic rate) · £50,270–125,140: 33.75% · Combine with ISA withdrawals (0%) and you can architect very low personal tax bills long-term.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     § 6  INVESTMENT PORTFOLIO
+══════════════════════════════ -->
+<section id="invest">
+  <div class="section-head">
+    <h2>Investment Portfolio — ILR Advantage Fully Used</h2>
+    <p class="section-sub">You have full access to every UK tax-advantaged account · Build in this exact order</p>
+  </div>
+
+  <div class="g3" style="margin-bottom:24px">
+    <div class="inv-card" style="border-color:rgba(46,204,113,0.35)">
+      <div class="inv-icon">🏦</div>
+      <div class="inv-name">Step 1: Emergency Buffer</div>
+      <div class="inv-desc">Before any investment. 3-month expense buffer = £3,000 min. Open Chase Bank UK savings (4.5% AER easy access). Auto-sweep £400/month until hit. Non-negotiable foundation.</div>
+      <div class="inv-metrics">
+        <div class="inv-m"><div class="v" style="color:var(--green)">£3,000</div><div class="l">Target</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--cyan)">4.5%</div><div class="l">AER rate</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--gold2)">7 months</div><div class="l">Timeline</div></div>
+      </div>
+    </div>
+    <div class="inv-card" style="border-color:rgba(78,205,196,0.35)">
+      <div class="inv-icon">📈</div>
+      <div class="inv-name">Step 2: Stocks & Shares ISA</div>
+      <div class="inv-desc">Open InvestEngine (0% platform fee) or Vanguard. Start £200/month into FTSE Global All Cap. All gains and income: 0% tax forever. £20,000/year allowance. This is your primary wealth builder.</div>
+      <div class="inv-metrics">
+        <div class="inv-m"><div class="v" style="color:var(--cyan)">£20K</div><div class="l">Annual limit</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--green)">0%</div><div class="l">Tax on gains</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--gold2)">~7–9%</div><div class="l">Hist. return</div></div>
+      </div>
+    </div>
+    <div class="inv-card" style="border-color:rgba(201,168,76,0.35)">
+      <div class="inv-icon">🏛️</div>
+      <div class="inv-name">Step 3: SIPP (via Indus Nexus)</div>
+      <div class="inv-desc">Employer SIPP from company profits. £3,600/year = saves £684 corp tax + grows tax-free. At 57, draw 25% lump sum tax-free. Vanguard or Hargreaves Lansdown SIPP. Start this Day 1 of Indus Nexus trading.</div>
+      <div class="inv-metrics">
+        <div class="inv-m"><div class="v" style="color:var(--gold2)">25%</div><div class="l">Tax relief</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--green)">19%</div><div class="l">Corp tax saved</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--cyan)">£3,600</div><div class="l">Year 1 target</div></div>
+      </div>
+    </div>
+    <div class="inv-card" style="border-color:rgba(155,89,182,0.35)">
+      <div class="inv-icon">🎟️</div>
+      <div class="inv-name">Premium Bonds (NS&I)</div>
+      <div class="inv-desc">Up to £50,000. Tax-free prize fund. Expected: 4.4% effective return (tax-free). Instant access. No risk of capital loss. Good for your emergency fund overflow — park excess cash here between investments.</div>
+      <div class="inv-metrics">
+        <div class="inv-m"><div class="v" style="color:var(--purple)">£50K</div><div class="l">Max holding</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--green)">0%</div><div class="l">Tax on prizes</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--gold2)">4.4%</div><div class="l">Expected yield</div></div>
+      </div>
+    </div>
+    <div class="inv-card" style="border-color:rgba(52,152,219,0.35)">
+      <div class="inv-icon">🌱</div>
+      <div class="inv-name">EIS / SEIS — Tax Relief Investing</div>
+      <div class="inv-desc">Year 2–3 strategy. £5K in SEIS = £2,500 income tax back (50%). £10K in EIS = £3,000 back (30%). Use platforms: Seedrs, Crowdcube, SeedLegals. Focus on London tech/fintech where your sector knowledge applies. Losses also get tax relief.</div>
+      <div class="inv-metrics">
+        <div class="inv-m"><div class="v" style="color:var(--cyan)">50%</div><div class="l">SEIS relief</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--green)">30%</div><div class="l">EIS relief</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--gold2)">Year 2–3</div><div class="l">Timeline</div></div>
+      </div>
+    </div>
+    <div class="inv-card" style="border-color:rgba(231,76,60,0.35)">
+      <div class="inv-icon">🖥️</div>
+      <div class="inv-name">IBKR — Active Trading (Sector Edge)</div>
+      <div class="inv-desc">You have IBKR in your Indus Nexus plan. Use your semiconductor sector expertise: NVDA, ASML, ARM Holdings, Taiwan Semi, Broadcom. Your trading intel = informational advantage. Keep in GIA (General Investment Account) — flexible, no caps. Use ISA for long-term, IBKR for active plays.</div>
+      <div class="inv-metrics">
+        <div class="inv-m"><div class="v" style="color:var(--red)">GIA</div><div class="l">Account type</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--amber)">CGT</div><div class="l">On gains</div></div>
+        <div class="inv-m"><div class="v" style="color:var(--gold2)">Sector edge</div><div class="l">Advantage</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Portfolio Allocation — Year 3 Target (£75,000 invested)</div>
+    <div class="g2">
+      <div class="ch-lg"><canvas id="portfolioChart"></canvas></div>
+      <div>
+        <div style="margin-top:12px">
+          <div class="pb-row">
+            <span class="pb-label" style="width:170px">Stocks & Shares ISA</span>
+            <div class="pb-track"><div class="pb-fill" style="width:40%;background:linear-gradient(90deg,var(--cyan),#0e7e78)"></div></div>
+            <span class="pb-val">£30,000</span><span class="pb-pct">40%</span>
+          </div>
+          <div class="pb-row">
+            <span class="pb-label" style="width:170px">SIPP (pension)</span>
+            <div class="pb-track"><div class="pb-fill" style="width:20%;background:linear-gradient(90deg,var(--gold),#7d5a00)"></div></div>
+            <span class="pb-val">£15,000</span><span class="pb-pct">20%</span>
+          </div>
+          <div class="pb-row">
+            <span class="pb-label" style="width:170px">IBKR active (GIA)</span>
+            <div class="pb-track"><div class="pb-fill" style="width:17%;background:linear-gradient(90deg,#e74c3c,#922b21)"></div></div>
+            <span class="pb-val">£12,500</span><span class="pb-pct">17%</span>
+          </div>
+          <div class="pb-row">
+            <span class="pb-label" style="width:170px">Premium Bonds</span>
+            <div class="pb-track"><div class="pb-fill" style="width:10%;background:linear-gradient(90deg,var(--purple),#5b2c6f)"></div></div>
+            <span class="pb-val">£7,500</span><span class="pb-pct">10%</span>
+          </div>
+          <div class="pb-row">
+            <span class="pb-label" style="width:170px">EIS/SEIS angels</span>
+            <div class="pb-track"><div class="pb-fill" style="width:8%;background:linear-gradient(90deg,var(--green),#1a6b3a)"></div></div>
+            <span class="pb-val">£6,000</span><span class="pb-pct">8%</span>
+          </div>
+          <div class="pb-row">
+            <span class="pb-label" style="width:170px">Cash emergency</span>
+            <div class="pb-track"><div class="pb-fill" style="width:5%;background:linear-gradient(90deg,#3498db,#1a5276)"></div></div>
+            <span class="pb-val">£4,000</span><span class="pb-pct">5%</span>
+          </div>
+        </div>
+        <div class="ab g" style="margin-top:16px">
+          <div class="icon">💡</div>
+          <div><strong>The Compound Effect (ISA, starting £200/month)</strong>
+          <p>Year 1: £2,400 invested. Year 5: £15,200. Year 10: £37,200. Year 20: £111,600. At 7% average return. All completely tax-free. Starting today vs starting in 2 years costs you ~£14,000 by Year 10.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     § 7  12-MONTH ROADMAP
+══════════════════════════════ -->
+<section id="roadmap">
+  <div class="section-head">
+    <h2>12-Month Wealth Building Roadmap</h2>
+    <p class="section-sub">Personal finance + Indus Nexus + investing — in exact sequence, with targets at each milestone</p>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">🗺️ Quarter-by-Quarter Plan</div>
+
+      <div class="rm-item">
+        <div class="rm-dot">Q1</div>
+        <div class="rm-content">
+          <div class="rm-tag">📅 March – May 2026 · Foundation Layer</div>
+          <h4>Register Indus Nexus + Financial Foundation</h4>
+          <p>Complete Companies House registration (£100). Apply for EORI. Open Revolut Business + Wise Multi-currency. Open Chase Bank savings (emergency fund: £400/mo). Cancel Walmart Plus. Set Uber spending limit £60/month. Delete Uber Eats. First month: put £100 into InvestEngine ISA. Target end-state: emergency fund £1,200 · ISA opened · company registered · EORI active.</p>
+        </div>
+      </div>
+
+      <div class="rm-item">
+        <div class="rm-dot">Q2</div>
+        <div class="rm-content">
+          <div class="rm-tag">📅 June – August 2026 · Trading Activation</div>
+          <h4>First Indus Nexus Trade + Scale Savings</h4>
+          <p>Open Arrow/Avnet distributor account. Execute first semiconductor trade (target: £5K–10K order, 10% margin = £500–1K profit). Apply for VAT (if approaching £90K threshold). Emergency fund: £2,400 built. ISA: £300/month now. Start ACCA tutoring for supplementary income (2 students). Driving theory test passed → reduce Uber by 50%. Target: first £1K company profit · emergency fund 80% built.</p>
+        </div>
+      </div>
+
+      <div class="rm-item">
+        <div class="rm-dot">Q3</div>
+        <div class="rm-content">
+          <div class="rm-tag">📅 September – November 2026 · Stack</div>
+          <h4>Multiple Income Streams Running</h4>
+          <p>Emergency fund: £3,000 complete. ISA: £200/month continuing. Set up company SIPP: £300/month employer contribution. First IT consultancy day booked (target: 5 days at £500 = £2,500). First HMO research (identify Luton 3-bed properties at £1,200/month). IBKR account active: start paper trading semiconductor sector before going live. Target: 3 income streams active · ISA balance £1,500+.</p>
+        </div>
+      </div>
+
+      <div class="rm-item">
+        <div class="rm-dot">Q4</div>
+        <div class="rm-content">
+          <div class="rm-tag">📅 December 2026 – February 2027 · Harvest</div>
+          <h4>Year-End Review + Year 2 Planning</h4>
+          <p>File Indus Nexus first set of accounts. Extract dividend (target: £8K–10K). Add to ISA allowance. SIPP: £3,600 accumulated. Review HMO feasibility — can you take on a property in Q1 2027? IBKR: first live semiconductor equity position. ISA balance: £3,000+. Emergency fund: complete and earning 4.5%. Total invested wealth: £6,000–8,000. Personal net worth projection: £20,000+.</p>
+        </div>
+      </div>
+
+      <div class="rm-item" style="padding-bottom:0">
+        <div class="rm-dot" style="border-color:var(--green)">🏆</div>
+        <div class="rm-content">
+          <div class="rm-tag">🎯 March 2028 · 2-Year Target</div>
+          <h4>Sovereign Position Reached</h4>
+          <p>Indus Nexus Year 2: £30K+ net profit. Personal employment: £55K+ salary. ISA: £8K+ balance growing tax-free. SIPP: £7,200+. HMO: 1 property running at £600–900/month net. ACCA tutoring: £300–500/month. Total personal wealth: £50,000–75,000. Multiple income streams = financial independence trajectory locked in.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card">
+        <div class="card-title">📈 2-Year Wealth Projection</div>
+        <div class="ch-lg"><canvas id="wealthChart"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚡ 30-Day Sprint — Start Monday</div>
+        <div class="action-step">
+          <div class="step-num">1</div>
+          <div class="step-content"><h4>Cancel Walmart Plus — 5 minutes</h4><p>asda.com → Sign in → Account → Manage ASDA Plus → Cancel</p><div class="step-save save">💙 Save £10.28/month immediately</div></div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">2</div>
+          <div class="step-content"><h4>Monzo: set Uber category limit = £60</h4><p>Monzo app → Spending → Set limit on Transport → Uber</p><div class="step-save save">💙 Save £68/month average</div></div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">3</div>
+          <div class="step-content"><h4>Open Chase UK savings account</h4><p>chase.co.uk → Open in 10 minutes. Transfer £400 from Monzo today.</p><div class="step-save earn">💚 Start earning 4.5% AER</div></div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">4</div>
+          <div class="step-content"><h4>Complete Companies House registration</h4><p>companieshouse.gov.uk → £100 · 24 hours · Indus Nexus Limited</p><div class="step-save earn">💚 Unlocks all business income streams</div></div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">5</div>
+          <div class="step-content"><h4>Apply for EORI number</h4><p>gov.uk/eori → Free · 3 working days · Required for all import/export</p><div class="step-save earn">💚 Enables Indus Nexus trading</div></div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">6</div>
+          <div class="step-content"><h4>Open InvestEngine ISA — even £50 today</h4><p>investengine.com → ISA → FTSE Global All Cap · 0% platform fee</p><div class="step-save earn">💚 Lock in this year's ISA allowance</div></div>
+        </div>
+        <div class="action-step" style="border:none">
+          <div class="step-num">7</div>
+          <div class="step-content"><h4>Pass DVSA theory test (already booked Sep)</h4><p>Practice daily via DVSA app. Pass = full licence = kill £800/yr Uber dependency.</p><div class="step-save save">💙 Save £800/yr Uber once driving independently</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card-title">🧮 Total Annual Earnings Potential — Fully Activated</div>
+    <table class="dt">
+      <thead><tr><th>Income Stream</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>💼 Employment salary (est. net)</td><td style="color:var(--green)">£42,720</td><td style="color:var(--green)">£45,000</td><td style="color:var(--green)">£48,000</td><td><span class="bg bg-green">ACTIVE</span></td></tr>
+        <tr><td>🏢 Indus Nexus trading (net dividend)</td><td>£8,424</td><td style="color:var(--gold2)">£31,500</td><td style="color:var(--green)">£60,000</td><td><span class="bg bg-amber">LAUNCH NOW</span></td></tr>
+        <tr><td>📚 ACCA freelance consulting</td><td>£3,000</td><td>£8,000</td><td>£15,000</td><td><span class="bg bg-amber">LAUNCH NOW</span></td></tr>
+        <tr><td>🏠 HMO rent-to-rent (Luton)</td><td>£0</td><td>£7,200</td><td>£18,000</td><td><span class="bg bg-cyan">YEAR 2</span></td></tr>
+        <tr><td>🎓 ACCA tutoring</td><td>£2,400</td><td>£4,800</td><td>£7,200</td><td><span class="bg bg-amber">LAUNCH Q2</span></td></tr>
+        <tr><td>📈 ISA / investment returns</td><td>£168</td><td>£560</td><td>£1,400</td><td><span class="bg bg-cyan">OPEN NOW</span></td></tr>
+        <tr><td>🛏️ Airbnb / Rent-a-Room</td><td>£2,400</td><td>£5,000</td><td>£7,500</td><td><span class="bg bg-cyan">IF ROOM AVAIL</span></td></tr>
+        <tr><td>🤖 Amazon FBA (accessories)</td><td>£0</td><td>£3,000</td><td>£8,000</td><td><span class="bg bg-green">YEAR 2</span></td></tr>
+        <tr style="background:rgba(46,204,113,0.07)">
+          <td><strong style="color:var(--green)">TOTAL ANNUAL INCOME</strong></td>
+          <td><strong style="color:var(--cyan)">£59,112</strong></td>
+          <td><strong style="color:var(--gold2)">£105,060</strong></td>
+          <td><strong style="color:var(--green)">£165,100</strong></td>
+          <td><span class="bg bg-gold">SOVEREIGN</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer style="text-align:center;padding:32px;border-top:1px solid var(--border);color:var(--muted);font-size:12px">
+  <div style="color:var(--gold2);font-weight:700;font-size:14px;margin-bottom:6px">DK · Wealth Command Centre</div>
+  Built from real Monzo + Zarlash bank data · Senior Auditor · ILR Holder · Indus Nexus Limited · Generated March 2026
+  <div style="margin-top:8px">Projections are estimates based on available data. Not financial advice — consult a qualified IFA for regulated advice.</div>
+</footer>
+
+<script>
+// ── PARTICLES ─────────────────────────────────────────────────────────────────
+(()=>{
+  const c=document.getElementById('ptcl'),ctx=c.getContext('2d');
+  const r=()=>{c.width=c.offsetWidth;c.height=c.offsetHeight};
+  r();window.addEventListener('resize',r);
+  const pts=Array.from({length:55},()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.6+.4}));
+  const draw=()=>{
+    ctx.clearRect(0,0,c.width,c.height);
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>c.width)p.vx*=-1;if(p.y<0||p.y>c.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(201,168,76,0.45)';ctx.fill()});
+    pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{const dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<110){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(78,205,196,${(1-d/110)*.12})`;ctx.lineWidth=.5;ctx.stroke()}}));
+    requestAnimationFrame(draw);
+  };draw();
+})();
+
+// ── NAV ACTIVE ────────────────────────────────────────────────────────────────
+const secs=document.querySelectorAll('section[id]'),navA=document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{let c='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-80)c=s.id});navA.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+c))});
+
+// ── CHART DEFAULTS ────────────────────────────────────────────────────────────
+Chart.defaults.color='#7a8aaa';
+Chart.defaults.borderColor='rgba(255,255,255,0.05)';
+Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+Chart.defaults.font.size=12;
+
+// ── P&L DONUT ─────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('plDonut'),{type:'doughnut',data:{labels:['Rent','Eating Out','Transport','Groceries','Bills & Subs','General','Holidays','Shopping & Ent.'],datasets:[{data:[46,10,9.6,4.9,4.7,5.5,7.1,3.3],backgroundColor:['#e74c3c','#f39c12','#e67e22','#2ecc71','#3498db','#9b59b6','#1abc9c','#c9a84c'],borderWidth:2,borderColor:'#060b14',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{boxWidth:10,padding:8}},tooltip:{callbacks:{label:ctx=>' £'+ctx.raw+' per £100 earned'}}}}});
+
+// ── SPEND COMPARE ─────────────────────────────────────────────────────────────
+new Chart(document.getElementById('spendCompare'),{type:'bar',data:{labels:['Uber','Dining Out','Holidays','RV News','Subscriptions','Uber Eats'],datasets:[{label:'Current /mo',data:[128,218,154,70,68,16],backgroundColor:'rgba(231,76,60,0.7)',borderRadius:5},{label:'Target /mo',data:[60,150,80,30,35,0],backgroundColor:'rgba(46,204,113,0.7)',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>'£'+v}}}}});
+
+// ── SUBSCRIPTION CHART ─────────────────────────────────────────────────────────
+new Chart(document.getElementById('subChart'),{type:'doughnut',data:{labels:['ACCA (keep)','Amazon Prime','Walmart Plus (cut)','Campus Global','Railcard'],datasets:[{data:[226,107.88,123,55,35],backgroundColor:['#2ecc71','#f39c12','#e74c3c','#3498db','#2ecc71'],borderWidth:2,borderColor:'#0d1526'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:8,font:{size:11}}},tooltip:{callbacks:{label:ctx=>' £'+ctx.raw.toFixed(0)+'/yr'}}}}});
+
+// ── INCOME MATRIX (BUBBLE) ────────────────────────────────────────────────────
+new Chart(document.getElementById('incomeMatrix'),{type:'bubble',data:{datasets:[
+  {label:'Semiconductor Trading',data:[{x:7,y:24,r:16}],backgroundColor:'rgba(46,204,113,0.6)'},
+  {label:'ACCA Consulting',data:[{x:8,y:12,r:12}],backgroundColor:'rgba(201,168,76,0.7)'},
+  {label:'HMO Rent-to-Rent',data:[{x:5,y:10,r:13}],backgroundColor:'rgba(78,205,196,0.6)'},
+  {label:'Rent-a-Room/Airbnb',data:[{x:9,y:7,r:9}],backgroundColor:'rgba(155,89,182,0.7)'},
+  {label:'ACCA Tutoring',data:[{x:9,y:5,r:8}],backgroundColor:'rgba(52,152,219,0.7)'},
+  {label:'UK-India Trade Fac.',data:[{x:4,y:10,r:11}],backgroundColor:'rgba(230,126,34,0.7)'},
+  {label:'Amazon FBA',data:[{x:6,y:6,r:8}],backgroundColor:'rgba(231,76,60,0.6)'},
+  {label:'EIS/SEIS Investing',data:[{x:3,y:8,r:9}],backgroundColor:'rgba(26,188,156,0.7)'},
+  {label:'ISA Passive',data:[{x:10,y:3,r:7}],backgroundColor:'rgba(41,128,185,0.7)'},
+  {label:'Saudi Vision 2030',data:[{x:2,y:20,r:15}],backgroundColor:'rgba(192,57,43,0.6)'},
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}},scales:{x:{min:0,max:11,title:{display:true,text:'Ease (1=Hard, 10=Easy)',color:'#7a8aaa'},grid:{color:'rgba(255,255,255,0.04)'}},y:{title:{display:true,text:'Year 1 Potential Income (£K)',color:'#7a8aaa'},grid:{color:'rgba(255,255,255,0.04)'}}}}}});
+
+// ── TRADING PROJECTIONS ───────────────────────────────────────────────────────
+new Chart(document.getElementById('tradingChart'),{type:'bar',data:{labels:['Year 1','Year 2','Year 3'],datasets:[{label:'Revenue (£K)',data:[90,285,654],backgroundColor:'rgba(78,205,196,0.4)',borderRadius:6,yAxisID:'y1'},{label:'Net Profit (£K)',data:[8.4,31.5,72],backgroundColor:'rgba(201,168,76,0.8)',borderRadius:6,yAxisID:'y'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10}}},scales:{y:{position:'left',ticks:{callback:v=>'£'+v+'K'},grid:{color:'rgba(255,255,255,0.05)'}},y1:{position:'right',ticks:{callback:v=>'£'+v+'K'},grid:{display:false}}}}});
+
+// ── PORTFOLIO DOUGHNUT ────────────────────────────────────────────────────────
+new Chart(document.getElementById('portfolioChart'),{type:'doughnut',data:{labels:['S&S ISA','SIPP','IBKR Active','Premium Bonds','EIS/SEIS','Cash Buffer'],datasets:[{data:[30000,15000,12500,7500,6000,4000],backgroundColor:['#4ecdc4','#c9a84c','#e74c3c','#9b59b6','#2ecc71','#3498db'],borderWidth:2,borderColor:'#060b14',hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:8}},tooltip:{callbacks:{label:ctx=>' £'+ctx.raw.toLocaleString()+' ('+((ctx.raw/75000)*100).toFixed(0)+'%)'}}}}}});
+
+// ── WEALTH PROJECTION ─────────────────────────────────────────────────────────
+const m=['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+const curr=m.map((_,i)=>Math.round(1394*(i+1)));
+const optim=m.map((_,i)=>Math.round(1800*(i+1)));
+const full=m.map((_,i)=>{const base=1800*(i+1);const biz=i>=3?1000*(i-2):0;return Math.round(base+biz)});
+new Chart(document.getElementById('wealthChart'),{type:'line',data:{labels:m,datasets:[{label:'Current path',data:curr,borderColor:'rgba(78,205,196,0.7)',backgroundColor:'rgba(78,205,196,0.06)',tension:.4,borderWidth:2,fill:true},{label:'Optimised spend',data:optim,borderColor:'rgba(201,168,76,0.8)',backgroundColor:'rgba(201,168,76,0.06)',tension:.4,borderWidth:2,fill:true},{label:'All streams active',data:full,borderColor:'rgba(46,204,113,0.9)',backgroundColor:'rgba(46,204,113,0.07)',tension:.4,borderWidth:2.5,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:10}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{maxTicksLimit:12}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>'£'+v.toLocaleString()}}}}});
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────────────
+const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity=1;e.target.style.transform='translateY(0)';io.unobserve(e.target)}}),{threshold:0.08});
+document.querySelectorAll('.card,.opp-card,.inv-card,.trade-scenario,.fcast-card,.rm-item').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(18px)';el.style.transition='opacity .5s ease,transform .5s ease';io.observe(el)});
+</script>
+</body>
+</html>

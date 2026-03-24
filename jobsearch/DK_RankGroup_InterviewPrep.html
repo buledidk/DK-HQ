@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DK — Rank Group Interview Brief</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --bg4: #22222e;
+    --gold: #f5c842;
+    --gold2: #e8a020;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --blue: #4e8df5;
+    --purple: #9d78f5;
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --border: rgba(255,255,255,0.07);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; font-size:14px; line-height:1.6; }
+
+  /* TOP BANNER */
+  .hero {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0d1a3a 50%, #0a1a0a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;
+    background:radial-gradient(circle,rgba(245,200,66,0.12),transparent 70%);
+    border-radius:50%;
+  }
+  .hero-label { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .hero-title { font-size:26px; font-weight:800; letter-spacing:-0.5px; margin-bottom:6px; }
+  .hero-title span {
+    background:linear-gradient(135deg,var(--gold),#fff 60%,var(--gold));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .hero-meta { display:flex; gap:20px; flex-wrap:wrap; margin-top:14px; }
+  .meta-chip {
+    background:var(--bg3); border:1px solid var(--border); border-radius:20px;
+    padding:5px 14px; font-size:12px; display:flex; align-items:center; gap:6px;
+  }
+  .meta-chip .dot { width:7px;height:7px;border-radius:50%;background:var(--green); animation:pulse 2s infinite; }
+  .meta-chip .dot.amber { background:var(--gold); }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+
+  /* COUNTDOWN */
+  .countdown-bar {
+    background: linear-gradient(90deg, rgba(231,76,60,0.15), rgba(245,200,66,0.1));
+    border: 1px solid rgba(231,76,60,0.3);
+    border-radius:10px; margin:20px 32px 0; padding:12px 20px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .countdown-icon { font-size:22px; }
+  .countdown-text { flex:1; }
+  .countdown-text strong { color:var(--red); font-size:15px; }
+  .countdown-text p { color:var(--muted); font-size:12px; margin-top:2px; }
+  .time-badge {
+    background:rgba(231,76,60,0.2); border:1px solid rgba(231,76,60,0.4);
+    border-radius:8px; padding:6px 16px; font-size:18px; font-weight:900;
+    color:var(--red); letter-spacing:2px;
+  }
+
+  /* LAYOUT */
+  .container { max-width:1100px; margin:0 auto; padding:24px 20px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  @media(max-width:760px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+  /* CARDS */
+  .card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:14px;
+    padding:20px; margin-bottom:16px;
+  }
+  .card-header {
+    display:flex; align-items:center; gap:10px; margin-bottom:16px;
+    padding-bottom:12px; border-bottom:1px solid var(--border);
+  }
+  .card-icon { font-size:18px; }
+  .card-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .card.gold-border { border-color:rgba(245,200,66,0.3); }
+  .card.green-border { border-color:rgba(46,204,113,0.3); }
+  .card.blue-border { border-color:rgba(78,141,245,0.3); }
+  .card.red-border { border-color:rgba(231,76,60,0.3); }
+  .card.purple-border { border-color:rgba(157,120,245,0.3); }
+
+  /* KPI ROW */
+  .kpi-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .kpi {
+    background:var(--bg3); border:1px solid var(--border); border-radius:10px;
+    padding:12px 18px; flex:1; min-width:120px;
+  }
+  .kpi-val { font-size:22px; font-weight:900; color:var(--gold); }
+  .kpi-label { font-size:11px; color:var(--muted); margin-top:2px; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted);
+    margin:28px 0 12px; display:flex; align-items:center; gap:10px;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* BULLET LIST */
+  .bullet-list { list-style:none; }
+  .bullet-list li {
+    padding:7px 0; border-bottom:1px solid var(--border); font-size:13px;
+    display:flex; align-items:flex-start; gap:10px;
+  }
+  .bullet-list li:last-child { border-bottom:none; }
+  .bullet-list li::before { content:'▸'; color:var(--gold); flex-shrink:0; margin-top:1px; }
+
+  /* Q&A BLOCKS */
+  .qa-block {
+    background:var(--bg3); border-radius:10px; padding:14px 16px;
+    margin-bottom:10px; border-left:3px solid var(--blue);
+  }
+  .qa-block.green { border-left-color:var(--green); }
+  .qa-block.gold { border-left-color:var(--gold); }
+  .qa-block.purple { border-left-color:var(--purple); }
+  .qa-q { font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px; }
+  .qa-a { font-size:12px; color:var(--muted); line-height:1.7; }
+  .qa-a strong { color:var(--text); }
+
+  /* ALIGNMENT TABLE */
+  .align-table { width:100%; border-collapse:collapse; }
+  .align-table th {
+    background:var(--bg3); color:var(--muted); font-size:11px; font-weight:700;
+    text-transform:uppercase; letter-spacing:1px; padding:10px 14px; text-align:left;
+    border-bottom:1px solid var(--border);
+  }
+  .align-table td {
+    padding:10px 14px; font-size:12px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  .align-table tr:last-child td { border-bottom:none; }
+  .match-badge {
+    display:inline-block; padding:2px 10px; border-radius:20px; font-size:10px;
+    font-weight:700; text-transform:uppercase; letter-spacing:1px;
+  }
+  .match-strong { background:rgba(46,204,113,0.15); color:var(--green); border:1px solid rgba(46,204,113,0.3); }
+  .match-good { background:rgba(245,200,66,0.15); color:var(--gold); border:1px solid rgba(245,200,66,0.3); }
+
+  /* TAG */
+  .tag {
+    display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px;
+    background:var(--bg4); border:1px solid var(--border); margin:2px; color:var(--muted);
+  }
+  .tag.blue { background:rgba(78,141,245,0.15); color:var(--blue); border-color:rgba(78,141,245,0.3); }
+  .tag.green { background:rgba(46,204,113,0.15); color:var(--green); border-color:rgba(46,204,113,0.3); }
+  .tag.gold { background:rgba(245,200,66,0.15); color:var(--gold); border-color:rgba(245,200,66,0.3); }
+
+  /* QUESTIONS TO ASK */
+  .ask-item {
+    background:var(--bg3); border-radius:10px; padding:12px 16px; margin-bottom:8px;
+    border:1px solid rgba(157,120,245,0.2); display:flex; gap:12px;
+  }
+  .ask-num {
+    width:24px;height:24px;border-radius:50%;background:rgba(157,120,245,0.2);
+    color:var(--purple); font-size:11px; font-weight:900; display:flex;
+    align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .ask-text { font-size:12px; line-height:1.6; }
+  .ask-why { font-size:11px; color:var(--muted); margin-top:4px; }
+
+  /* MINDSET BOX */
+  .mindset-box {
+    background:linear-gradient(135deg,rgba(245,200,66,0.08),rgba(157,120,245,0.05));
+    border:1px solid rgba(245,200,66,0.2); border-radius:14px; padding:20px;
+    margin-bottom:16px;
+  }
+  .mindset-title { font-size:14px; font-weight:800; color:var(--gold); margin-bottom:10px; }
+  .mindset-text { font-size:13px; color:var(--text); line-height:1.8; }
+
+  /* FOOTER */
+  footer {
+    text-align:center; padding:30px; color:var(--muted); font-size:11px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">🎯 Interview Prep Brief — Confidential</div>
+  <div class="hero-title"><span>Senior Group Reporting Manager</span></div>
+  <div class="hero-title" style="font-size:18px;color:var(--muted);font-weight:500;margin-top:4px;">The Rank Group PLC · London Stock Exchange: RNK</div>
+  <div class="hero-meta">
+    <div class="meta-chip"><span class="dot"></span> LIVE: Tomorrow — March 11, 2026</div>
+    <div class="meta-chip"><span class="dot amber"></span> 3:30 PM GMT · Phone Call (they call you)</div>
+    <div class="meta-chip">📞 Interviewer: Iona Zaharieva</div>
+    <div class="meta-chip">🏢 Maidenhead, Berkshire HQ</div>
+  </div>
+</div>
+
+<!-- COUNTDOWN -->
+<div class="countdown-bar">
+  <div class="countdown-icon">⏰</div>
+  <div class="countdown-text">
+    <strong>TOMORROW AT 3:30 PM GMT — INTERVIEWER CALLS YOU</strong>
+    <p>Be in a quiet place with strong signal. Have this brief, your CV, and a notepad ready.</p>
+  </div>
+  <div class="time-badge">3:30 PM</div>
+</div>
+
+<div class="container">
+
+  <!-- COMPANY SNAPSHOT -->
+  <div class="section-label">Company Intelligence</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-val">$1.07B</div><div class="kpi-label">Annual Revenue</div></div>
+    <div class="kpi"><div class="kpi-val">~5,000</div><div class="kpi-label">Employees</div></div>
+    <div class="kpi"><div class="kpi-val">$590M</div><div class="kpi-label">Market Cap</div></div>
+    <div class="kpi"><div class="kpi-val">1937</div><div class="kpi-label">Founded</div></div>
+    <div class="kpi"><div class="kpi-val">100+</div><div class="kpi-label">Licensed Venues</div></div>
+    <div class="kpi"><div class="kpi-val">LSE:RNK</div><div class="kpi-label">Listed Exchange</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card gold-border">
+      <div class="card-header"><div class="card-icon">🎰</div><div class="card-title">Business Segments</div></div>
+      <ul class="bullet-list">
+        <li><strong>Grosvenor Casinos</strong> — flagship UK casino brand, 50+ venues</li>
+        <li><strong>Mecca Bingo</strong> — community bingo halls, entertainment</li>
+        <li><strong>Digital</strong> — live casino, sports betting, online bingo/slots</li>
+        <li><strong>Enracha Venues</strong> — Spanish gaming operations</li>
+      </ul>
+    </div>
+    <div class="card blue-border">
+      <div class="card-header"><div class="card-icon">📊</div><div class="card-title">Finance Tech Stack (Know These)</div></div>
+      <div style="padding-top:4px;">
+        <span class="tag blue">Microsoft Dynamics 365 Finance</span>
+        <span class="tag blue">Power BI</span>
+        <span class="tag blue">WhereScape</span>
+        <span class="tag blue">ServiceNow</span>
+        <span class="tag gold">Docker Swarm</span>
+        <span class="tag gold">Ansible</span>
+        <span class="tag">DXC</span>
+        <span class="tag">SAML</span>
+      </div>
+      <p style="color:var(--muted);font-size:12px;margin-top:12px;">Dynamics 365 Finance + Power BI = core tools for this role. Know them cold.</p>
+    </div>
+  </div>
+
+  <!-- CRITICAL CONTEXT -->
+  <div class="section-label">Critical Context — Leadership Transition</div>
+  <div class="card red-border">
+    <div class="card-header"><div class="card-icon">🔄</div><div class="card-title">⚠️ Leadership Shake-Up — USE THIS TO STAND OUT</div></div>
+    <ul class="bullet-list">
+      <li><strong>Richard Harris</strong> (CFO since May 2022) became <strong>Interim CEO on January 30, 2026</strong> — this is recent and significant</li>
+      <li><strong>Cliff</strong> joined as <strong>Interim CFO in February 2026</strong> — brand new, was CFO at Manchester United for 8 years</li>
+      <li>This means the Finance function is <strong>in transition</strong> — they need a solid Senior Reporting Manager to provide continuity and stability</li>
+      <li><strong>Your pitch:</strong> "I bring the structure and process discipline during this transitional moment. I'm not just a reporter, I'm a process architect."</li>
+    </ul>
+  </div>
+
+  <!-- YOUR ALIGNMENT -->
+  <div class="section-label">DK's Alignment to Role</div>
+  <table class="align-table">
+    <tr>
+      <th>Role Requirement</th>
+      <th>Your Match</th>
+      <th>Strength</th>
+    </tr>
+    <tr>
+      <td>Group financial reporting across multiple business segments</td>
+      <td>Senior Auditor experience across multi-entity environments; audit of complex group structures</td>
+      <td><span class="match-badge match-strong">Strong ✓</span></td>
+    </tr>
+    <tr>
+      <td>Statutory & management accounts production</td>
+      <td>Audit background means you've reviewed, challenged and produced accounts at group level</td>
+      <td><span class="match-badge match-strong">Strong ✓</span></td>
+    </tr>
+    <tr>
+      <td>Process design & improvement</td>
+      <td>Process designer by trade — this is a direct skill match</td>
+      <td><span class="match-badge match-strong">Exact Match ✓</span></td>
+    </tr>
+    <tr>
+      <td>Listed PLC environment (LSE)</td>
+      <td>Audit experience with listed entities, regulatory compliance, governance</td>
+      <td><span class="match-badge match-strong">Strong ✓</span></td>
+    </tr>
+    <tr>
+      <td>Entrepreneurial mindset / business building</td>
+      <td>Sole entrepreneur, Indus Nexus Ltd — drives commercial awareness beyond pure reporting</td>
+      <td><span class="match-badge match-good">Good ✓</span></td>
+    </tr>
+    <tr>
+      <td>Stakeholder management, CFO-level reporting</td>
+      <td>Audit background = regular C-suite interaction, presenting findings to boards</td>
+      <td><span class="match-badge match-strong">Strong ✓</span></td>
+    </tr>
+  </table>
+
+  <!-- LIKELY QUESTIONS + ANSWERS -->
+  <div class="section-label">Likely Interview Questions — Your Answers</div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q1: "Tell me about yourself and why you're interested in Rank Group?"</div>
+    <div class="qa-a">
+      <strong>Open with impact:</strong> "I'm DK — a senior finance professional with a background in audit, process design, and entrepreneurship. I've spent my career building rigorous financial reporting frameworks and understanding how data drives decisions at group level. The Rank Group caught my attention because it's a genuinely complex multi-segment business — Grosvenor, Mecca, Digital, Enracha — all with distinct reporting needs, and I thrive in that complexity. The current leadership transition also signals an exciting moment to bring stability and build something lasting in the finance function."
+    </div>
+  </div>
+
+  <div class="qa-block green">
+    <div class="qa-q">Q2: "What experience do you have in group-level financial reporting?"</div>
+    <div class="qa-a">
+      <strong>Lead with specifics:</strong> Speak to multi-entity consolidations, group accounts, intercompany eliminations, segment reporting. Mention your audit work reviewing group structures. If you've prepared or reviewed group statutory accounts, lead with that. Connect to the Rank Group's four-segment structure.
+    </div>
+  </div>
+
+  <div class="qa-block gold">
+    <div class="qa-q">Q3: "How do you approach process improvement in a reporting function?"</div>
+    <div class="qa-a">
+      <strong>This is your superpower — own it:</strong> "Process design is central to how I approach any reporting environment. I start by mapping the current state, identifying bottlenecks — whether that's manual handoffs, data quality issues, or unclear ownership — and then designing a future state with clear accountability and automation where possible. In a business with Rank's complexity — multiple segments, digital and physical channels — having clean, repeatable reporting processes isn't optional, it's the foundation."
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q4: "How do you handle working to tight month-end deadlines?"</div>
+    <div class="qa-a">
+      Talk about prioritisation, pre-close checklists, proactive communication. Mention building resilience into the process so deadlines aren't missed when unexpected issues arise. Keep it concrete — a specific example if you have one.
+    </div>
+  </div>
+
+  <div class="qa-block green">
+    <div class="qa-q">Q5: "How do you manage relationships with senior stakeholders?"</div>
+    <div class="qa-a">
+      <strong>Key point:</strong> The new Interim CFO Cliff just joined. Frame your answer around building trust quickly with new finance leadership — anticipating what they need before they ask, translating numbers into narrative, and being the reliable foundation they lean on during uncertainty.
+    </div>
+  </div>
+
+  <div class="qa-block purple">
+    <div class="qa-q">Q6: "Why are you interested in the gaming / leisure sector?"</div>
+    <div class="qa-a">
+      "The gaming and entertainment sector is one of the most commercially dynamic in the UK — it sits at the intersection of consumer behaviour, regulatory change, and digital transformation. Rank specifically is navigating the shift from physical venues to digital channels — that's a genuinely interesting reporting challenge because the revenue recognition, customer metrics, and regulatory requirements differ by channel. I find that complexity energising."
+    </div>
+  </div>
+
+  <!-- QUESTIONS TO ASK -->
+  <div class="section-label">Questions YOU Ask — Show Seniority</div>
+  <div class="ask-item">
+    <div class="ask-num">1</div>
+    <div>
+      <div class="ask-text">"With Cliff joining as Interim CFO in February, how is the finance function evolving? What are the immediate priorities for this reporting role in supporting that transition?"</div>
+      <div class="ask-why">Shows you've done research and positions you as a partner, not just a hire.</div>
+    </div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">2</div>
+    <div>
+      <div class="ask-text">"How does Group Reporting interact with the four business segment finance teams — is the consolidation primarily centralised or does it rely on segment-level inputs?"</div>
+      <div class="ask-why">Technical question that shows you understand group reporting structures.</div>
+    </div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">3</div>
+    <div>
+      <div class="ask-text">"What are the biggest pain points in the current reporting cycle? Where does the process break down today?"</div>
+      <div class="ask-why">Opens the door to pitch your process design strength as the solution.</div>
+    </div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">4</div>
+    <div>
+      <div class="ask-text">"What does success look like in the first 90 days?"</div>
+      <div class="ask-why">Classic but powerful — shows you're results-oriented and thinking ahead.</div>
+    </div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">5</div>
+    <div>
+      <div class="ask-text">"Is Rank Group using Dynamics 365 Finance across all segments, or is there still a mix of legacy systems at segment level?"</div>
+      <div class="ask-why">Shows technical credibility and practical curiosity about the real environment.</div>
+    </div>
+  </div>
+
+  <!-- MINDSET + CLOSING -->
+  <div class="section-label">DK's Winning Mindset</div>
+  <div class="mindset-box">
+    <div class="mindset-title">🧠 Your Edge Going Into This Call</div>
+    <div class="mindset-text">
+      You're not desperate — you're selective. You're a <strong>Senior Auditor, process designer, and entrepreneur</strong> who builds things that last. The Rank Group is in a pivotal moment: new Interim CEO, new Interim CFO, four segments to consolidate, digital growth to manage.<br><br>
+      <strong>They need a reporting manager who brings structure in chaos.</strong> That's you. You don't just produce numbers — you build the systems that produce the numbers reliably, month after month.<br><br>
+      Own the conversation. Ask smart questions. Leave them thinking: <em>"This person already understands our problems."</em>
+    </div>
+  </div>
+
+  <!-- LAST-MINUTE CHECKLIST -->
+  <div class="section-label">Day-Of Checklist</div>
+  <div class="grid-2">
+    <div class="card green-border">
+      <div class="card-header"><div class="card-icon">✅</div><div class="card-title">Before 3:00 PM</div></div>
+      <ul class="bullet-list">
+        <li>Read Rank Group's latest news on rank.com/investors</li>
+        <li>Review your own CV — especially group reporting examples</li>
+        <li>Write 2–3 bullet STAR examples (Situation, Task, Action, Result)</li>
+        <li>Check signal strength / quiet space confirmed</li>
+        <li>Have notepad + pen ready</li>
+        <li>Re-read this brief at 3:00 PM sharp</li>
+      </ul>
+    </div>
+    <div class="card gold-border">
+      <div class="card-header"><div class="card-icon">📞</div><div class="card-title">On The Call</div></div>
+      <ul class="bullet-list">
+        <li>Answer confidently — pause before answering, it's a strength not a weakness</li>
+        <li>Use their name: "Iona" — personalise the conversation</li>
+        <li>Mention Grosvenor / Mecca / Digital segments by name</li>
+        <li>Reference the CFO transition at the right moment</li>
+        <li>Close strong: "I'm genuinely excited about this. What are the next steps?"</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  DK — Rank Group Interview Brief · Senior Group Reporting Manager · March 11, 2026 · 3:30 PM GMT<br>
+  <span style="color:rgba(255,255,255,0.2);">Prepared by SOVEREIGN Intelligence · Confidential</span>
+</footer>
+
+</body>
+</html>
