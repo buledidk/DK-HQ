@@ -4,7 +4,7 @@
 > finance, risk, audit, and compliance — packaged as auto-triggering
 > Claude Code skills and a portfolio-grade capability statement.
 
-This pack contains **40 auto-triggering skills** + **3 orchestrator agents** + routing trees + end-to-end connectivity guides.
+This pack contains **43 auto-triggering skills** + **3 orchestrator agents** + routing trees + end-to-end connectivity guides.
 
 ## Navigate
 
@@ -16,133 +16,146 @@ This pack contains **40 auto-triggering skills** + **3 orchestrator agents** + r
 
 ---
 
-## Skill index (40)
+## Skill index (43)
 
 ### Engineering workflow (5)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`audit-commit`](./audit-commit/SKILL.md) | say "commit", "push", finish a change | Runs project checks, writes a conventional commit, pushes |
-| [`run-project-checks`](./run-project-checks/SKILL.md) | say "run tests", "lint", "build", "check" | Detects project type, runs the full check suite |
-| [`audit-pr-review`](./audit-pr-review/SKILL.md) | open a PR, say "review", paste a diff | Reviews with audit + compliance lens |
-| [`scaffold-audit-module`](./scaffold-audit-module/SKILL.md) | say "scaffold", "new app", "new package", "bootstrap" | Creates new apps / packages / audit modules |
-| [`audit-report-writer`](./audit-report-writer/SKILL.md) | say "write report", "status update", "summary" | Produces reports in IMPLEMENTATION_*.md style |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`audit-commit`](./audit-commit/SKILL.md) | say "commit", "push" |
+| [`run-project-checks`](./run-project-checks/SKILL.md) | say "run tests", "lint", "build", "check" |
+| [`audit-pr-review`](./audit-pr-review/SKILL.md) | open a PR, say "review", paste a diff |
+| [`scaffold-audit-module`](./scaffold-audit-module/SKILL.md) | say "scaffold", "new app", "new package" |
+| [`audit-report-writer`](./audit-report-writer/SKILL.md) | say "write report", "status update" |
 
-### External audit — lifecycle overview (2)
+### External audit — lifecycle + file delivery + phase deep-dives (12)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`external-audit-lifecycle`](./external-audit-lifecycle/SKILL.md) | mention audit planning, materiality, risk, fieldwork, KAM, EQR | Full ISA (UK) external-audit lifecycle with automation hooks |
-| [`uk-compliance-review`](./uk-compliance-review/SKILL.md) | touch PII, audit trail, ISA, FRS, FCA, Companies Act, GDPR, AML | Regulatory review with pass/fail checklist per regime |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`external-audit-lifecycle`](./external-audit-lifecycle/SKILL.md) | mention audit planning, materiality, fieldwork, KAM |
+| [`uk-compliance-review`](./uk-compliance-review/SKILL.md) | touch ISA, FRS, FCA, Companies Act, GDPR, AML |
+| [`big4-audit-file-delivery`](./big4-audit-file-delivery/SKILL.md) | say "audit file", Aura, Canvas, Clara, Omnia, Caseware |
+| [`audit-planning-materiality`](./audit-planning-materiality/SKILL.md) | say "audit strategy", "materiality", "ISA 300/320" |
+| [`risk-assessment`](./risk-assessment/SKILL.md) | say "ISA 315", "RoMM", "significant risk" |
+| [`controls-assessment`](./controls-assessment/SKILL.md) | say "control testing", "TOC", "TOE", "ITGC", "SOX" |
+| [`audit-evidence-sampling`](./audit-evidence-sampling/SKILL.md) | say "sampling", "MUS", "projection" |
+| [`journal-entry-testing`](./journal-entry-testing/SKILL.md) | say "JE testing", "ISA 240 ¶32" |
+| [`going-concern-audit`](./going-concern-audit/SKILL.md) | say "going concern", "ISA 570", "covenant headroom" |
+| [`group-audit`](./group-audit/SKILL.md) | say "group audit", "ISA 600", "component auditor" |
+| [`auditors-report`](./auditors-report/SKILL.md) | say "auditor's report", "KAM", "qualified opinion" |
+| [`audit-quality-eqr`](./audit-quality-eqr/SKILL.md) | say "ISQM", "EQR", "root cause" |
 
-### External audit — phase deep-dives + file delivery (10)
+### Workpaper generation (1)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`big4-audit-file-delivery`](./big4-audit-file-delivery/SKILL.md) | say "audit file", "Aura", "Canvas", "Clara", "Omnia", "Caseware" | File prep, drafting, review, QC, approval on Big 4 + mid-tier systems |
-| [`audit-planning-materiality`](./audit-planning-materiality/SKILL.md) | say "audit strategy", "materiality", "performance materiality", "ISA 300/320" | Strategy + plan + OM/PM/CTT/specific/component materiality |
-| [`risk-assessment`](./risk-assessment/SKILL.md) | say "ISA 315", "RoMM", "significant risk", "walkthrough" | ISA 315 revised + ISA 240 risk assessment |
-| [`controls-assessment`](./controls-assessment/SKILL.md) | say "control testing", "TOC", "TOE", "walkthrough", "ITGC", "SOD", "SOX" | D&I + OE testing with sample-size framework |
-| [`audit-evidence-sampling`](./audit-evidence-sampling/SKILL.md) | say "sampling", "MUS", "tolerable misstatement", "projection" | Sufficient-appropriate evidence + statistical + ADA |
-| [`journal-entry-testing`](./journal-entry-testing/SKILL.md) | say "JE testing", "ISA 240 ¶32", "management override" | Full-population JE analytics |
-| [`going-concern-audit`](./going-concern-audit/SKILL.md) | say "going concern", "ISA 570", "material uncertainty", "covenant headroom" | 12-month assessment + stress testing + report implications |
-| [`group-audit`](./group-audit/SKILL.md) | say "group audit", "ISA 600", "component auditor", "component materiality" | ISA 600 revised scoping, instructions, direction + supervision |
-| [`auditors-report`](./auditors-report/SKILL.md) | say "auditor's report", "KAM", "qualified opinion", "adverse", "disclaimer" | Opinion decision tree + ISA 700/701/705/706 wording |
-| [`audit-quality-eqr`](./audit-quality-eqr/SKILL.md) | say "ISQM", "EQR", "engagement quality review", "root cause" | ISQM 1 + 2 + ISA 220 revised + RCA + remediation |
-
-### Workpaper generation (1) — NEW
-
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`audit-workpaper-engine`](./audit-workpaper-engine/SKILL.md) | say "materiality calculation", "planning memo", "risk matrix", "analytical procedures", "control walkthrough", "write up the testing", "prepare the audit file" | Generative ISA-compliant workpaper engine — .docx / .xlsx / React artefacts with full ISA 300/320/315/520/570/240 templates, SOX/ICFR structures, and generic demo entities |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`audit-workpaper-engine`](./audit-workpaper-engine/SKILL.md) | say "materiality calc", "planning memo", "risk matrix", "write up the testing", "prepare the audit file" |
 
 ### Financial-statement deep work (4)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`financial-statement-review`](./financial-statement-review/SKILL.md) | say "review the accounts", "IFRS 15", "IAS 36", "earnings quality", "iXBRL" | Deep FS review with standard-by-standard mapping |
-| [`disclosure-review`](./disclosure-review/SKILL.md) | say "disclosure review", "notes", "TCFD", "APM review", "viability" | Disclosure completeness + narrative consistency |
-| [`fs-internal-consistency`](./fs-internal-consistency/SKILL.md) | say "tie out", "does it foot", "reconcile FS", "narrative vs numbers" | 7-layer internal-consistency checks |
-| [`accounting-judgments-estimates`](./accounting-judgments-estimates/SKILL.md) | say "ISA 540", "critical judgment", "auditor's range", "impairment model", "ECL model" | Evaluate management estimates + bias + hindsight |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`financial-statement-review`](./financial-statement-review/SKILL.md) | say "review the accounts", "IFRS 15", "IAS 36", "iXBRL" |
+| [`disclosure-review`](./disclosure-review/SKILL.md) | say "disclosure review", "notes", "TCFD", "APM" |
+| [`fs-internal-consistency`](./fs-internal-consistency/SKILL.md) | say "tie out", "does it foot", "narrative vs numbers" |
+| [`accounting-judgments-estimates`](./accounting-judgments-estimates/SKILL.md) | say "ISA 540", "critical judgment", "impairment model", "ECL model" |
 
 ### Finance · risk · regulation (4)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`finance-process-automation`](./finance-process-automation/SKILL.md) | say "automate", "P2P", "O2C", "close", "reconciliation" | End-to-end finance process automation with controls |
-| [`risk-control-governance`](./risk-control-governance/SKILL.md) | say "risk register", "RCSA", "KRI", "SOX", "ICFR", "COSO", "three lines" | ERM + internal controls + governance frameworks |
-| [`banking-capital-markets-regulation`](./banking-capital-markets-regulation/SKILL.md) | say "Basel", "LCR", "IFRS 9 ECL", "MiFID", "EMIR", "CSDR", "AIFMD", "SMCR", "DORA" | Cross-regime regulatory expertise |
-| [`process-mining-optimization`](./process-mining-optimization/SKILL.md) | say "process mining", "event log", "bottleneck", "automation ROI" | Mines logs, quantifies KPIs, ranks automation candidates |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`finance-process-automation`](./finance-process-automation/SKILL.md) | say "automate", "P2P", "O2C", "close", "reconciliation" |
+| [`risk-control-governance`](./risk-control-governance/SKILL.md) | say "risk register", "RCSA", "KRI", "SOX", "COSO", "three lines" |
+| [`banking-capital-markets-regulation`](./banking-capital-markets-regulation/SKILL.md) | say "Basel", "LCR", "MiFID", "EMIR", "CSDR", "AIFMD", "SMCR", "DORA" |
+| [`process-mining-optimization`](./process-mining-optimization/SKILL.md) | say "process mining", "event log", "bottleneck", "automation ROI" |
 
-### Board · investor · governance (1)
+### Budgeting · FP&A · forecasting (1) — NEW
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`board-investor-governance-packs`](./board-investor-governance-packs/SKILL.md) | say "board pack", "AC pack", "ALCO", "investor deck", "s166", "Dear CEO" | Drafts board / AC / RC / ALCO / investor / regulator packs |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`budget-forecast-analysis`](./budget-forecast-analysis/SKILL.md) | say "budget", "forecast", "FP&A", "ZBB", "rolling forecast", "variance analysis", "LRP", "scenario", "sensitivity", "driver-based" |
+
+### Business process optimisation (1) — NEW
+
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`business-process-optimiser`](./business-process-optimiser/SKILL.md) | say "process optimisation", "TOM", "target operating model", "BPO", "Lean", "Six Sigma", "DMAIC", "SLA", "capacity model", "RACI", "shared service", "offshore", "automation road-map" |
+
+### Governance design (1) — NEW
+
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`governance-structure-enhancement`](./governance-structure-enhancement/SKILL.md) | say "governance structure", "board composition", "board effectiveness", "committee", "ToR", "delegated authority", "SMCR", "SYSC", "UK Corporate Governance Code", "Wates", "skills matrix", "NED", "SMF" |
+
+### Board · investor · governance communication (1)
+
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`board-investor-governance-packs`](./board-investor-governance-packs/SKILL.md) | say "board pack", "AC pack", "ALCO", "investor deck", "s166", "Dear CEO" |
 
 ### Sector polish (3)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`sector-banking-capital-markets`](./sector-banking-capital-markets/SKILL.md) | say "bank audit", "broker-dealer", "CCP", "CSD", "IFRS 9 ECL audit", "CASS audit" | Polished sector expertise — banks, investment firms, capital-markets infra |
-| [`sector-asset-management`](./sector-asset-management/SKILL.md) | say "AIFM", "UCITS", "LTAF", "NAV audit", "performance fee", "depositary", "PRIIPs" | Polished sector expertise — AMCM + wealth + fund admin |
-| [`sector-manufacturing-industry`](./sector-manufacturing-industry/SKILL.md) | say "manufacturer", "retail audit", "construction", "oil and gas", "inventory audit" | Polished sector expertise — industrials, consumer, tech, O&G, real estate, pharma |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`sector-banking-capital-markets`](./sector-banking-capital-markets/SKILL.md) | say "bank audit", "broker-dealer", "CCP", "IFRS 9 ECL audit", "CASS audit" |
+| [`sector-asset-management`](./sector-asset-management/SKILL.md) | say "AIFM", "UCITS", "LTAF", "NAV audit", "PRIIPs" |
+| [`sector-manufacturing-industry`](./sector-manufacturing-industry/SKILL.md) | say "manufacturer", "retail audit", "oil and gas", "inventory audit" |
 
 ### Leadership + soft skills (1)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`leadership-soft-skills`](./leadership-soft-skills/SKILL.md) | say "communication", "decision under uncertainty", "cross-cultural", "distributed team", "coaching" | Communication by audience, decisions under uncertainty, distributed teams, executive presence |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`leadership-soft-skills`](./leadership-soft-skills/SKILL.md) | say "communication", "decision under uncertainty", "cross-cultural", "distributed team", "coaching" |
 
 ### AI in finance + accounting (1)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`ai-finance-accounting`](./ai-finance-accounting/SKILL.md) | say "AI for audit", "LLM in finance", "multi-agent", "accuracy engine", "hallucination control" | Deployment patterns for AI in finance — agents, accuracy engines, governance |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`ai-finance-accounting`](./ai-finance-accounting/SKILL.md) | say "AI for audit", "LLM in finance", "multi-agent", "accuracy engine" |
 
 ### Specialist extended pack (8)
 
-| Skill | Auto-triggers when you... | What it does |
-|-------|---------------------------|--------------|
-| [`esg-sustainability-reporting`](./esg-sustainability-reporting/SKILL.md) | say "ESG", "CSRD", "ESRS", "ISSB S1/S2", "TCFD", "SASB", "double materiality", "Scope 1/2/3" | CSRD / ISSB preparer + ISSA 5000 assurance |
-| [`internal-audit-iia`](./internal-audit-iia/SKILL.md) | say "internal audit", "IIA", "GIAS", "three lines", "CAE", "QAIP", "EQA" | IIA GIAS 2024 engagements + annual planning + QAIP |
-| [`transaction-services-dd`](./transaction-services-dd/SKILL.md) | say "DD", "due diligence", "QoE", "SPA", "NWC", "net debt", "earn-out", "locked box", "carve-out" | Buy-side / sell-side FDD + QoE + SPA mechanics |
-| [`forensic-fraud-investigation`](./forensic-fraud-investigation/SKILL.md) | say "fraud", "forensic", "investigation", "whistleblower", "bribery", "expert witness", "asset tracing" | Fraud investigation + ACFE schemes + CPR 35 expert reports |
-| [`treasury-hedge-accounting`](./treasury-hedge-accounting/SKILL.md) | say "hedge accounting", "IFRS 9 hedge", "IRRBB", "cash flow hedge", "fair value hedge", "net investment hedge" | IFRS 9 hedge docs + effectiveness + IRRBB + treasury policy |
-| [`tax-provisioning-ias12`](./tax-provisioning-ias12/SKILL.md) | say "IAS 12", "ASC 740", "deferred tax", "DTA", "UTP", "IFRIC 23", "Pillar Two", "GloBE" | IAS 12 + IFRIC 23 + Pillar Two + ASC 740 provisioning |
-| [`data-room-automation`](./data-room-automation/SKILL.md) | say "VDR", "data room", "Q&A log", "redaction", "Intralinks", "Datasite", "Ansarada" | VDR setup + indexing + Q&A workflow + redaction pipeline |
-| [`audit-analytics-adas`](./audit-analytics-adas/SKILL.md) | say "ADA", "audit analytics", "IDEA", "ACL", "Alteryx", "full population", "Halo", "Helix" | Full-population ADA + data pipeline + continuous auditing |
+| Skill | Auto-triggers when you... |
+|-------|---------------------------|
+| [`esg-sustainability-reporting`](./esg-sustainability-reporting/SKILL.md) | say "ESG", "CSRD", "ESRS", "ISSB S1/S2", "TCFD", "double materiality", "Scope 1/2/3" |
+| [`internal-audit-iia`](./internal-audit-iia/SKILL.md) | say "internal audit", "IIA", "GIAS", "three lines", "CAE", "QAIP", "EQA" |
+| [`transaction-services-dd`](./transaction-services-dd/SKILL.md) | say "DD", "QoE", "SPA", "NWC", "net debt", "earn-out", "locked box", "carve-out" |
+| [`forensic-fraud-investigation`](./forensic-fraud-investigation/SKILL.md) | say "fraud", "forensic", "investigation", "whistleblower", "bribery", "expert witness" |
+| [`treasury-hedge-accounting`](./treasury-hedge-accounting/SKILL.md) | say "hedge accounting", "IFRS 9 hedge", "IRRBB", "cash flow hedge" |
+| [`tax-provisioning-ias12`](./tax-provisioning-ias12/SKILL.md) | say "IAS 12", "ASC 740", "deferred tax", "UTP", "IFRIC 23", "Pillar Two", "GloBE" |
+| [`data-room-automation`](./data-room-automation/SKILL.md) | say "VDR", "data room", "Q&A log", "redaction", "Intralinks", "Datasite" |
+| [`audit-analytics-adas`](./audit-analytics-adas/SKILL.md) | say "ADA", "audit analytics", "IDEA", "ACL", "Alteryx", "full population", "Halo", "Helix" |
 
 ---
 
 ## Orchestrator agents (3)
 
-Under `.claude/agents/` — invoke via `@<agent-name>` inside Claude Code. Agents orchestrate multiple skills into a workflow:
+Under `.claude/agents/` — invoke via `@<agent-name>` inside Claude Code:
 
-| Agent | Orchestrates | Use when |
-|---|---|---|
-| [`audit-file-reviewer`](../agents/audit-file-reviewer.md) | big4-audit-file-delivery · controls-assessment · audit-evidence-sampling · journal-entry-testing · accounting-judgments-estimates · financial-statement-review · audit-quality-eqr · **audit-workpaper-engine** | Manager / partner / pre-EQR full file review |
-| [`fs-close-coordinator`](../agents/fs-close-coordinator.md) | fs-internal-consistency · disclosure-review · accounting-judgments-estimates · financial-statement-review | Month-end / year-end / interim FS review |
-| [`governance-pack-builder`](../agents/governance-pack-builder.md) | board-investor-governance-packs · sector-* · risk-control-governance · leadership-soft-skills + topical skills | Board / AC / RC / ALCO / investor / regulator pack drafting |
+| Agent | Orchestrates |
+|---|---|
+| [`audit-file-reviewer`](../agents/audit-file-reviewer.md) | big4-audit-file-delivery · controls-assessment · audit-evidence-sampling · journal-entry-testing · accounting-judgments-estimates · financial-statement-review · audit-quality-eqr · **audit-workpaper-engine** |
+| [`fs-close-coordinator`](../agents/fs-close-coordinator.md) | fs-internal-consistency · disclosure-review · accounting-judgments-estimates · financial-statement-review |
+| [`governance-pack-builder`](../agents/governance-pack-builder.md) | board-investor-governance-packs · **governance-structure-enhancement** · sector-* · risk-control-governance · leadership-soft-skills · **budget-forecast-analysis** · **business-process-optimiser** |
 
 ---
 
 ## Deploy to Anthropic Skills API
 
-All 40 skills can be pushed to your Anthropic account programmatically:
+All 43 skills can be pushed to your Anthropic account programmatically:
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-... pnpm sync-skills          # uses scripts/sync-skills.ts
 ```
 
-Or the one-command bootstrap:
+Or one-command:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/buledidk/DK-HQ/claude/draft-skills-profile-5mltb/scripts/bootstrap.sh \
   | ANTHROPIC_API_KEY=sk-ant-... bash
 ```
 
-The script reads every `SKILL.md`, upserts to the Anthropic Skills API (POST → create, PATCH → update), and writes `.claude/skills-manifest.json` so re-runs are idempotent. See **[SETUP_CONNECTIVITY.md](./SETUP_CONNECTIVITY.md)** for the end-to-end wiring across claude.ai, Console, and Claude Code, and **[DEPLOY_TODAY.md](./DEPLOY_TODAY.md)** for the 3-minute runbook.
+See **[DEPLOY_TODAY.md](./DEPLOY_TODAY.md)** for the 3-minute runbook, **[SETUP_CONNECTIVITY.md](./SETUP_CONNECTIVITY.md)** for end-to-end wiring.
 
 ---
 
@@ -162,11 +175,11 @@ cp -r .claude/skills/* ~/.claude/skills/
 
 ## Editing a skill
 
-Edit the `SKILL.md`. Changes take effect next Claude session. Keep YAML `description` keyword-rich — that drives auto-activation. Re-run `pnpm sync-skills` to propagate to the Anthropic org.
+Edit the `SKILL.md`. Changes take effect next Claude session. Re-run `pnpm sync-skills` to propagate to the Anthropic org.
 
 ## Adding a new skill
 
-1. `.claude/skills/<new-skill>/SKILL.md` with YAML frontmatter (`name`, `description`).
+1. `.claude/skills/<new-skill>/SKILL.md` with YAML frontmatter.
 2. Body: scope, phase-by-phase workflow, deliverables, anti-patterns, standards.
 3. Add a row here, a branch in `SKILL_TREES.md`, and a line in `PORTFOLIO.md`.
 4. `pnpm sync-skills` to deploy.
