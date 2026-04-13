@@ -1,0 +1,17 @@
+{
+  "name": "@dk-hq/shared",
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./supabase": "./src/lib/supabase.ts",
+    "./types": "./src/lib/database.types.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
