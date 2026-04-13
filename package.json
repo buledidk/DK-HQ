@@ -1,0 +1,29 @@
+{
+  "name": "dk-hq",
+  "version": "0.1.0",
+  "description": "DK Master Portal - Unified Audit Automation Platform",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "clean": "pnpm -r clean",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "keywords": [
+    "audit",
+    "automation",
+    "accounting",
+    "ISA",
+    "FRS102",
+    "companies-act"
+  ],
+  "author": "Indus Nexus Limited",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
