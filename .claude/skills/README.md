@@ -37,10 +37,11 @@ relevant context. You can also invoke any of them manually via
 | [`external-audit-lifecycle`](./external-audit-lifecycle/SKILL.md) | mention audit planning, materiality, risk assessment, fieldwork, KAM, EQR | Full ISA (UK) external-audit lifecycle with automation hooks per phase |
 | [`uk-compliance-review`](./uk-compliance-review/SKILL.md) | touch PII, audit trail, ISA, FRS, FCA, Companies Act, GDPR, AML | Regulatory review with a pass/fail checklist per regime |
 
-### External audit — phase deep-dives
+### External audit — phase deep-dives + file delivery
 
 | Skill | Auto-triggers when you... | What it does |
 |-------|---------------------------|--------------|
+| [`big4-audit-file-delivery`](./big4-audit-file-delivery/SKILL.md) | say "audit file", "working paper", "Aura", "Canvas", "Clara", "Omnia", "Caseware", "lead schedule", "section A/B/C", "review notes" | Cross-industry audit-file prep, drafting, review, QC, approval on Big 4 + mid-tier audit systems |
 | [`audit-planning-materiality`](./audit-planning-materiality/SKILL.md) | say "audit strategy", "materiality", "performance materiality", "ISA 300/320" | Overall strategy + audit plan + OM/PM/CTT/specific/component materiality |
 | [`risk-assessment`](./risk-assessment/SKILL.md) | say "ISA 315", "RoMM", "significant risk", "walkthrough", "inherent risk" | ISA 315 revised + ISA 240 risk assessment — with stand-back |
 | [`controls-assessment`](./controls-assessment/SKILL.md) | say "control testing", "TOC", "TOE", "walkthrough", "ITGC", "SOD", "SOX" | Design + operating effectiveness testing with sample-size framework |
@@ -69,11 +70,48 @@ relevant context. You can also invoke any of them manually via
 | [`banking-capital-markets-regulation`](./banking-capital-markets-regulation/SKILL.md) | say "Basel", "LCR", "IFRS 9 ECL", "MiFID", "EMIR", "CSDR", "T+1", "AIFMD", "SMCR", "DORA" | Cross-regime regulatory expertise for banks / investment firms / asset managers |
 | [`process-mining-optimization`](./process-mining-optimization/SKILL.md) | say "process mining", "event log", "bottleneck", "automation ROI", "business case" | Mines event logs, quantifies KPIs, ranks automation candidates, builds the business case |
 
+### Board + investor + governance communication
+
+| Skill | Auto-triggers when you... | What it does |
+|-------|---------------------------|--------------|
+| [`board-investor-governance-packs`](./board-investor-governance-packs/SKILL.md) | say "board pack", "audit committee pack", "ALCO", "investor deck", "earnings deck", "s166", "Dear CEO" | Drafts board/AC/RC/ALCO/investor/regulator packs in house style with BIG-4 pattern |
+
+### Sector polish (audit + automation exposure)
+
+| Skill | Auto-triggers when you... | What it does |
+|-------|---------------------------|--------------|
+| [`sector-banking-capital-markets`](./sector-banking-capital-markets/SKILL.md) | say "bank audit", "broker-dealer", "CCP", "CSD", "IFRS 9 ECL audit", "trading book", "treasury audit", "CASS audit" | Polished sector expertise — banks, investment firms, capital-markets infra |
+| [`sector-asset-management`](./sector-asset-management/SKILL.md) | say "AIFM", "UCITS", "LTAF", "NAV audit", "performance fee", "depositary", "PRIIPs", "PE audit", "hedge fund" | Polished sector expertise — asset managers, wealth, PE/PC/VC/HF, fund admin |
+| [`sector-manufacturing-industry`](./sector-manufacturing-industry/SKILL.md) | say "manufacturer", "retail audit", "SaaS audit", "construction", "oil and gas", "long-term contract", "inventory audit", "warranty" | Polished sector expertise — manufacturing, industrial, consumer, tech, construction, O&G, utilities, real estate, pharma |
+
+### Leadership + soft skills
+
+| Skill | Auto-triggers when you... | What it does |
+|-------|---------------------------|--------------|
+| [`leadership-soft-skills`](./leadership-soft-skills/SKILL.md) | say "communication", "difficult conversation", "decision under uncertainty", "cross-cultural", "global/remote/distributed team", "negotiation", "conflict", "coaching", "hire", "performance management" | Communication by audience, decisions under uncertainty, running distributed teams across countries + cultures, team lifecycle, ambiguity navigation, executive presence, stakeholder + conflict management |
+
 ### AI in finance + accounting
 
 | Skill | Auto-triggers when you... | What it does |
 |-------|---------------------------|--------------|
 | [`ai-finance-accounting`](./ai-finance-accounting/SKILL.md) | say "AI for audit", "LLM in finance", "multi-agent", "accuracy engine", "hallucination control", "OCR invoices" | Deployment patterns for AI in finance — agents, accuracy engines, governance |
+
+---
+
+## Deploy to Anthropic Skills API
+
+All 31 skills can be pushed to your Anthropic account programmatically
+(rather than manual paste per Project on claude.ai):
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+pnpm sync-skills          # uses scripts/sync-skills.ts
+```
+
+The script reads every `SKILL.md` in this folder, upserts it to the
+Anthropic Skills API (POST to create, PATCH to update), and writes
+`.claude/skills-manifest.json` (skill name → skill id) so re-runs are
+idempotent. See `scripts/sync-skills.ts` for details.
 
 ---
 
