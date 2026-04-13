@@ -113,3 +113,22 @@ docs/                         # architecture, API-keys registry, roadmap, sessio
 - Skills with acronyms in the body should spell the first occurrence in full (e.g., "Financial Planning & Analysis (FP&A)", "International Standard on Auditing (ISA) 500") so the skill is discoverable regardless of how the user phrases a request.
 - `.env` files are gitignored; `.env.example` is the canonical list of required keys.
 - Commit signing via the sandbox has failed historically — in this environment use `git -c commit.gpgsign=false commit` if a signing hook blocks you. Do not silently skip other hooks.
+
+## Compliance Context
+
+The Audit Engine is built around UK audit compliance:
+- **ISA (UK)** — International Standards on Auditing (risk assessment, materiality, procedures)
+- **FRS 102** — Financial Reporting Standard (disclosures, accounting policies)
+- **Companies Act 2006** — Size classification, statutory audit thresholds
+
+
+## Development Workflow
+
+1. Branch off `main` with pattern `feature/<name>` or `fix/<name>`
+2. CI runs lint, typecheck, test, build on every PR
+3. Merge to `main` triggers deploy workflow
+
+
+## API Integrations
+
+All external APIs flow through `@dk-hq/api-client`. Never call external APIs directly from app code — use the client wrappers for consistent auth, rate limiting, and error handling.

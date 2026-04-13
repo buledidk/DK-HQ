@@ -1,0 +1,26 @@
+{
+  "name": "@dk-hq/audit-engine",
+  "version": "0.1.0",
+  "description": "Professional Audit Automation Engine - ISA (UK), FRS 102, Companies Act 2006 compliant",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "build": "echo 'Build step - add bundler when ready'",
+    "test": "node --test src/**/*.test.js",
+    "lint": "echo 'Lint - configure ESLint'",
+    "typecheck": "echo 'Typecheck - configure TS'"
+  },
+  "keywords": [
+    "audit",
+    "ISA",
+    "FRS102",
+    "companies-act",
+    "automation"
+  ],
+  "dependencies": {
+    "@dk-hq/shared": "workspace:*",
+    "@dk-hq/api-client": "workspace:*"
+  }
+}
