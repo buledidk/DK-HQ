@@ -13,8 +13,11 @@
     "sync-skills": "tsx scripts/sync-skills.ts",
     "pull-skills": "tsx scripts/pull-skills.ts",
     "skills:roundtrip": "tsx scripts/pull-skills.ts && tsx scripts/sync-skills.ts",
+    "mirror-to-supabase": "tsx scripts/mirror-to-supabase.ts",
+    "generate-catalog": "tsx scripts/generate-catalog.ts",
     "generate-skill": "tsx scripts/generate-skill.ts create",
-    "enhance-skill": "tsx scripts/generate-skill.ts enhance"
+    "enhance-skill": "tsx scripts/generate-skill.ts enhance",
+    "skills:mirror-all": "tsx scripts/pull-skills.ts && tsx scripts/mirror-to-supabase.ts && tsx scripts/generate-catalog.ts"
   },
   "keywords": [
     "audit",

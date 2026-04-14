@@ -1,56 +1,122 @@
-# Skills Hub — Claude-first bidirectional sync
+# Skills Hub — claude.ai as source of truth, mirrored everywhere
 
-**Claude is the authoring hub. GitHub is the versioned mirror of record.**
+**claude.ai is the authoring hub. Every other surface is a downstream mirror.**
 
-This repo authors skills in either surface (Console UI or IDE), then reconciles
-them via scripts that talk to the Anthropic Skills API (`/v1/skills`).
+This repo is the long-term canonical Git mirror. Supabase is the queryable
+mirror for apps. Vercel / GitHub Pages is the public HTML display. Claude
+Code reads from GitHub (this repo) or `~/.claude/skills/` locally.
 
 ---
 
-## The three sync commands
+## Full topology
+
+```
+                     authored in browser
+                             |
+                             v
+       console.anthropic.com/settings/skills
+                             |
+                             v
+      =====================================
+      |   Anthropic Skills API /v1/skills  |   <- SOURCE OF TRUTH
+      =====================================
+                             |
+       -------------+--------+--------+--------------
+       |            |                 |              |
+       v            v                 v              v
+   claude.ai     Claude Code       Supabase      Vercel display
+   capabilities  (any repo)        skills_catalog docs/skills.html
+                                   (app queries)  (public catalogue)
+                        ^
+                        |  pulls locally via pnpm pull-skills
+                        v
+                DK-HQ GitHub repo
+                .claude/skills/<name>/SKILL.md
+                (long-term version history)
+```
+
+---
+
+## The 4 sync commands
 
 | Command | Direction | Use when |
 |---|---|---|
-| `pnpm sync-skills` | Git → API | you edited `.claude/skills/**/SKILL.md` locally |
-| `pnpm pull-skills` | API → Git | you edited a skill in `console.anthropic.com/settings/skills` |
-| `pnpm skills:roundtrip` | API ↔ API | full reconciliation; pulls first, then pushes |
+| `pnpm pull-skills` | API -> Git | You edited skills in the Console UI and want the Git mirror to catch up. |
+| `pnpm sync-skills` | Git -> API | You drafted a SKILL.md locally (e.g. via `pnpm generate-skill`) and want to deploy it. |
+| `pnpm mirror-to-supabase` | API -> Supabase | Your apps (Audit-Engine, dashboards) need to query the catalog without an Anthropic key. |
+| `pnpm generate-catalog` | Local -> Git | Regenerates `SKILLS_CATALOG.md` + `docs/skills.html` from the local SKILL.md files. |
 
-All three require `ANTHROPIC_API_KEY` in the environment. Both scripts are
-idempotent: skill `name` is the stable identity key; `.claude/skills-manifest.json`
-caches `name → id`.
+### All-in-one
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+export SUPABASE_URL=https://xxxx.supabase.co
+export SUPABASE_SERVICE_ROLE_KEY=sbp_...
+
+pnpm skills:mirror-all
+# pull-skills + mirror-to-supabase + generate-catalog
+
+git add . && git -c commit.gpgsign=false commit -m "mirror: full sync from claude.ai"
+git push origin claude/draft-skills-profile-5mltb
+```
 
 ---
 
-## Authoring workflows
+## One-time setup per surface
 
-### A) Console-first (quick, live, no IDE)
+### 1. claude.ai / Anthropic Console
+Nothing to do — authoring happens in the browser UI. Add / edit / delete
+skills at `https://console.anthropic.com/settings/skills` or
+`https://claude.ai/customize/skills`.
 
-1. Edit in the browser: `https://console.anthropic.com/settings/skills`.
-2. Save in Console — skill is live immediately across claude.ai + Claude Code.
-3. Mirror back to Git when you have a shell handy:
-   ```bash
-   export ANTHROPIC_API_KEY=sk-ant-...
-   pnpm pull-skills
-   git add .claude/skills .claude/skills-manifest.json
-   git commit -m "pull: mirror Console edits"
-   git push origin claude/draft-skills-profile-5mltb
-   ```
+### 2. GitHub (this repo)
+Already set up. `pnpm pull-skills` writes to `.claude/skills/<name>/SKILL.md`
+and the GitHub Action (`.github/workflows/skills-roundtrip.yml`) nightly-
+mirrors any Console drift into a PR automatically.
 
-### B) IDE-first (for review-heavy work, PRs, CI)
+### 3. Supabase (queryable mirror for apps)
+One-time:
 
-1. Edit `.claude/skills/<name>/SKILL.md` in your editor.
-2. Commit + push + open PR if needed.
-3. After merge:
-   ```bash
-   export ANTHROPIC_API_KEY=sk-ant-...
-   pnpm sync-skills
-   ```
+```bash
+# Apply schema via Supabase SQL editor, or:
+psql "$DATABASE_URL" -f packages/db/migrations/0001_skills_catalog.sql
+```
 
-### C) Claude Code in this repo
+Then populate:
 
-Claude Code reads skills directly from `.claude/skills/` when run inside
-DK-HQ. No API round-trip needed at runtime. If you also want project-level
-skills available globally:
+```bash
+export SUPABASE_URL=https://xxxx.supabase.co
+export SUPABASE_SERVICE_ROLE_KEY=sbp_...
+pnpm mirror-to-supabase
+```
+
+From any client app:
+
+```typescript
+// Public read, no service key needed (RLS allows SELECT for everyone)
+const { data } = await supabase
+  .from('skills_catalog')
+  .select('name, description, updated_at')
+  .order('name');
+```
+
+### 4. Vercel (public HTML catalogue)
+`pnpm generate-catalog` writes `docs/skills.html`. To serve it publicly:
+
+- **GitHub Pages:** Enable Pages on the repo, source `docs/`. URL becomes
+  `https://buledidk.github.io/DK-HQ/skills.html`.
+- **Vercel static project:** Point a new Vercel project at this repo with
+  Output Directory `docs`.
+- **Inside Audit-Engine:** Copy `docs/skills.html` to `apps/web/public/skills.html`
+  at build time, or symlink.
+
+The HTML page reads nothing at runtime — everything is pre-rendered from
+the `.claude/skills/` filesystem at `pnpm generate-catalog` time. Re-run
+after every `pull-skills` to keep the display fresh.
+
+### 5. Claude Code (any repo)
+Claude Code reads `.claude/skills/` from the current repo, or `~/.claude/skills/`
+as a user-level fallback. Copy once for global availability:
 
 ```bash
 mkdir -p ~/.claude/skills ~/.claude/agents
@@ -60,78 +126,58 @@ cp -r .claude/agents/* ~/.claude/agents/
 
 ---
 
-## Drift resolution
+## Authoring workflows
 
-When someone edits the same skill in both surfaces between sync runs,
-**last-write-wins** at the API level. Git keeps the history of the losing
-side.
+### A. Console-first (quick, live, no IDE)
+1. Edit at `https://claude.ai/customize/skills`. Save.
+2. `pnpm skills:mirror-all` on your laptop.
+3. Commit + push. All surfaces in sync.
 
-**Safe protocol:** run `pnpm skills:roundtrip` at the start of each work
-session. It pulls Console edits first, then pushes any Git commits on top.
+### B. IDE-first (PR-reviewed or AI-drafted)
+1. Write `.claude/skills/<name>/SKILL.md` or use
+   `pnpm generate-skill <name> "<topic>"` (Opus 4.6 + adaptive thinking
+   + prompt caching over existing pack).
+2. Commit + push + review.
+3. `pnpm sync-skills` (claude.ai + Console update).
+4. `pnpm mirror-to-supabase && pnpm generate-catalog`.
 
-**Nightly drift reconciliation:** `.github/workflows/skills-roundtrip.yml`
-runs `pnpm pull-skills` every night at 02:00 UTC and opens a PR if Console
-has drifted ahead of Git.
-
----
-
-## What is NOT synced through the API
-
-The Anthropic Skills API stores `name`, `description`, `instructions`
-(the YAML frontmatter + body). It does NOT currently store:
-
-- `scripts/*` bundled into a skill folder (Anthropic Skills pack format)
-- `assets/*` (images, PDFs, templates)
-- `references/*` (external docs)
-
-Those stay in Git only and load when Claude Code runs locally. The Hub
-workflow covers the instructional content that powers `/v1/skills` —
-which is what claude.ai + Console surface.
+### C. UI-only manual sync (no API key, no local commands)
+See `CLAUDE_FOR_CHROME_PROMPT.md`. Paste the prompt into Claude-for-Chrome
+and it drives the claude.ai Console UI to add every skill manually.
 
 ---
 
-## Topology
+## Auth checklist
 
-```
-                 Author in either surface
-                 ┌───────────────────────────┐
-                 │                        │
-           console.anthropic.com     .claude/skills/**/SKILL.md
-                 │                        │
-                 │  ← pnpm pull-skills    │
-                 │  → pnpm sync-skills    │
-                 └─────────┬────────────────┘
-                           │
-                  Anthropic Skills API
-                    /v1/skills (auth: x-api-key)
-                           │
-          ┌───────────────┼──────────────┐
-      claude.ai capabilities    Claude Code (any repo)
-   (your Pro/Team/Enterprise)   (via `/skills` + MCP)
-```
+| Env var | Used by | Where to get it |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | `pull-skills`, `sync-skills`, `mirror-to-supabase`, `generate-skill` | `console.anthropic.com/settings/keys` |
+| `SUPABASE_URL` | `mirror-to-supabase` | Supabase project → Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | `mirror-to-supabase` | Supabase project → Settings → API → service_role |
+
+Store locally in `.env.local` (gitignored) and source with `set -a; source .env.local; set +a`.
 
 ---
 
-## Bootstrap (one-command)
+## Drift resolution + nightly CI
 
-Still the fastest path to deploy everything on a fresh laptop:
-
-```bash
-curl -sSL https://raw.githubusercontent.com/buledidk/DK-HQ/claude/draft-skills-profile-5mltb/scripts/bootstrap.sh \
-  | ANTHROPIC_API_KEY=sk-ant-... bash
-```
-
-Runs `pnpm install` + `pnpm sync-skills` + writes manifest. Safe to re-run.
+If Console and Git both changed a skill between syncs, **last-write-wins**.
+Git keeps the history of the losing side. Safe protocol: start each work
+session with `pnpm pull-skills`. The nightly GitHub Action
+(`.github/workflows/skills-roundtrip.yml`) does the same at 02:00 UTC and
+opens a PR if Console has drifted.
 
 ---
 
-## Appendix — verify the endpoint before deploying
+## Endpoint sanity check
 
 ```bash
 curl -sI https://api.anthropic.com/v1/skills \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01" | head -n 1
-```
+# Expect: HTTP/2 200
 
-Expect `HTTP/2 200`. `401` = wrong key. `404` = endpoint not live for your
-org (contact Anthropic; fall back to Console paste + `pnpm pull-skills`).
+curl -s https://api.anthropic.com/v1/skills \
+  -H "x-api-key: $ANTHROPIC_API_KEY" \
+  -H "anthropic-version: 2023-06-01" | jq '.data | length'
+```
