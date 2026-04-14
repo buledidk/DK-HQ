@@ -1,0 +1,59 @@
+# Nightly Console → Git drift reconciliation.
+#
+# If anyone has edited a skill in console.anthropic.com/settings/skills
+# between git pushes, this workflow mirrors the change back to the repo
+# and opens a PR. Merge the PR to keep Git as source of truth. Close it
+# if the Console edit was a mistake.
+#
+# Requires repo secret: ANTHROPIC_API_KEY
+
+name: Skills roundtrip — pull Console edits
+
+on:
+  schedule:
+    - cron: "0 2 * * *"  # 02:00 UTC every day
+  workflow_dispatch:
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/draft-skills-profile-5mltb
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Pull skills from Anthropic Skills API
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: pnpm pull-skills
+
+      - name: Open PR if Console has drifted ahead of Git
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(skills): pull Console edits from /v1/skills"
+          branch: chore/skills-roundtrip-${{ github.run_id }}
+          title: "chore(skills): Console → Git drift reconciliation"
+          body: |
+            Nightly roundtrip detected drift between the Anthropic Skills API
+            (Claude authoring hub) and this repo. This PR mirrors the current
+            API state back to `.claude/skills/`.
+
+            **If intended:** merge the PR — your Console edits are now in Git.
+            **If a Console-side mistake:** close the PR, then
+            `pnpm sync-skills` locally to push Git state back to the API.
+          delete-branch: true

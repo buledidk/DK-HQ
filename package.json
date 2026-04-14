@@ -10,7 +10,9 @@
     "lint": "pnpm -r lint",
     "clean": "pnpm -r clean",
     "typecheck": "pnpm -r typecheck",
-    "sync-skills": "tsx scripts/sync-skills.ts"
+    "sync-skills": "tsx scripts/sync-skills.ts",
+    "pull-skills": "tsx scripts/pull-skills.ts",
+    "skills:roundtrip": "tsx scripts/pull-skills.ts && tsx scripts/sync-skills.ts"
   },
   "keywords": [
     "audit",
