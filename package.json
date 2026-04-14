@@ -12,7 +12,9 @@
     "typecheck": "pnpm -r typecheck",
     "sync-skills": "tsx scripts/sync-skills.ts",
     "pull-skills": "tsx scripts/pull-skills.ts",
-    "skills:roundtrip": "tsx scripts/pull-skills.ts && tsx scripts/sync-skills.ts"
+    "skills:roundtrip": "tsx scripts/pull-skills.ts && tsx scripts/sync-skills.ts",
+    "generate-skill": "tsx scripts/generate-skill.ts create",
+    "enhance-skill": "tsx scripts/generate-skill.ts enhance"
   },
   "keywords": [
     "audit",
@@ -30,6 +32,7 @@
   },
   "packageManager": "pnpm@8.15.0",
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
     "tsx": "^4.19.0"
   }
 }
