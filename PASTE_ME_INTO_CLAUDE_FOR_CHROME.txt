@@ -1,0 +1,128 @@
+You are driving my Chrome browser to mirror the skills in the GitHub repo
+buledidk/DK-HQ (branch: claude/draft-skills-profile-5mltb) into my Claude
+Skills account.
+
+Repo URL: https://github.com/buledidk/DK-HQ/tree/claude/draft-skills-profile-5mltb
+Raw URL pattern:
+  https://raw.githubusercontent.com/buledidk/DK-HQ/claude/draft-skills-profile-5mltb/.claude/skills/<NAME>/SKILL.md
+
+Target UI:
+  https://claude.ai/customize/skills
+
+My claude.ai and console.anthropic.com accounts are the same Anthropic org,
+so a skill added in one appears in the other. Work only in claude.ai.
+
+## What to do
+
+For each skill <NAME> in the ordered list at the bottom:
+
+1. Fetch the SKILL.md file from the raw URL above (substitute <NAME>).
+2. The file starts with YAML frontmatter between two `---` lines:
+
+       ---
+       name: <exact string for the Name field>
+       description: <single-line description, paste verbatim>
+       ---
+
+       <everything after this is the "instructions" body — preserve Markdown exactly>
+
+3. Navigate to https://claude.ai/customize/skills if you aren't already there.
+4. If a skill with this `name` already exists in the left sidebar:
+     - Click the row.
+     - Click the edit / pencil icon in the top-right of the detail pane.
+     - Replace Description with the fetched description.
+     - Replace the body editor contents with the fetched instructions.
+     - Ensure Trigger is set to "Slash command + auto".
+     - Save. Log "UPDATE <name>".
+   Otherwise:
+     - Click the "+" button at the top-right of the Skills column.
+     - Paste the name into the Name field.
+     - Paste the description into the Description field.
+     - Paste the instructions into the large Markdown editor.
+     - Set Trigger to "Slash command + auto".
+     - Save. Log "CREATE <name>".
+5. Verify the skill now shows in the left sidebar. If not, pause and ask me.
+6. Move on to the next skill.
+
+## Special cases
+
+- If a fetched body is a placeholder that only says "run pnpm pull-skills to
+  populate" (less than ~20 lines), SKIP it and log "SKIP <name>".
+- If the raw URL returns 404, log "MISSING <name>" and continue.
+- If you hit a login prompt, CAPTCHA, or the save button returns an error,
+  pause and ask me what to do — don't retry silently.
+- Do NOT modify, summarise, or re-format the description or instructions.
+  Paste verbatim.
+
+## At the end
+
+Report a summary:
+
+    CREATE: <count>
+    UPDATE: <count>
+    SKIP:   <count>
+    MISSING:<count>
+    FAIL:   <count> (+ list)
+    Runtime: ~<mm:ss>
+
+## Skill list — process in this exact order
+
+  1. dk-job-scanner
+  2. audit-workpaper-engine
+  3. algorithmic-art
+  4. canvas-design
+  5. skill-creator
+  6. audit-commit
+  7. run-project-checks
+  8. audit-pr-review
+  9. scaffold-audit-module
+ 10. audit-report-writer
+ 11. audit-planning-materiality
+ 12. risk-assessment
+ 13. controls-assessment
+ 14. audit-evidence-sampling
+ 15. journal-entry-testing
+ 16. going-concern-audit
+ 17. group-audit
+ 18. auditors-report
+ 19. audit-quality-eqr
+ 20. big4-audit-file-delivery
+ 21. audit-analytics-adas
+ 22. disclosure-review
+ 23. fs-internal-consistency
+ 24. accounting-judgments-estimates
+ 25. corroborating-evidence-inspection
+ 26. ifrs15-revenue-recognition
+ 27. ifrs16-lease-accounting
+ 28. ifrs17-insurance-contracts
+ 29. impairment-ias36
+ 30. employee-benefits-ias19
+ 31. tax-provisioning-ias12
+ 32. treasury-hedge-accounting
+ 33. transfer-pricing
+ 34. finance-process-automation
+ 35. risk-control-governance
+ 36. uk-compliance-review
+ 37. itgc-soc-cyber-audit
+ 38. climate-assurance-issa5000
+ 39. esg-sustainability-reporting
+ 40. internal-audit-iia
+ 41. transaction-services-dd
+ 42. forensic-fraud-investigation
+ 43. data-room-automation
+ 44. ai-finance-accounting
+ 45. ai-governance-model-risk
+ 46. sector-banking-capital-markets
+ 47. sector-asset-management
+ 48. sector-insurance
+ 49. sector-pensions
+ 50. sector-fintech-crypto
+ 51. sector-manufacturing-industry
+ 52. sector-public-charity
+ 53. budget-forecast-analysis
+ 54. business-process-optimiser
+ 55. governance-structure-enhancement
+ 56. board-investor-governance-packs
+ 57. leadership-soft-skills
+
+Start now with skill 1 (dk-job-scanner). Log progress every 5 skills.
