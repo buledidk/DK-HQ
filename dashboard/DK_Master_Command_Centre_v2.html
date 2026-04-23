@@ -343,13 +343,13 @@
 
 <!-- NAV TABS -->
 <div class="nav-tabs">
-  <div class="nav-tab active" onclick="switchTab('overview')">📊 Overview</div>
-  <div class="nav-tab" onclick="switchTab('decisions')">⚖️ Decisions</div>
-  <div class="nav-tab" onclick="switchTab('actions')">✅ Action Points</div>
-  <div class="nav-tab" onclick="switchTab('financial')">💰 Financial</div>
-  <div class="nav-tab" onclick="switchTab('connectivity')">🔌 Connectivity</div>
-  <div class="nav-tab" onclick="switchTab('servers')">🖥️ Servers & Infra</div>
-  <div class="nav-tab" onclick="switchTab('timeline')">📅 Timeline</div>
+  <div class="nav-tab active" onclick="switchTab('overview', this)">📊 Overview</div>
+  <div class="nav-tab" onclick="switchTab('decisions', this)">⚖️ Decisions</div>
+  <div class="nav-tab" onclick="switchTab('actions', this)">✅ Action Points</div>
+  <div class="nav-tab" onclick="switchTab('financial', this)">💰 Financial</div>
+  <div class="nav-tab" onclick="switchTab('connectivity', this)">🔌 Connectivity</div>
+  <div class="nav-tab" onclick="switchTab('servers', this)">🖥️ Servers & Infra</div>
+  <div class="nav-tab" onclick="switchTab('timeline', this)">📅 Timeline</div>
 </div>
 
 <div class="main">
@@ -1199,11 +1199,11 @@ function updateClock() {
 updateClock(); setInterval(updateClock, 1000);
 
 // ── Tab switching ──
-function switchTab(tabName) {
+function switchTab(tabName, clickedTab) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('section-'+tabName).classList.add('active');
-  event.target.classList.add('active');
+  clickedTab.classList.add('active');
 }
 
 // ── Action item check toggle ──
@@ -1222,7 +1222,7 @@ function toggleCheck(el) {
 
 // ── Decision filter ──
 function filterDecisions(status, btn) {
-  document.querySelectorAll('.filter-bar .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.decision-card').forEach(card=>{
     if (status === 'all' || card.dataset.status === status) {
@@ -1235,7 +1235,7 @@ function filterDecisions(status, btn) {
 
 // ── Action filter ──
 function filterActions(priority, btn) {
-  document.querySelectorAll('.filter-bar .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.action-item').forEach(item=>{
     if (priority === 'all' || item.dataset.priority === priority) {

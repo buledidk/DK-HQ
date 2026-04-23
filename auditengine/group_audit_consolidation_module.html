@@ -320,7 +320,7 @@ function addElimination(){
   const amt=parseFloat(document.getElementById('elim-amount').value)||0;
   if(!amt)return;
   elimCount++;
-  const ref='IC-0'+elimCount;
+  const ref='IC-'+String(elimCount).padStart(2,'0');
   const tbody=document.getElementById('elim-table').querySelector('tbody');
   const row=document.createElement('tr');
   row.innerHTML=`<td>${ref}</td><td>${type}</td><td>${from}</td><td>${to}</td><td class="num">${amt.toLocaleString()}</td><td class="num">(${amt.toLocaleString()})</td><td>ISA 600.29</td><td><span class="tag tag-amber">Pending</span></td>`;

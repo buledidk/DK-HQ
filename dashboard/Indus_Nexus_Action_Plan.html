@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indus Nexus Action Plan</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;color:#e0e0e0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;padding:20px}
+.container{max-width:1100px;margin:0 auto}
+h1{font-size:1.8rem;letter-spacing:3px;color:#fff}
+h2{font-size:1.1rem;color:#8892b0;margin-bottom:14px;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #2a2a4a;padding-bottom:8px}
+.header{padding:24px;background:#16213e;border-radius:12px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.header-left h1{margin-bottom:6px}
+.header-meta{font-size:0.85rem;color:#8892b0}
+.header-right{text-align:right}
+.status-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-weight:700;font-size:0.85rem}
+.status-badge.dormant{background:rgba(255,23,68,0.15);color:#ff1744}
+.progress-strip{display:flex;gap:12px;padding:14px 20px;background:#16213e;border-radius:10px;margin-bottom:24px;flex-wrap:wrap}
+.prog-item{text-align:center;flex:1;min-width:120px}
+.prog-value{font-size:1.3rem;font-weight:700;color:#64ffda}
+.prog-label{font-size:0.72rem;color:#8892b0}
+.section{background:#16213e;border-radius:10px;padding:24px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+.task{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #2a2a4a}
+.task:last-child{border-bottom:none}
+.task input[type=checkbox]{width:18px;height:18px;accent-color:#64ffda;cursor:pointer;flex-shrink:0;margin-top:3px}
+.task-content{flex:1}
+.task label{cursor:pointer;font-size:0.9rem;color:#ccd6f6;font-weight:600}
+.task label.done{text-decoration:line-through;color:#616161}
+.task-detail{font-size:0.78rem;color:#8892b0;margin-top:2px}
+.task-deadline{font-size:0.72rem;color:#ffab00;margin-top:2px}
+.task-blocker{font-size:0.72rem;color:#ff1744;font-weight:600;margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:10px}
+th{background:#0f3460;color:#64ffda;padding:10px 12px;text-align:left;font-weight:600}
+td{padding:9px 12px;border-bottom:1px solid #1a1a2e}
+tr:nth-child(even){background:#1a2744}
+tr:nth-child(odd){background:#16213e}
+tr:hover{background:#1e3a5f}
+.total-row{font-weight:700;color:#64ffda;background:#0f3460 !important}
+.revenue-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
+.rev-card{background:#1a1a2e;border-radius:8px;padding:16px;text-align:center;border:1px solid #2a2a4a}
+.rev-value{font-size:1.4rem;font-weight:700;color:#64ffda}
+.rev-label{font-size:0.75rem;color:#8892b0;margin-top:4px}
+.rev-sub{font-size:0.72rem;color:#ffab00;margin-top:6px}
+.links-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.link-card{display:flex;align-items:center;gap:10px;background:#1a1a2e;padding:14px 16px;border-radius:8px;text-decoration:none;color:#ccd6f6;transition:all 0.2s;border:1px solid transparent}
+.link-card:hover{border-color:#64ffda;color:#64ffda;transform:translateY(-2px)}
+.link-icon{width:32px;height:32px;background:#2a2a4a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.link-name{font-size:0.85rem;font-weight:600}
+.nav{display:flex;justify-content:center;gap:16px;margin-top:24px;padding:16px;font-size:0.8rem}
+.nav a{color:#64ffda;text-decoration:none}
+.nav a:hover{text-decoration:underline}
+.section-icon{margin-right:8px}
+@media(max-width:768px){.header{flex-direction:column;text-align:center}.header-right{text-align:center}.revenue-cards,.links-grid{grid-template-columns:1fr}.progress-strip{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>INDUS NEXUS LIMITED</h1>
+      <div class="header-meta">Company No: [placeholder] &bull; Incorporated in England &amp; Wales</div>
+    </div>
+    <div class="header-right">
+      <span class="status-badge dormant">STATUS: DORMANT &mdash; NEEDS ACTIVATION</span>
+    </div>
+  </div>
+
+  <!-- PROGRESS STRIP -->
+  <div class="progress-strip">
+    <div class="prog-item"><div class="prog-value" id="totalDone">0</div><div class="prog-label">Tasks Complete</div></div>
+    <div class="prog-item"><div class="prog-value" id="totalTasks">0</div><div class="prog-label">Total Tasks</div></div>
+    <div class="prog-item"><div class="prog-value" id="pctDone">0%</div><div class="prog-label">Progress</div></div>
+    <div class="prog-item"><div class="prog-value">May 2026</div><div class="prog-label">First Invoice Target</div></div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="sec1">
+    <h2><span class="section-icon">&#9888;</span>Immediate Actions (This Week)</h2>
+    <div class="tasks-wrap"></div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="sec2">
+    <h2><span class="section-icon">&#128176;</span>Tax &amp; Compliance (By 5 April)</h2>
+    <div class="tasks-wrap"></div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="sec3">
+    <h2><span class="section-icon">&#9881;</span>Operational Setup (By end April)</h2>
+    <div class="tasks-wrap"></div>
+  </div>
+
+  <!-- SECTION 4: EXPENSE TABLE -->
+  <div class="section">
+    <h2><span class="section-icon">&#128200;</span>Expense Reclassification (&pound;353/year tax saving)</h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Expense</th><th>Annual Cost</th><th>CT Saving (19%)</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>ACCA membership</td><td>~&pound;300</td><td>&pound;57</td><td>Pay via company</td></tr>
+          <tr><td>LinkedIn Premium</td><td>~&pound;240</td><td>&pound;46</td><td>Switch billing</td></tr>
+          <tr><td>Microsoft 365</td><td>~&pound;100</td><td>&pound;19</td><td>Switch billing</td></tr>
+          <tr><td>Home office allowance</td><td>~&pound;312</td><td>&pound;59</td><td>Claim flat rate</td></tr>
+          <tr><td>Domain/hosting</td><td>~&pound;100</td><td>&pound;19</td><td>Already business</td></tr>
+          <tr><td>Supabase Pro</td><td>~$300/&pound;240</td><td>&pound;46</td><td>Already business</td></tr>
+          <tr><td>Phone (business %)</td><td>~&pound;200</td><td>&pound;38</td><td>Apportion 50%</td></tr>
+          <tr class="total-row"><td>Total</td><td>~&pound;1,492</td><td>~&pound;353</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 5: REVENUE -->
+  <div class="section">
+    <h2><span class="section-icon">&#127919;</span>Revenue Targets</h2>
+    <div class="revenue-cards">
+      <div class="rev-card">
+        <div class="rev-value">May 2026</div>
+        <div class="rev-label">First Invoice Target</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-value">&pound;85,000</div>
+        <div class="rev-label">Year 1 Revenue Target</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-value">3 Streams</div>
+        <div class="rev-label">Revenue Sources</div>
+        <div class="rev-sub">AuditEngine SaaS &bull; Audit Consultancy &bull; Financial Reporting</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: LINKS -->
+  <div class="section">
+    <h2><span class="section-icon">&#128279;</span>Key Links</h2>
+    <div class="links-grid">
+      <a class="link-card" href="https://find-and-update.company-information.service.gov.uk" target="_blank"><div class="link-icon">&#127970;</div><div class="link-name">Companies House</div></a>
+      <a class="link-card" href="https://www.tax.service.gov.uk/gg/sign-in" target="_blank"><div class="link-icon">&#127468;</div><div class="link-name">HMRC Gateway</div></a>
+      <a class="link-card" href="https://www.gov.uk/eori" target="_blank"><div class="link-icon">&#127760;</div><div class="link-name">EORI Application</div></a>
+      <a class="link-card" href="https://www.starlingbank.com/business" target="_blank"><div class="link-icon">&#9733;</div><div class="link-name">Starling Business</div></a>
+      <a class="link-card" href="https://www.tide.co" target="_blank"><div class="link-icon">&#127754;</div><div class="link-name">Tide Business</div></a>
+      <a class="link-card" href="https://www.freeagent.com" target="_blank"><div class="link-icon">&#128209;</div><div class="link-name">FreeAgent</div></a>
+    </div>
+  </div>
+
+  <div class="nav">
+    <a href="DK_Command_Centre.html">&#8592; Command Centre</a> |
+    <a href="AuditEngine_Milestones.html">AuditEngine Milestones &#8594;</a>
+  </div>
+</div>
+
+<script>
+const SECTIONS_DATA={
+  sec1:[
+    {text:'Open business bank account \u2014 Starling or Tide (compare both)',detail:'BLOCKER for everything \u2014 cannot trade, cannot invoice, cannot claim expenses',deadline:'This week',blocker:true},
+    {text:'Pay ACCA membership renewal',detail:'Protect professional credentials \u2014 required for audit sign-off authority',deadline:'ASAP'},
+    {text:'Apply for EORI number via gov.uk/eori',detail:'Free, 5 minutes \u2014 required for any international trade',deadline:'This week'}
+  ],
+  sec2:[
+    {text:'Investigate \u00a317K self-assessment gap (\u00a378,607 vs \u00a360K BDO salary)',detail:'Potential HMRC enquiry risk \u2014 identify source of discrepancy',deadline:'5 April'},
+    {text:'Set up CT600 corporation tax software',detail:'Free HMRC portal closed 1 April \u2014 need alternative filing method',deadline:'5 April'},
+    {text:'Review VAT registration threshold',detail:'Not required until \u00a390K revenue \u2014 monitor as business grows',deadline:'5 April'},
+    {text:'Confirm all Companies House filings are current',detail:'Check confirmation statement, accounts, and PSC register',deadline:'5 April'},
+    {text:'Set up accounting software (FreeAgent, Xero, or QuickBooks)',detail:'Essential for bookkeeping, invoicing, and tax returns',deadline:'5 April'}
+  ],
+  sec3:[
+    {text:'Set up professional email (dk@indusnexus.com or similar)',detail:'Professional email builds client trust and brand identity',deadline:'End April'},
+    {text:'Obtain Professional Indemnity (PI) insurance',detail:'Required for audit and consultancy engagements \u2014 typically \u00a3300-500/yr',deadline:'End April'},
+    {text:'Create engagement letter template',detail:'Standard terms for audit and consultancy engagements',deadline:'End April'},
+    {text:'Update LinkedIn with Indus Nexus Limited details',detail:'Professional presence \u2014 show active company status',deadline:'End April'},
+    {text:'Create simple company website/landing page',detail:'Basic online presence with service offerings and contact details',deadline:'End April'}
+  ]
+};
+
+const STORAGE_KEY='indus_nexus_v1';
+function loadState(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):{};}catch(e){return{};}}
+function saveState(st){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(st));}catch(e){}}
+
+let state=loadState();
+
+function render(){
+  let totalTasks=0,totalDone=0;
+  Object.keys(SECTIONS_DATA).forEach(secId=>{
+    const wrap=document.querySelector('#'+secId+' .tasks-wrap');
+    if(!wrap)return;
+    const tasks=SECTIONS_DATA[secId];
+    if(!state[secId])state[secId]=tasks.map(()=>false);
+    wrap.innerHTML='';
+    tasks.forEach((t,i)=>{
+      totalTasks++;
+      const checked=state[secId][i];
+      if(checked)totalDone++;
+      const div=document.createElement('div');
+      div.className='task';
+      div.innerHTML=`
+        <input type="checkbox" id="${secId}_${i}" data-sec="${secId}" data-idx="${i}" ${checked?'checked':''}>
+        <div class="task-content">
+          <label for="${secId}_${i}" class="${checked?'done':''}">${t.text}</label>
+          <div class="task-detail">${t.detail}</div>
+          <div class="task-deadline">Deadline: ${t.deadline}</div>
+          ${t.blocker?'<div class="task-blocker">BLOCKER \u2014 Unblocks ALL trading activity</div>':''}
+        </div>
+      `;
+      wrap.appendChild(div);
+    });
+  });
+
+  document.getElementById('totalDone').textContent=totalDone;
+  document.getElementById('totalTasks').textContent=totalTasks;
+  const pct=totalTasks?Math.round(totalDone/totalTasks*100):0;
+  document.getElementById('pctDone').textContent=pct+'%';
+
+  document.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change',function(){
+      const sec=this.dataset.sec;
+      const idx=parseInt(this.dataset.idx);
+      state[sec][idx]=this.checked;
+      saveState(state);
+      render();
+    });
+  });
+}
+
+render();
+</script>
+</body>
+</html>

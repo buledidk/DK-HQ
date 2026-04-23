@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuditEngine — Milestone Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080D19;--surface:#0D1428;--border:rgba(255,255,255,0.06);
+  --text:#E8E8F0;--muted:rgba(255,255,255,0.45);--accent:#F5A623;
+  --green:#4CAF50;--amber:#FF9800;--red:#EF5353;--blue:#42A5F5;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* Header */
+.header{padding:28px 40px;background:linear-gradient(135deg,#0D1428,#131B32);border-bottom:1px solid var(--border)}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.header h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300}
+.header h1 span{color:var(--accent);font-weight:600}
+.header .subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+.header-right{text-align:right}
+.header-right .date{font-size:11px;color:var(--muted)}
+.header-right .overall{font-size:14px;font-weight:600;color:var(--accent);margin-top:2px}
+
+/* Status Assessment */
+.assessment{max-width:1200px;margin:24px auto;padding:0 40px}
+.assessment-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px}
+.assessment-card h2{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--accent);margin-bottom:16px}
+.findings{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.finding{padding:14px 18px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.015)}
+.finding h4{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px}
+.finding p{font-size:13px;line-height:1.5}
+.finding .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-top:6px}
+.tag-green{background:rgba(76,175,80,0.12);color:#81C784;border:1px solid rgba(76,175,80,0.2)}
+.tag-amber{background:rgba(255,152,0,0.12);color:#FFB74D;border:1px solid rgba(255,152,0,0.2)}
+.tag-red{background:rgba(239,83,83,0.12);color:#EF9A9A;border:1px solid rgba(239,83,83,0.2)}
+.tag-blue{background:rgba(66,165,245,0.12);color:#90CAF9;border:1px solid rgba(66,165,245,0.2)}
+
+/* Overall progress */
+.overall-progress{max-width:1200px;margin:24px auto;padding:0 40px}
+.progress-bar-container{background:rgba(255,255,255,0.04);border-radius:10px;height:14px;overflow:hidden;border:1px solid var(--border)}
+.progress-bar-fill{height:100%;border-radius:10px;transition:width 0.8s ease;background:linear-gradient(90deg,var(--green),var(--accent))}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+
+/* Milestones */
+.milestones{max-width:1200px;margin:28px auto;padding:0 40px}
+.milestone{margin-bottom:16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);overflow:hidden;transition:all 0.3s}
+.milestone:hover{border-color:rgba(255,255,255,0.1)}
+
+.m-header{padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:16px;user-select:none}
+.m-status{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.m-status.green{background:linear-gradient(135deg,#4CAF50,#2E7D32)}
+.m-status.amber{background:linear-gradient(135deg,#FF9800,#F57C00);animation:pulse 2s infinite}
+.m-status.red{background:rgba(239,83,83,0.15);border:1px solid rgba(239,83,83,0.3)}
+.m-status.grey{background:rgba(255,255,255,0.06)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,152,0,0.3)}50%{box-shadow:0 0 0 8px rgba(255,152,0,0)}}
+
+.m-info{flex:1}
+.m-title{font-size:15px;font-weight:600;margin-bottom:2px}
+.m-meta{font-size:11px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+.m-progress{width:120px}
+.m-progress-bar{height:6px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden;margin-bottom:3px}
+.m-progress-fill{height:100%;border-radius:3px;transition:width 0.6s}
+.m-progress-text{font-size:10px;color:var(--muted);text-align:right}
+
+.m-chevron{font-size:16px;color:var(--muted);transition:transform 0.3s}
+.milestone.open .m-chevron{transform:rotate(180deg)}
+
+.m-body{display:none;padding:0 24px 24px;border-top:1px solid var(--border);margin-top:0}
+.milestone.open .m-body{display:block;padding-top:20px}
+
+/* Tasks */
+.task-group{margin-bottom:16px}
+.task-group h4{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:10px}
+.task{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:4px;transition:background 0.2s;cursor:pointer}
+.task:hover{background:rgba(255,255,255,0.02)}
+.task input[type="checkbox"]{width:16px;height:16px;accent-color:var(--green);margin-top:2px;cursor:pointer;flex-shrink:0}
+.task label{font-size:13px;line-height:1.5;cursor:pointer;flex:1}
+.task label.done{text-decoration:line-through;color:var(--muted)}
+.task .tech{font-size:10px;color:var(--blue);background:rgba(66,165,245,0.08);padding:2px 8px;border-radius:4px;white-space:nowrap;margin-left:auto;flex-shrink:0}
+
+/* Technical Details */
+.tech-details{margin-top:16px;padding:16px;background:rgba(0,0,0,0.2);border-radius:10px;border:1px solid var(--border)}
+.tech-details summary{font-size:12px;font-weight:600;color:var(--blue);cursor:pointer;margin-bottom:10px}
+.tech-details pre{font-family:'DM Sans',monospace;font-size:11px;color:var(--muted);line-height:1.7;white-space:pre-wrap;word-break:break-all}
+.tech-details code{color:#81C784}
+
+/* Deliverable */
+.deliverable{margin-top:14px;padding:12px 16px;border-radius:8px;border-left:3px solid var(--accent);background:rgba(245,166,35,0.04)}
+.deliverable h5{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:4px}
+.deliverable p{font-size:13px}
+
+/* Footer */
+.footer{max-width:1200px;margin:40px auto;padding:20px 40px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center}
+
+@media(max-width:768px){
+  .findings{grid-template-columns:1fr}
+  .m-meta{flex-direction:column;gap:4px}
+  .header{padding:20px 20px}
+  .assessment,.milestones,.overall-progress{padding:0 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>Audit<span>Engine</span> — Prototype → Product</h1>
+      <div class="subtitle">Milestone Roadmap · DK Buledi</div>
+    </div>
+    <div class="header-right">
+      <div class="date" id="currentDate"></div>
+      <div class="overall" id="overallPct">0% Complete</div>
+    </div>
+  </div>
+</div>
+
+<!-- CURRENT STATE ASSESSMENT -->
+<div class="assessment">
+  <div class="assessment-card">
+    <h2>Current State Assessment</h2>
+    <div class="findings">
+      <div class="finding">
+        <h4>React App (~/Desktop/audit-engine)</h4>
+        <p>Full Vite + React project with 60+ source modules. Has node_modules, Supabase client, Docker config, Vercel config, and a <strong>pre-built dist/ folder</strong> (3.2 MB bundle, code-split into 15 chunks).</p>
+        <span class="tag tag-amber">Built but untested deploy</span>
+      </div>
+      <div class="finding">
+        <h4>JSX Components (~/Downloads)</h4>
+        <p>Multiple versions found: AuditEngine_Complete.jsx (877 lines, v9.1 with 8 industries), AuditEngineV10_AURA_Full.jsx (1,463 lines), plus 6+ partial iterations.</p>
+        <span class="tag tag-green">Core logic working</span>
+      </div>
+      <div class="finding">
+        <h4>Pre-built Bundle (dist/)</h4>
+        <p>Production build exists with vendor chunks for React, XLSX, DOCX and code-split app modules. If the dist/ deploys cleanly, Milestone 1 is essentially done.</p>
+        <span class="tag tag-blue">Deploy candidate ready</span>
+      </div>
+      <div class="finding">
+        <h4>File Lock Issue</h4>
+        <p>The audit-engine directory currently shows EDEADLK (resource deadlock) on all reads — likely a background process or git lock. Needs clearing before any work can proceed.</p>
+        <span class="tag tag-red">Blocking — fix first</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERALL PROGRESS BAR -->
+<div class="overall-progress">
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="overallBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span>Prototype</span>
+    <span id="overallBarLabel">0%</span>
+    <span>First Revenue</span>
+  </div>
+</div>
+
+<!-- MILESTONES -->
+<div class="milestones" id="milestoneContainer"></div>
+
+<div class="footer">
+  AuditEngine Milestone Tracker · Progress auto-saves to browser · Last updated <span id="footerDate"></span>
+</div>
+
+<script>
+const MILESTONES = [
+  {
+    id: "m1",
+    title: "MILESTONE 1 — Deploy As-Is",
+    target: "25 March 2026",
+    status: "amber", // green, amber, red, grey
+    emoji: "🚀",
+    deliverable: "Live URL accessible by anyone — prove the product exists outside your laptop",
+    tasks: [
+      {
+        group: "Pre-flight",
+        items: [
+          { id:"m1t1", text:"Kill background processes holding file lock on audit-engine/", tech:"lsof / kill", done:false },
+          { id:"m1t2", text:"Verify dist/index.html loads locally (npx serve dist)", tech:"serve", done:false },
+          { id:"m1t3", text:"Test all 8 industry paths render correctly", tech:"manual QA", done:false },
+          { id:"m1t4", text:"Test export (DOCX/XLSX) works from production build", tech:"manual QA", done:false },
+        ]
+      },
+      {
+        group: "Deploy",
+        items: [
+          { id:"m1t5", text:"Option A: Drag dist/ folder to Netlify Drop (app.netlify.com/drop)", tech:"Netlify", done:false },
+          { id:"m1t6", text:"Option B: Push to GitHub → connect Vercel (vercel.json already exists)", tech:"Vercel", done:false },
+          { id:"m1t7", text:"Set custom subdomain: auditengine.netlify.app or similar", tech:"DNS", done:false },
+          { id:"m1t8", text:"Verify live URL loads and generates workpapers end-to-end", tech:"smoke test", done:false },
+        ]
+      }
+    ],
+    techDetails: `WHAT EXISTS:
+├── dist/index.html (1.3 KB entry point)
+├── dist/assets/ (15 code-split JS chunks, 3.2 MB total)
+│   ├── vendor-react (272 KB) — React runtime
+│   ├── vendor-xlsx (424 KB) — Excel export
+│   ├── vendor-docx (400 KB) — Word export
+│   ├── index (606 KB) — Main app bundle
+│   ├── data-reference (630 KB) — ISA/FRS standards
+│   └── data-methodology (412 KB) — Audit procedures
+└── vercel.json (pre-configured)
+
+QUICKEST PATH:
+1. cd ~/Desktop/audit-engine
+2. npx serve dist -p 3000  (test locally)
+3. Drag dist/ to https://app.netlify.com/drop
+   OR: vercel --prod (uses existing vercel.json)
+
+RISK: dist/ was built Mar 21 — if source changed after,
+need to rebuild: npm run build`
+  },
+  {
+    id: "m2",
+    title: "MILESTONE 2 — Fix Performance",
+    target: "28 March 2026",
+    status: "grey",
+    emoji: "⚡",
+    deliverable: "Page loads in under 2 seconds — professional first impression for any prospect",
+    tasks: [
+      {
+        group: "Analysis",
+        items: [
+          { id:"m2t1", text:"Run Lighthouse audit on deployed URL — capture baseline scores", tech:"Lighthouse", done:false },
+          { id:"m2t2", text:"Identify largest chunks — data-reference.js (630KB) and index.js (607KB)", tech:"webpack-analyzer", done:false },
+          { id:"m2t3", text:"Profile initial load — which chunks block first paint?", tech:"DevTools", done:false },
+        ]
+      },
+      {
+        group: "Optimisation",
+        items: [
+          { id:"m2t4", text:"Add lazy loading for industry data (load on selection, not upfront)", tech:"React.lazy()", done:false },
+          { id:"m2t5", text:"Gzip/Brotli compression on Netlify/Vercel (usually automatic)", tech:"CDN config", done:false },
+          { id:"m2t6", text:"Tree-shake unused standards data from bundle", tech:"Vite rollup", done:false },
+          { id:"m2t7", text:"Add loading skeleton/spinner for perceived performance", tech:"CSS", done:false },
+          { id:"m2t8", text:"Pre-render critical CSS; defer non-essential JS", tech:"Vite plugin", done:false },
+        ]
+      },
+      {
+        group: "Validation",
+        items: [
+          { id:"m2t9", text:"Re-run Lighthouse — target 90+ Performance score", tech:"Lighthouse", done:false },
+          { id:"m2t10", text:"Test on mobile 4G throttle — verify sub-3s interactive", tech:"DevTools", done:false },
+        ]
+      }
+    ],
+    techDetails: `CURRENT BUNDLE ANALYSIS:
+Total: 3.2 MB (uncompressed)
+├── Data files: 1.43 MB (45%) ← biggest win
+│   data-reference: 630 KB (ISA/FRS encyclopaedia)
+│   data-methodology: 412 KB (procedures library)
+│   data-standards: 226 KB (regulatory data)
+│   data-models: 123 KB (financial models)
+├── Vendor libs: 1.1 MB (34%)
+│   xlsx: 424 KB | docx: 400 KB | react: 272 KB
+└── App code: 0.67 MB (21%)
+
+STRATEGY:
+• Phase 1: Enable Brotli (saves ~60%) → 1.3 MB transfer
+• Phase 2: Lazy-load data-* chunks → first paint with 0 data
+• Phase 3: Lazy-load xlsx/docx vendors → load on export click
+• Target: <500 KB initial load → sub-2s on broadband`
+  },
+  {
+    id: "m3",
+    title: "MILESTONE 3 — Authentication",
+    target: "5 April 2026",
+    status: "grey",
+    emoji: "🔐",
+    deliverable: "Login gate protecting AuditEngine — only registered users get access",
+    tasks: [
+      {
+        group: "Supabase Setup",
+        items: [
+          { id:"m3t1", text:"Create Supabase project (or use existing Pro account)", tech:"Supabase", done:false },
+          { id:"m3t2", text:"Enable Email/Password auth provider", tech:"Supabase Auth", done:false },
+          { id:"m3t3", text:"Set up users table with role field (admin/user/trial)", tech:"SQL", done:false },
+          { id:"m3t4", text:"Configure email templates (confirm, reset password)", tech:"Supabase", done:false },
+        ]
+      },
+      {
+        group: "Frontend Integration",
+        items: [
+          { id:"m3t5", text:"Install @supabase/supabase-js (note: supabaseClient.js already exists in src/)", tech:"npm", done:false },
+          { id:"m3t6", text:"Build login/register page matching dark theme", tech:"React", done:false },
+          { id:"m3t7", text:"Add AuthContext provider wrapping app routes", tech:"React Context", done:false },
+          { id:"m3t8", text:"Protected route: redirect to login if no session", tech:"React Router", done:false },
+          { id:"m3t9", text:"Add logout button and session persistence", tech:"Supabase", done:false },
+        ]
+      },
+      {
+        group: "Testing",
+        items: [
+          { id:"m3t10", text:"Test: unauthenticated user → sees login page only", tech:"manual QA", done:false },
+          { id:"m3t11", text:"Test: register → email confirm → login → see engine", tech:"manual QA", done:false },
+          { id:"m3t12", text:"Test: password reset flow works end-to-end", tech:"manual QA", done:false },
+        ]
+      }
+    ],
+    techDetails: `EXISTING INFRASTRUCTURE:
+• supabaseClient.js already in src/ — config may need updating
+• .env.template has Supabase vars defined
+• server/ directory has API routes (may have auth middleware)
+
+IMPLEMENTATION:
+// src/supabaseClient.js
+import { createClient } from '@supabase/supabase-js'
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+)
+
+// Auth check in App.jsx
+const { data: { session } } = await supabase.auth.getSession()
+if (!session) return <LoginPage />
+
+SUPABASE SQL:
+CREATE TABLE profiles (
+  id UUID REFERENCES auth.users PRIMARY KEY,
+  email TEXT,
+  role TEXT DEFAULT 'trial',
+  created_at TIMESTAMPTZ DEFAULT now()
+);`
+  },
+  {
+    id: "m4",
+    title: "MILESTONE 4 — Usage Tracking",
+    target: "12 April 2026",
+    status: "grey",
+    emoji: "📊",
+    deliverable: "Admin dashboard showing who's using AuditEngine and how — proof of traction for investors/partners",
+    tasks: [
+      {
+        group: "Event Logging",
+        items: [
+          { id:"m4t1", text:"Create Supabase usage_events table (user_id, event_type, metadata, timestamp)", tech:"SQL", done:false },
+          { id:"m4t2", text:"Log: login events with IP/device", tech:"Supabase", done:false },
+          { id:"m4t3", text:"Log: industry selection (which industry, how often)", tech:"JS event", done:false },
+          { id:"m4t4", text:"Log: workpaper generation (which WP, which format exported)", tech:"JS event", done:false },
+          { id:"m4t5", text:"Log: session duration and page views", tech:"JS event", done:false },
+        ]
+      },
+      {
+        group: "Admin Dashboard",
+        items: [
+          { id:"m4t6", text:"Create /admin route (only role=admin can access)", tech:"React Router", done:false },
+          { id:"m4t7", text:"Card: Total users / Active this week / Total sessions", tech:"Supabase query", done:false },
+          { id:"m4t8", text:"Chart: Daily active users (last 30 days)", tech:"Recharts", done:false },
+          { id:"m4t9", text:"Table: Recent activity log (user, action, timestamp)", tech:"React table", done:false },
+          { id:"m4t10", text:"Chart: Most popular industries breakdown", tech:"Recharts", done:false },
+        ]
+      }
+    ],
+    techDetails: `SUPABASE TABLE:
+CREATE TABLE usage_events (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users,
+  event_type TEXT NOT NULL,  -- 'login','select_industry','generate_wp','export'
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX idx_events_user ON usage_events(user_id);
+CREATE INDEX idx_events_type ON usage_events(event_type);
+CREATE INDEX idx_events_date ON usage_events(created_at);
+
+-- Row Level Security
+ALTER TABLE usage_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users see own events" ON usage_events
+  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Admins see all" ON usage_events
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );`
+  },
+  {
+    id: "m5",
+    title: "MILESTONE 5 — First Paying User",
+    target: "30 April 2026",
+    status: "grey",
+    emoji: "💰",
+    deliverable: "Stripe checkout working — first invoice generated — AuditEngine is a revenue-generating business",
+    tasks: [
+      {
+        group: "Stripe Setup",
+        items: [
+          { id:"m5t1", text:"Create Stripe account and get API keys", tech:"Stripe", done:false },
+          { id:"m5t2", text:"Create product: AuditEngine Pro", tech:"Stripe Dashboard", done:false },
+          { id:"m5t3", text:"Create price: Monthly subscription (suggest £49-99/month)", tech:"Stripe", done:false },
+          { id:"m5t4", text:"Set up Stripe webhook endpoint for subscription events", tech:"Supabase Edge Fn", done:false },
+        ]
+      },
+      {
+        group: "Payment Integration",
+        items: [
+          { id:"m5t5", text:"Add Stripe Checkout redirect from app (client-side)", tech:"@stripe/stripe-js", done:false },
+          { id:"m5t6", text:"Handle checkout.session.completed webhook → update user role", tech:"Supabase", done:false },
+          { id:"m5t7", text:"Paywall: trial users see limited industries, paid see all 8", tech:"React", done:false },
+          { id:"m5t8", text:"Add billing portal link for subscription management", tech:"Stripe Portal", done:false },
+        ]
+      },
+      {
+        group: "Landing Page",
+        items: [
+          { id:"m5t9", text:"Build landing page: hero, features, pricing table, CTA", tech:"HTML/React", done:false },
+          { id:"m5t10", text:"Add social proof section (DK's Big 4 background, ISA compliance)", tech:"copy", done:false },
+          { id:"m5t11", text:"Add FAQ: What industries? What standards? Export formats?", tech:"copy", done:false },
+          { id:"m5t12", text:"Connect custom domain: auditengine.co.uk or similar", tech:"DNS", done:false },
+        ]
+      },
+      {
+        group: "Go Live",
+        items: [
+          { id:"m5t13", text:"Recruit 3-5 beta testers (LinkedIn network, audit contacts)", tech:"outreach", done:false },
+          { id:"m5t14", text:"Collect feedback → quick-fix top 3 issues", tech:"iteration", done:false },
+          { id:"m5t15", text:"Convert first beta tester to paid subscription", tech:"🎯 GOAL", done:false },
+        ]
+      }
+    ],
+    techDetails: `PRICING STRATEGY:
+• Trial: Free, 2 industries (Construction + Retail)
+• Pro: £49/month — all 8 industries, unlimited WPs
+• Firm: £199/month — multi-user, admin dashboard (future)
+
+STRIPE INTEGRATION:
+// Client-side checkout
+const { error } = await stripe.redirectToCheckout({
+  lineItems: [{ price: 'price_xxx', quantity: 1 }],
+  mode: 'subscription',
+  successUrl: window.location.origin + '/success',
+  cancelUrl: window.location.origin + '/pricing',
+});
+
+// Supabase Edge Function: handle webhook
+const event = stripe.webhooks.constructEvent(body, sig, secret);
+if (event.type === 'checkout.session.completed') {
+  await supabase.from('profiles')
+    .update({ role: 'pro', stripe_customer_id: event.data.object.customer })
+    .eq('email', event.data.object.customer_email);
+}
+
+REVENUE TARGET:
+10 users × £49/month = £490 MRR by end of May
+50 users × £49/month = £2,450 MRR by end of Q3`
+  }
+];
+
+// ──────── RENDER ────────
+function init() {
+  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('footerDate').textContent = new Date().toLocaleDateString('en-GB');
+
+  loadState();
+  renderMilestones();
+  updateOverallProgress();
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('auditengine_milestones_v2');
+    if (saved) {
+      const state = JSON.parse(saved);
+      MILESTONES.forEach(m => {
+        m.tasks.forEach(g => {
+          g.items.forEach(t => {
+            if (state[t.id] !== undefined) t.done = state[t.id];
+          });
+        });
+      });
+    }
+  } catch(e) {}
+}
+
+function saveState() {
+  const state = {};
+  MILESTONES.forEach(m => {
+    m.tasks.forEach(g => {
+      g.items.forEach(t => { state[t.id] = t.done; });
+    });
+  });
+  try { localStorage.setItem('auditengine_milestones_v2', JSON.stringify(state)); } catch(e) {}
+}
+
+function getProgress(m) {
+  let total = 0, done = 0;
+  m.tasks.forEach(g => { g.items.forEach(t => { total++; if(t.done) done++; }); });
+  return total > 0 ? Math.round(done/total*100) : 0;
+}
+
+function getStatusColor(m) {
+  const p = getProgress(m);
+  if (p === 100) return 'green';
+  if (p > 0) return 'amber';
+  if (m.status === 'amber') return 'amber';
+  return 'grey';
+}
+
+function renderMilestones() {
+  const container = document.getElementById('milestoneContainer');
+  container.innerHTML = '';
+
+  MILESTONES.forEach((m, idx) => {
+    const pct = getProgress(m);
+    const color = getStatusColor(m);
+    const fillColor = color === 'green' ? 'var(--green)' : color === 'amber' ? 'var(--amber)' : 'rgba(255,255,255,0.15)';
+
+    const div = document.createElement('div');
+    div.className = 'milestone' + (idx === 0 ? ' open' : '');
+    div.innerHTML = `
+      <div class="m-header" onclick="toggleMilestone(this)">
+        <div class="m-status ${color}">${m.emoji}</div>
+        <div class="m-info">
+          <div class="m-title">${m.title}</div>
+          <div class="m-meta">
+            <span>Target: ${m.target}</span>
+            <span>${countDone(m)}/${countTotal(m)} tasks</span>
+          </div>
+        </div>
+        <div class="m-progress">
+          <div class="m-progress-bar"><div class="m-progress-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+          <div class="m-progress-text">${pct}%</div>
+        </div>
+        <div class="m-chevron">▾</div>
+      </div>
+      <div class="m-body">
+        ${m.tasks.map(g => `
+          <div class="task-group">
+            <h4>${g.group}</h4>
+            ${g.items.map(t => `
+              <div class="task">
+                <input type="checkbox" id="${t.id}" ${t.done?'checked':''} onchange="toggleTask('${m.id}','${t.id}',this.checked)">
+                <label for="${t.id}" class="${t.done?'done':''}">${t.text}</label>
+                <span class="tech">${t.tech}</span>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+        <details class="tech-details">
+          <summary>Technical Details & Commands</summary>
+          <pre>${m.techDetails}</pre>
+        </details>
+        <div class="deliverable">
+          <h5>Deliverable</h5>
+          <p>${m.deliverable}</p>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function countDone(m) { let c=0; m.tasks.forEach(g=>g.items.forEach(t=>{if(t.done)c++})); return c; }
+function countTotal(m) { let c=0; m.tasks.forEach(g=>g.items.forEach(t=>c++)); return c; }
+
+function toggleMilestone(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+function toggleTask(mId, tId, checked) {
+  const m = MILESTONES.find(x => x.id === mId);
+  m.tasks.forEach(g => {
+    g.items.forEach(t => { if(t.id === tId) t.done = checked; });
+  });
+  saveState();
+  renderMilestones();
+  updateOverallProgress();
+}
+
+function updateOverallProgress() {
+  let total=0, done=0;
+  MILESTONES.forEach(m => m.tasks.forEach(g => g.items.forEach(t => { total++; if(t.done) done++; })));
+  const pct = total > 0 ? Math.round(done/total*100) : 0;
+  document.getElementById('overallBar').style.width = pct + '%';
+  document.getElementById('overallBarLabel').textContent = pct + '%';
+  document.getElementById('overallPct').textContent = pct + '% Complete';
+}
+
+init();
+</script>
+</body>
+</html>

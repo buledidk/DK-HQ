@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DK Command Centre</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;color:#e0e0e0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;padding:20px}
+.container{max-width:1400px;margin:0 auto}
+h1{font-size:1.8rem;letter-spacing:3px;color:#fff}
+h2{font-size:1.2rem;color:#8892b0;margin-bottom:16px;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #2a2a4a;padding-bottom:8px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;background:#16213e;border-radius:12px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.header-left{display:flex;align-items:center;gap:16px}
+.header-right{text-align:right;font-size:0.85rem;color:#8892b0}
+.header-right .time{font-size:1.1rem;color:#fff;font-weight:600}
+.badge{background:#2a2a4a;color:#64ffda;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;letter-spacing:1px}
+.row{display:grid;gap:20px;margin-bottom:24px}
+.row-4{grid-template-columns:repeat(4,1fr)}
+.row-5{grid-template-columns:repeat(5,1fr)}
+.card{background:#16213e;border-radius:10px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.2);transition:transform 0.2s,box-shadow 0.2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.35)}
+.status-card{border-left:4px solid}
+.status-card.green{border-color:#00c853}
+.status-card.amber{border-color:#ffab00}
+.status-card.red{border-color:#ff1744}
+.status-card.grey{border-color:#616161}
+.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px}
+.dot-green{background:#00c853}
+.dot-amber{background:#ffab00}
+.dot-red{background:#ff1744}
+.dot-grey{background:#616161}
+.card-title{display:flex;align-items:center;font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px}
+.card-status{font-size:0.8rem;color:#8892b0;margin-bottom:6px}
+.card-metric{font-size:0.85rem;color:#ccd6f6;margin-bottom:4px}
+.card-priority{font-size:0.8rem;color:#64ffda;margin-top:8px;padding-top:8px;border-top:1px solid #2a2a4a}
+.card-revenue{font-size:0.75rem;color:#ffab00;margin-top:4px}
+.card-blocker{font-size:0.75rem;color:#ff1744;margin-top:4px}
+.card-dependency{font-size:0.75rem;color:#616161;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:0.82rem}
+th{background:#0f3460;color:#64ffda;padding:10px 12px;text-align:left;font-weight:600;letter-spacing:0.5px;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid #1a1a2e}
+tr:nth-child(even){background:#1a2744}
+tr:nth-child(odd){background:#16213e}
+tr:hover{background:#1e3a5f}
+.p1{color:#ff1744;font-weight:700}
+.p2{color:#ffab00;font-weight:700}
+.p3{color:#64ffda;font-weight:700}
+.status-overdue{color:#ff1744;font-weight:600}
+.status-pending{color:#ffab00}
+.status-new{color:#64ffda}
+.status-notstarted{color:#8892b0}
+.fin-card{text-align:center}
+.fin-card .fin-value{font-size:1.3rem;font-weight:700;color:#fff;margin:8px 0}
+.fin-card .fin-label{font-size:0.75rem;color:#8892b0}
+.fin-card .fin-action{font-size:0.7rem;margin-top:6px;padding:3px 8px;border-radius:12px;display:inline-block}
+.fin-warn{background:rgba(255,171,0,0.15);color:#ffab00}
+.fin-danger{background:rgba(255,23,68,0.15);color:#ff1744}
+.fin-info{background:rgba(100,255,218,0.15);color:#64ffda}
+.timeline{position:relative;padding:20px 0}
+.tl-row{display:flex;gap:12px;align-items:stretch;overflow-x:auto;padding-bottom:10px}
+.tl-item{flex:1;min-width:200px;background:#16213e;border-radius:8px;padding:14px;border-top:3px solid #64ffda;position:relative}
+.tl-item.current{border-top-color:#ffab00;box-shadow:0 0 12px rgba(255,171,0,0.2)}
+.tl-date{font-size:0.75rem;color:#64ffda;font-weight:600;margin-bottom:6px}
+.tl-tasks{font-size:0.78rem;color:#ccd6f6}
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tool-link{display:flex;align-items:center;gap:10px;background:#16213e;padding:14px 16px;border-radius:8px;text-decoration:none;color:#ccd6f6;transition:all 0.2s;border:1px solid transparent}
+.tool-link:hover{border-color:#64ffda;color:#64ffda;transform:translateY(-2px)}
+.tool-icon{width:32px;height:32px;background:#2a2a4a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.tool-name{font-size:0.85rem;font-weight:600}
+.footer{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#16213e;border-radius:10px;margin-top:24px;font-size:0.8rem;color:#8892b0}
+.footer a{color:#64ffda;text-decoration:none;margin:0 8px}
+.footer a:hover{text-decoration:underline}
+.section{margin-bottom:24px}
+@media(max-width:1024px){.row-4,.row-5{grid-template-columns:repeat(2,1fr)}.tools-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.row-4,.row-5,.tools-grid{grid-template-columns:1fr}.header{flex-direction:column;gap:12px;text-align:center}.tl-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>DK COMMAND CENTRE</h1>
+      <span class="badge">4 WORKSTREAMS ACTIVE</span>
+    </div>
+    <div class="header-right">
+      <div class="time" id="clock"></div>
+      <div id="dateDisplay"></div>
+    </div>
+  </div>
+
+  <!-- ROW 1: STATUS CARDS -->
+  <div class="section">
+    <h2>Workstream Status</h2>
+    <div class="row row-4">
+      <div class="card status-card amber">
+        <div class="card-title"><span class="status-dot dot-amber"></span>JOB SEARCH</div>
+        <div class="card-status">Active &mdash; Daily scan enabled</div>
+        <div class="card-metric">17 roles found | 3 key leads</div>
+        <div class="card-priority">Priority: Apply to Hays GRM &pound;80-100K, follow up Rank Group</div>
+        <div class="card-revenue">Revenue: &pound;70-90K salary target</div>
+      </div>
+      <div class="card status-card red">
+        <div class="card-title"><span class="status-dot dot-red"></span>INDUS NEXUS COMPLIANCE</div>
+        <div class="card-status">At Risk &mdash; Dormant</div>
+        <div class="card-metric">0 revenue | Bank account needed</div>
+        <div class="card-priority">Priority: Open Starling/Tide THIS WEEK</div>
+        <div class="card-blocker">Blocker: Cannot trade without bank</div>
+      </div>
+      <div class="card status-card green">
+        <div class="card-title"><span class="status-dot dot-green"></span>AUDIT ENGINE</div>
+        <div class="card-status">Prototype Complete</div>
+        <div class="card-metric">8 industries | 9-sheet Excel | 6 work papers</div>
+        <div class="card-priority">Priority: Deploy to Netlify by 25 March</div>
+        <div class="card-revenue">Revenue: SaaS recurring revenue</div>
+      </div>
+      <div class="card status-card grey">
+        <div class="card-title"><span class="status-dot dot-grey"></span>WEB PORTAL</div>
+        <div class="card-status">Pre-Development</div>
+        <div class="card-metric">Supabase Pro active ($25/mo)</div>
+        <div class="card-priority">Priority: Define scope after compliance sorted</div>
+        <div class="card-dependency">Dependency: Bank account + AuditEngine</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: PRIORITY ACTION MATRIX -->
+  <div class="section">
+    <h2>Priority Action Matrix</h2>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Priority</th><th>Action</th><th>Workstream</th><th>Deadline</th><th>Status</th><th>Impact</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td class="p1">P1</td><td>Pay ACCA membership</td><td>Job Search</td><td>ASAP</td><td class="status-overdue">OVERDUE</td><td>Protects professional status</td></tr>
+          <tr><td>2</td><td class="p1">P1</td><td>Open business bank account (Starling/Tide)</td><td>Indus Nexus</td><td>29 Mar</td><td class="status-notstarted">NOT STARTED</td><td>Unblocks ALL trading</td></tr>
+          <tr><td>3</td><td class="p1">P1</td><td>Follow up Rank Group interview</td><td>Job Search</td><td>24 Mar</td><td class="status-pending">PENDING</td><td>Potential offer</td></tr>
+          <tr><td>4</td><td class="p1">P1</td><td>Follow up PKF Littlejohn (Jack Alexander)</td><td>Job Search</td><td>24 Mar</td><td class="status-pending">PENDING</td><td>Pipeline building</td></tr>
+          <tr><td>5</td><td class="p2">P2</td><td>Apply: Hays Group Reporting Manager &pound;80-100K</td><td>Job Search</td><td>25 Mar</td><td class="status-new">NEW</td><td>Strong match</td></tr>
+          <tr><td>6</td><td class="p2">P2</td><td>Apply: Experian Head of ICFR</td><td>Job Search</td><td>25 Mar</td><td class="status-new">NEW</td><td>FTSE 100 leadership</td></tr>
+          <tr><td>7</td><td class="p2">P2</td><td>Resolve &pound;17K self-assessment gap</td><td>Indus Nexus</td><td>5 Apr</td><td class="status-notstarted">NOT STARTED</td><td>HMRC risk</td></tr>
+          <tr><td>8</td><td class="p2">P2</td><td>Deploy AuditEngine to Netlify</td><td>AuditEngine</td><td>25 Mar</td><td class="status-notstarted">NOT STARTED</td><td>Product goes live</td></tr>
+          <tr><td>9</td><td class="p3">P3</td><td>Apply for EORI number</td><td>Indus Nexus</td><td>31 Mar</td><td class="status-notstarted">NOT STARTED</td><td>International trade</td></tr>
+          <tr><td>10</td><td class="p3">P3</td><td>Set up CT600 filing software</td><td>Indus Nexus</td><td>5 Apr</td><td class="status-notstarted">NOT STARTED</td><td>Tax compliance</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ROW 3: FINANCIAL SNAPSHOT -->
+  <div class="section">
+    <h2>Financial Snapshot</h2>
+    <div class="row row-5">
+      <div class="card fin-card">
+        <div class="fin-label">Amex Gold</div>
+        <div class="fin-value">&pound;1,658</div>
+        <div class="fin-label">outstanding</div>
+        <span class="fin-action fin-warn">Target payoff 28 Mar</span>
+      </div>
+      <div class="card fin-card">
+        <div class="fin-label">ISA Deadline</div>
+        <div class="fin-value">5 April</div>
+        <div class="fin-label" id="isaDays"></div>
+        <span class="fin-action fin-danger">Act now</span>
+      </div>
+      <div class="card fin-card">
+        <div class="fin-label">ChatGPT Sub</div>
+        <div class="fin-value">CANCEL</div>
+        <div class="fin-label">Still active</div>
+        <span class="fin-action fin-danger">Cancel ASAP</span>
+      </div>
+      <div class="card fin-card">
+        <div class="fin-label">Tax Savings</div>
+        <div class="fin-value">&pound;353/yr</div>
+        <div class="fin-label">Expense reclassification</div>
+        <span class="fin-action fin-info">Implement</span>
+      </div>
+      <div class="card fin-card">
+        <div class="fin-label">Supabase Pro</div>
+        <div class="fin-value">$25/mo</div>
+        <div class="fin-label">Business expense</div>
+        <span class="fin-action fin-info">Deductible</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: TIMELINE -->
+  <div class="section">
+    <h2>Timeline</h2>
+    <div class="tl-row">
+      <div class="tl-item current">
+        <div class="tl-date">Week 22 Mar</div>
+        <div class="tl-tasks">ACCA payment, bank account, job follow-ups (Rank Group, PKF Littlejohn)</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Week 29 Mar</div>
+        <div class="tl-tasks">AuditEngine deployment, EORI application, Amex payoff target</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Week 5 Apr</div>
+        <div class="tl-tasks">CT600 setup, ISA deadline, self-assessment gap resolution</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">April</div>
+        <div class="tl-tasks">Portal scope definition, continued job applications, AuditEngine auth + tracking</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">May</div>
+        <div class="tl-tasks">First Indus Nexus invoice, portal dev begins, AuditEngine first paying user</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 5: TOOLS & RESOURCES -->
+  <div class="section">
+    <h2>Tools &amp; Resources</h2>
+    <div class="tools-grid">
+      <a class="tool-link" href="https://mail.google.com" target="_blank"><div class="tool-icon">&#9993;</div><div class="tool-name">Gmail</div></a>
+      <a class="tool-link" href="https://calendar.google.com" target="_blank"><div class="tool-icon">&#128197;</div><div class="tool-name">Google Calendar</div></a>
+      <a class="tool-link" href="https://www.linkedin.com/jobs" target="_blank"><div class="tool-icon">&#128188;</div><div class="tool-name">LinkedIn Jobs</div></a>
+      <a class="tool-link" href="https://supabase.com/dashboard" target="_blank"><div class="tool-icon">&#9889;</div><div class="tool-name">Supabase Dashboard</div></a>
+      <a class="tool-link" href="https://app.netlify.com" target="_blank"><div class="tool-icon">&#9650;</div><div class="tool-name">Netlify</div></a>
+      <a class="tool-link" href="https://find-and-update.company-information.service.gov.uk" target="_blank"><div class="tool-icon">&#127970;</div><div class="tool-name">Companies House</div></a>
+      <a class="tool-link" href="https://www.tax.service.gov.uk/gg/sign-in" target="_blank"><div class="tool-icon">&#127468;</div><div class="tool-name">HMRC Gateway</div></a>
+      <a class="tool-link" href="https://www.gov.uk/eori" target="_blank"><div class="tool-icon">&#127760;</div><div class="tool-name">EORI Application</div></a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>Last updated: <span id="lastUpdated"></span></div>
+    <div>DK Buledi &times; Claude</div>
+    <div>
+      <a href="DK_Command_Centre.html">Command Centre</a> |
+      <a href="AuditEngine_Milestones.html">AuditEngine Milestones</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateClock(){
+  const now=new Date();
+  const timeStr=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const dateStr=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('clock').textContent=timeStr;
+  document.getElementById('dateDisplay').textContent=dateStr;
+  document.getElementById('lastUpdated').textContent=now.toLocaleString('en-GB');
+}
+function updateISA(){
+  const isa=new Date(2026,3,5);
+  const now=new Date();
+  const diff=Math.ceil((isa-now)/(1000*60*60*24));
+  document.getElementById('isaDays').textContent=diff+' days remaining';
+}
+updateClock();
+updateISA();
+setInterval(updateClock,1000);
+</script>
+</body>
+</html>

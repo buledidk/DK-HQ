@@ -311,10 +311,10 @@ h2::before{content:'';display:inline-block;width:3px;height:22px;background:var(
     <div class="card">
       <h3 style="color:var(--gold2);margin-bottom:20px;font-size:16px">Deep Dive by Category</h3>
       <div class="tab-btns">
-        <button class="tab-btn active" onclick="showTab('transport')">🚗 Transport</button>
-        <button class="tab-btn" onclick="showTab('eatingout')">🍽️ Eating Out</button>
-        <button class="tab-btn" onclick="showTab('groceries')">🛒 Groceries</button>
-        <button class="tab-btn" onclick="showTab('general')">📦 General</button>
+        <button class="tab-btn active" onclick="showTab('transport', this)">🚗 Transport</button>
+        <button class="tab-btn" onclick="showTab('eatingout', this)">🍽️ Eating Out</button>
+        <button class="tab-btn" onclick="showTab('groceries', this)">🛒 Groceries</button>
+        <button class="tab-btn" onclick="showTab('general', this)">📦 General</button>
       </div>
 
       <div id="transport" class="tab-panel active">
@@ -944,11 +944,11 @@ window.addEventListener('scroll',()=>{
 });
 
 // ── TABS ───────────────────────────────────────────────────────────────────────
-function showTab(id){
+function showTab(id, clickedBtn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
+  clickedBtn.classList.add('active');
 }
 
 // ── CHART.JS GLOBAL DEFAULTS ────────────────────────────────────────────────
